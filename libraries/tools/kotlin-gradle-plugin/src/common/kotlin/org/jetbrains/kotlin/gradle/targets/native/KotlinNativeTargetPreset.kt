@@ -132,10 +132,13 @@ internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     HostManager().isEnabled(this)
 }
 
-internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Future<Boolean>
+@Suppress("DEPRECATION")
+internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Provider<Boolean>
     get() = when (this) {
-        is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported
-        else -> project.future { true }
+        is KotlinNativeCompilation -> crossCompilationSupported
+        else -> project.provider {
+            konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+        }
     }
 
 // KT-81134 with a fallback to `enabledOnCurrentHostForKlibCompilation`

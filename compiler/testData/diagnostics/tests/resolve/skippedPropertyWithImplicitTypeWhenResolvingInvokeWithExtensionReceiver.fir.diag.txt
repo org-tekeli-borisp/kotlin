@@ -1,0 +1,3 @@
+/ResolveWithDeprecationWarning.kt:(634,637): error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.
+/ChangedBehaviorOnGreenCode.kt:(86,88): warning: This extension function is shadowed by a member property ''val x2: O2' defined in 'O2'' with ''fun invoke(): String' defined in 'O2''.
+/ChangedDiagnosticsOnRedCode.kt:(187,189): error: Unresolved reference 'p4'.

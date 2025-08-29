@@ -37917,6 +37917,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("skippedPropertyWithImplicitTypeWhenResolvingInvokeWithExtensionReceiver.kt")
+      public void testSkippedPropertyWithImplicitTypeWhenResolvingInvokeWithExtensionReceiver() {
+        runTest("compiler/testData/diagnostics/tests/resolve/skippedPropertyWithImplicitTypeWhenResolvingInvokeWithExtensionReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("smartcastToMoreSpecificProperty.kt")
       public void testSmartcastToMoreSpecificProperty() {
         runTest("compiler/testData/diagnostics/tests/resolve/smartcastToMoreSpecificProperty.kt");

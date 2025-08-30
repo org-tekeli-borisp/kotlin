@@ -56,6 +56,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "Parameters passed to js(code) should have a valid JavaScript name"
         )
 
+        put(
+            ErrorsWasm.INTRINSICS_INLINED_IN_KLIB,
+            "Wasm intrinsics should not be inlined into KLib"
+        )
     }
 }
 

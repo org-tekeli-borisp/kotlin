@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASI_EXT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_EXPORT_ON_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.INTRINSICS_INLINED_IN_KLIB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE
@@ -112,5 +113,7 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS, "External declaration cannot have context parameters.")
         map.put(EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS, "Exported declaration cannot have context parameters.")
+
+        map.put(INTRINSICS_INLINED_IN_KLIB, "Wasm intrinsics should not be inlined into KLib")
     }
 }

@@ -43,6 +43,8 @@ public interface ErrorsWasm {
     DiagnosticFactory1<PsiElement, String> JSCODE_UNSUPPORTED_FUNCTION_KIND = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> JSCODE_INVALID_PARAMETER_NAME = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> INTRINSICS_INLINED_IN_KLIB = DiagnosticFactory0.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

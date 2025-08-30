@@ -63,5 +63,8 @@ object FirWasmErrors : KtDiagnosticsContainer() {
     // Associated object
     val ASSOCIATED_OBJECT_INVALID_BINDING: KtDiagnosticFactory0 = KtDiagnosticFactory0("ASSOCIATED_OBJECT_INVALID_BINDING", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
+    // Internals
+    val INTRINSICS_INLINED_IN_KLIB: KtDiagnosticFactory0 = KtDiagnosticFactory0("INTRINSICS_INLINED_IN_KLIB", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirWasmErrorsDefaultMessages
 }

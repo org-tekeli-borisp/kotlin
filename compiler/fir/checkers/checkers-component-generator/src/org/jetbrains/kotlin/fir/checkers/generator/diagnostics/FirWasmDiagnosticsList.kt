@@ -76,4 +76,8 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
     val ASSOCIATED_OBJECTS by object : DiagnosticGroup("Associated object") {
         val ASSOCIATED_OBJECT_INVALID_BINDING by error<KtElement>()
     }
+
+    val WASM_INTERNAL by object : DiagnosticGroup("Internals") {
+        val INTRINSICS_INLINED_IN_KLIB by error<PsiElement>()
+    }
 }

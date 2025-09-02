@@ -1,3 +1,12 @@
-/ResolveWithDeprecationWarning.kt:(634,637): error: Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.
-/ChangedBehaviorOnGreenCode.kt:(86,88): warning: This extension function is shadowed by a member property ''val x2: O2' defined in 'O2'' with ''fun invoke(): String' defined in 'O2''.
-/ChangedDiagnosticsOnRedCode.kt:(187,189): error: Unresolved reference 'p4'.
+/ResolveWithDeprecationWarning.kt:(390,391): warning: Property 'val f: String' is skipped when resolving the respective function call. Please specify its return type explicitly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-367.
+
+/ResolveWithDeprecationWarning.kt:(649,650): warning: Property 'val g: Boolean' is skipped when resolving the respective function call. Please specify its return type explicitly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-367.
+/GreenCodeBecomesRed.kt:(177,179): error: Expression 'x1' of type 'O1' cannot be invoked as a function. Function 'invoke()' is not found.
+
+/GreenCodeBecomesRed.kt:(177,179): warning: Property 'val x1: O1' is skipped when resolving the respective function call. Please specify its return type explicitly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-367.
+/ChangedBehaviorOnGreenCode.kt:(88,90): warning: This extension function is shadowed by a member property ''val x2: O2' defined in 'O2'' with ''fun invoke(): String' defined in 'O2''.
+
+/ChangedBehaviorOnGreenCode.kt:(325,327): warning: Property 'val x2: O2' is skipped when resolving the respective function call. Please specify its return type explicitly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-367.
+/ChangedDiagnosticsOnRedCode.kt:(189,191): warning: Property 'val p4: <ERROR TYPE REF: Unresolved name: p4>' is skipped when resolving the respective function call. Please specify its return type explicitly. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-367.
+
+/ChangedDiagnosticsOnRedCode.kt:(189,191): error: Unresolved reference 'p4'.

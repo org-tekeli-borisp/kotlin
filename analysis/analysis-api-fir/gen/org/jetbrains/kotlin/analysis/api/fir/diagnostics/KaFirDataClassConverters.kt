@@ -590,6 +590,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER.errorFactory) { firDiagnostic ->
+        SkippedPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiverErrorImpl(
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER.warningFactory) { firDiagnostic ->
+        SkippedPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiverWarningImpl(
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUPER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
         SuperIsNotAnExpressionImpl(
             firDiagnostic as KtPsiDiagnostic,

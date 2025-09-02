@@ -55,6 +55,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirPrivateToThisAccessChecker,
         FirContextParameterInCalledSignatureChecker,
         FirInlineExposedLessVisibleTypeQualifiedAccessChecker,
+        FirSkippedPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiverChecker,
     )
 
     override val callCheckers: Set<FirCallChecker> = setOf(

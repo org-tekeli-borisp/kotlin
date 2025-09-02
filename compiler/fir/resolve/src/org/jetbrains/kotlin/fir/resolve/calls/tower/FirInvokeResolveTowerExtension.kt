@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.declarations.utils.isMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -19,10 +20,11 @@ import org.jetbrains.kotlin.fir.resolve.calls.NotFunctionAsOperator
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeSkippedPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiver
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -118,15 +120,15 @@ internal class FirInvokeResolveTowerExtension(
     }
 
     /**
-     * Let we have a call if a form of "x.f()" or "f()"
+     * Let us having a call in the form of `x.f()` or `f()`
      *
-     * This method enqueues a task (based on runResolutionForInvokeReceiverVariable) that for each successful property enqueues another task
-     * that tries to resolve "f()" call itself
+     * This method enqueues a task (based on [runResolutionForInvokeReceiverVariable]) that for each successful property enqueues another task
+     * that tries to resolve `f()` call itself
      *
-     * @param info describes whole "x.f()" or "f()"
-     * @param invokeReceiverInfo describes "x.f" or "f" variable (in case of no-receiver call or in case of resolving invokeExtension with "x")
-     * @param invokeBuiltinExtensionMode is true only when the original call has a form "x.f()" and invokeReceiverInfo is "f"
-     * @param runResolutionForInvokeReceiverVariable runs the process of looking for the receiver ("x.f" or "f") on the given FirTowerResolveTask
+     * @param info describes the whole `x.f()` or `f()`
+     * @param invokeReceiverInfo describes `x.f` or `f` variable (in case of no-receiver call or in case of resolving invokeExtension with `x`)
+     * @param invokeBuiltinExtensionMode is true only when the original call has a form `x.f()` and invokeReceiverInfo is `f`
+     * @param runResolutionForInvokeReceiverVariable runs the process of looking for the receiver (`x.f` or `f`) on the given FirTowerResolveTask
      */
     private inline fun enqueueInvokeReceiverTask(
         info: CallInfo,
@@ -163,12 +165,34 @@ internal class FirInvokeResolveTowerExtension(
         collector: CandidateCollector
     ) {
         for (invokeReceiverCandidate in collector.bestCandidates()) {
-            val symbol = invokeReceiverCandidate.symbol
-            if (symbol !is FirCallableSymbol<*> && symbol !is FirClassLikeSymbol<*>) continue
+            val isExtensionFunctionType = when (val symbol = invokeReceiverCandidate.symbol) {
+                is FirCallableSymbol<*> -> {
+                    if (symbol is FirPropertySymbol && // Maybe use FirRegularPropertySymbol (not possible to resolve to a following declaration for local property, however, not sure because of potential loops)
+                        // The warning should be reported even if the type is resolved, but its source kind is an implicit type ref
+                        // to get rid of resolving inconsistency in IDE parallel mode and actually to get rid of behavior that depends of declarations ordering.
+                        symbol.fir.returnTypeRef.let { it is FirImplicitTypeRef || it.source?.kind == KtFakeSourceElementKind.ImplicitTypeRef } &&
+                        //symbol.getContainingClassSymbol() != null && // Tried some filtering to reduce the number of reported warnings (not possible to resolve to a following declaration on top-level?)
+                        info.explicitReceiver != null
+                    ) {
+                        (info.callSite as FirQualifiedAccessExpression).let {
+                            it.replaceNonFatalDiagnostics(
+                                it.nonFatalDiagnostics + ConeSkippedPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiver(
+                                    symbol
+                                )
+                            )
+                        }
+                        //continue // We can only report warnings without affecting resolve behavior
+                    }
 
-            val isExtensionFunctionType =
-                symbol is FirCallableSymbol<*> &&
-                        components.returnTypeCalculator.tryCalculateReturnType(symbol).isExtensionFunctionType(components.session)
+                    components.returnTypeCalculator.tryCalculateReturnType(symbol).isExtensionFunctionType(components.session)
+                }
+                is FirClassLikeSymbol<*> -> {
+                    false
+                }
+                else -> {
+                    continue
+                }
+            }
 
             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                 continue

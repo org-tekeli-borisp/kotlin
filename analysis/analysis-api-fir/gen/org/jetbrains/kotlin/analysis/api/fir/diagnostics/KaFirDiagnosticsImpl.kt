@@ -532,6 +532,18 @@ internal class SelfCallInNestedObjectConstructorErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SelfCallInNestedObjectConstructorError
 
+internal class SkippedPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiverErrorImpl(
+    override val property: KaVariableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.SkippedPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiverError
+
+internal class SkippedPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiverWarningImpl(
+    override val property: KaVariableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.SkippedPropertyWithImplicitTypeWhenResolvingInvokeCallWithExtensionReceiverWarning
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

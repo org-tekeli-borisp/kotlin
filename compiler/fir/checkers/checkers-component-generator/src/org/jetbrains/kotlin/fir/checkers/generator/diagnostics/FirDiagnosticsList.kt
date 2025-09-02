@@ -229,6 +229,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<List<String?>>("altererNames")
         }
         val SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR by error<PsiElement>()
+        val SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER by deprecationError<KtExpression>(LanguageFeature.ForbidInvokeCallWithExtensionIfTryResolvingPropertyWithImplicitReturnType, PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<FirPropertySymbol>("property")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

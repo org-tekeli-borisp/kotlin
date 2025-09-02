@@ -14,7 +14,7 @@ val Int.p: String
 class Foo {
     private val f = f()
     // New warning should be reported
-    private fun f() = 42.f()
+    private fun f() = 42.<!SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER_ERROR!>f<!>()
 
     private val p = p()
     private fun p() = 42.p // Property call is resolved correctly because there is no attempt to resolve invoke call
@@ -24,7 +24,7 @@ fun String.g(): Boolean = false
 
 class Bar {
     // New warning should be reported
-    private fun g() = "s2".g()
+    private fun g() = "s2".<!SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER_ERROR!>g<!>()
     private val g = g()
 }
 
@@ -32,7 +32,7 @@ class Bar {
 
 // Previously: resolve to invoke and green code.
 // After: `FUNCTION_EXPECTED` error + new warning.
-fun f2() = O1.x1()
+fun f2() = O1.<!FUNCTION_EXPECTED, SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER_ERROR!>x1<!>()
 
 object O1 {
     val x1 = O1
@@ -45,7 +45,7 @@ fun O2.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>x2<!>() = "
 
 // Previously: resolving to the `invoke` below.
 // After: resolving to the extension function above (despite the fact it has `EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE` warning) + new warning.
-fun f3() = O2.x2()
+fun f3() = O2.<!SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER_ERROR!>x2<!>()
 
 object O2 {
     val x2 = O2
@@ -56,7 +56,7 @@ object O2 {
 
 // Previously: UNRESOLVED_REFERENCE.
 // After: UNRESOLVED_REFERENCE + new warning.
-val p4 = 1.<!UNRESOLVED_REFERENCE!>p4<!>
+val p4 = 1.<!SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER_ERROR, UNRESOLVED_REFERENCE!>p4<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
 objectDeclaration, operator, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

@@ -464,7 +464,8 @@ enum class LanguageFeature(
     CheckPackageInfoNullnessAnnotations(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-77729"),
     ForbidTypeAliasWithMissingDependencyType(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-79781"),
     ForbidImplicitTypeAnnotationWithMissingDependency(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-80247"),
-    ProperExhaustivenessCheckForJavaOpenSealedClass(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true,"KT-78879"),
+    ProperExhaustivenessCheckForJavaOpenSealedClass(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KT-78879"),
+    ForbidInvokeCallWithExtensionIfTryResolvingPropertyWithImplicitReturnType(sinceVersion = KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-367"),
 
     // 2.5
 

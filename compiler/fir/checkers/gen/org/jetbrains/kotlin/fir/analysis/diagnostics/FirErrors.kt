@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingLessVisibleType
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidImplicitTypeAnnotationWithMissingDependency
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidInvokeCallWithExtensionIfTryResolvingPropertyWithImplicitReturnType
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidObjectDelegationToItself
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidParenthesizedLhsInAssignments
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidProjectionsInAnnotationProperties
@@ -230,6 +231,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val RESOLUTION_TO_CLASSIFIER: KtDiagnosticFactory1<FirRegularClassSymbol> = KtDiagnosticFactory1("RESOLUTION_TO_CLASSIFIER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val AMBIGUOUS_ALTERED_ASSIGN: KtDiagnosticFactory1<List<String?>> = KtDiagnosticFactory1("AMBIGUOUS_ALTERED_ASSIGN", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER: KtDiagnosticFactoryForDeprecation1<FirPropertySymbol> = KtDiagnosticFactoryForDeprecation1("SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER", ForbidInvokeCallWithExtensionIfTryResolvingPropertyWithImplicitReturnType, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, KtExpression::class, getRendererFactory())
 
     // Super
     val SUPER_IS_NOT_AN_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUPER_IS_NOT_AN_EXPRESSION", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())

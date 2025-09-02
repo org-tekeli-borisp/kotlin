@@ -1,4 +1,4 @@
-/ChangedDiagnosticsOnRedCode.kt:57:12: error: unresolved reference: p4
+/ChangedDiagnosticsOnRedCode.kt:59:12: error: unresolved reference: p4
 val p4 = 1.p4
            ^^
 

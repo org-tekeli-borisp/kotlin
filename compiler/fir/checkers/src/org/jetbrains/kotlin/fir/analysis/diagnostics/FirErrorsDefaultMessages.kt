@@ -798,6 +798,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
@@ -1087,6 +1088,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR,
             "Self references to members of containing class are prohibited in constructor of nested object.",
+        )
+        map.put(
+            SKIPPED_PROPERTY_WITH_IMPLICIT_TYPE_WHEN_RESOLVING_INVOKE_CALL_WITH_EXTENSION_RECEIVER,
+            "Property ''{0}'' is skipped when resolving the respective function call. Please specify its return type explicitly.",
+            SYMBOL,
         )
         map.put(
             PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL,

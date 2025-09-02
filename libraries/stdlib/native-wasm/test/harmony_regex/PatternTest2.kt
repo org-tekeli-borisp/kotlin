@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 /* Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -981,6 +986,16 @@ class PatternTest2 {
         assertEquals("", s[0])
         assertEquals("2", s[1])
         assertEquals(2, s.size)
+    }
+
+    // Regression test for KT-80665
+    @Test fun testSymbolCategory() {
+        val symbols = Regex("\\p{S}+")
+        val punctuation = Regex("\\p{P}+")
+
+        val str = "«»" // Pi Pf
+        assertTrue(punctuation.matches(str))
+        assertFalse(symbols.matches(str))
     }
 
     private class UBInfo(var low: Int, var high: Int, var name: String)

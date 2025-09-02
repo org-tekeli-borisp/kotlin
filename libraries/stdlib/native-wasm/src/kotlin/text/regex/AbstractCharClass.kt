@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -807,7 +807,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
                 CharClasses.PE -> CachedCategory(CharCategory.END_PUNCTUATION.value, false)
                 CharClasses.PC -> CachedCategory(CharCategory.CONNECTOR_PUNCTUATION.value, false)
                 CharClasses.PO -> CachedCategory(CharCategory.OTHER_PUNCTUATION.value, true)
-                CharClasses.ISS -> CachedCategoryScope(0x7E000000, true)
+                CharClasses.ISS -> CachedCategoryScope(0x1E000000, true)
                 CharClasses.SM -> CachedCategory(CharCategory.MATH_SYMBOL.value, true)
                 CharClasses.SC -> CachedCategory(CharCategory.CURRENCY_SYMBOL.value, false)
                 CharClasses.SK -> CachedCategory(CharCategory.MODIFIER_SYMBOL.value, false)

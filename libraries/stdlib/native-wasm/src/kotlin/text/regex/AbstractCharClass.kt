@@ -796,7 +796,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
                 CharClasses.ZS -> CachedCategory(CharCategory.SPACE_SEPARATOR.value, false)
                 CharClasses.ZL -> CachedCategory(CharCategory.LINE_SEPARATOR.value, false)
                 CharClasses.ZP -> CachedCategory(CharCategory.PARAGRAPH_SEPARATOR.value, false)
-                CharClasses.ISC -> CachedCategoryScope(0xF0000, true, true)
+                CharClasses.ISC -> CachedCategoryScope(0xD8001, true, true)
                 CharClasses.CC -> CachedCategory(CharCategory.CONTROL.value, false)
                 CharClasses.CF -> CachedCategory(CharCategory.FORMAT.value, true)
                 CharClasses.CO -> CachedCategory(CharCategory.PRIVATE_USE.value, true)

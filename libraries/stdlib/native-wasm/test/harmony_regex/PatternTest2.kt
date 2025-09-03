@@ -998,6 +998,23 @@ class PatternTest2 {
         assertFalse(symbols.matches(str))
     }
 
+    // Regression test for KT-80665, KT-80666
+    @Test fun testOtherCategory() {
+        val other = Regex("\\p{C}")
+
+        val unassignedStr = "\ufdd0"
+        val wsStr = "\t"
+
+        assertTrue(other.matches(unassignedStr), "${other}.matches(\"$unassignedStr\")")
+        assertTrue(other.matches(wsStr), "${other}.matches(\"$wsStr\")")
+
+        val unassigned = Regex("\\p{Cn}")
+        assertTrue(unassigned.matches(unassignedStr), "${unassigned}.matches(\"$unassignedStr\")")
+
+        val whiteSpace = Regex("\\p{Cc}")
+        assertTrue(whiteSpace.matches(wsStr), "${unassigned}.matches(\"$wsStr\")")
+    }
+
     private class UBInfo(var low: Int, var high: Int, var name: String)
 
     // A table representing the unicode categories

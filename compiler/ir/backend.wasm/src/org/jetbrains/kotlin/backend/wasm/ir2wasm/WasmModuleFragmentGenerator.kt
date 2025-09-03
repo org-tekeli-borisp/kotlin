@@ -184,6 +184,15 @@ private fun WasmBackendContext.defineBuiltinSignatures(irFile: IrFile, wasmFileC
         jsToKotlinAnyAdapter = null
     }
 
+    val jsToKotlinStringAdapter: IrFunctionSymbol?
+    if (isWasmJsTarget) {
+        jsToKotlinStringAdapter = wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.takeIf {
+            irFile == it.owner.fileOrNull
+        }
+    } else {
+        jsToKotlinStringAdapter = null
+    }
+
     val unitGetInstance = findUnitGetInstanceFunction().takeIf {
         irFile == it.fileOrNull
     }
@@ -205,6 +214,7 @@ private fun WasmBackendContext.defineBuiltinSignatures(irFile: IrFile, wasmFileC
         kotlinAny = kotlinAnyClass,
         tryGetAssociatedObject = tryGetAssociatedObjectFunction,
         jsToKotlinAnyAdapter = jsToKotlinAnyAdapter,
+        jsToKotlinStringAdapter = jsToKotlinStringAdapter,
         unitGetInstance = unitGetInstance?.symbol,
         runRootSuites = runRootSuites,
         createString = createString,

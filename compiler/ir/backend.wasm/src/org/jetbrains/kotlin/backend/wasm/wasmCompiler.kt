@@ -372,7 +372,7 @@ fun generateAsyncJsWrapper(
     val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
 
     val builtinsList = jsModuleImports.filter { it.startsWith("wasm:") }.map { "${it.removePrefix("wasm:")}" }
-    val options = "{ builtins: ['${builtinsList.joinToString(", ")}'] }"
+    val options = "{ builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: \"strings\" }"
 
     return """
 export async function instantiate(imports={}, runInitializer=true) {
@@ -424,12 +424,17 @@ $jsCodeBodyIndented
     }
 
     const wasmFilePath = $pathJsStringLiteral;
+    
+    const StringConstantsProxy = new Proxy({}, {
+      get(_, prop) { return prop; }
+    });
 
     const importObject = {
         js_code,
         intrinsics: {
             tag: wasmTag
         },
+        "strings": StringConstantsProxy,
 $imports
 $dependenciesImports
     };

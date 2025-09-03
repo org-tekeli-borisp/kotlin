@@ -28,6 +28,7 @@ class BuiltinIdSignatures(
     val kotlinAny: IdSignature?,
     val tryGetAssociatedObject: IdSignature?,
     val jsToKotlinAnyAdapter: IdSignature?,
+    val jsToKotlinStringAdapter: IdSignature?,
     val unitGetInstance: IdSignature?,
     val runRootSuites: IdSignature?,
     val createString: IdSignature?,
@@ -54,12 +55,15 @@ class RttiElements(
 class WasmStringsElements(
     var createStringLiteralUtf16: WasmSymbol<WasmFunction> = WasmSymbol(),
     var createStringLiteralLatin1: WasmSymbol<WasmFunction> = WasmSymbol(),
+    var createStringLiteralJsString: WasmSymbol<WasmFunction> = WasmSymbol(),
     var createStringLiteralType: WasmSymbol<WasmFunctionType> = WasmSymbol(),
 )
 
 class WasmCompiledFileFragment(
     val fragmentTag: String?,
     val functions: ReferencableAndDefinable<IdSignature, WasmFunction> = ReferencableAndDefinable(),
+    val globalLiterals: ReferencableElements<String, WasmGlobal> = ReferencableElements(),
+    val globalLiteralsIds: ReferencableElements<String, Int> = ReferencableElements(),
     val globalFields: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
     val globalVTables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
     val globalClassITables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
@@ -167,6 +171,7 @@ class WasmCompiledModuleFragment(
         additionalTypes: MutableList<WasmTypeDeclaration>,
         stringPoolSize: Int,
         initializeUnit: Boolean,
+        stringPoolSizeWithGlobals: Int,
         wasmElements: MutableList<WasmElement>,
         exports: MutableList<WasmExport<*>>,
         globals: MutableList<WasmGlobal>,
@@ -190,8 +195,23 @@ class WasmCompiledModuleFragment(
         val createStringFunction = tryFindBuiltInFunction { it.createString }
             ?: compilationException("kotlin.createString is not file in fragments", null)
         val stringType = createStringFunction.type.owner.resultTypes[0]
-        val (stringPoolField, stringArrayType) = createStringPoolField(stringPoolSize, stringType, additionalTypes)
+        val (stringPoolField, stringArrayType) = createStringPoolField(stringPoolSizeWithGlobals, stringType, additionalTypes)
         globals.add(stringPoolField)
+
+        if (isWasmJsTarget) {
+            val stringLiteralFunctionJsString =
+                createStringLiteralFunction(
+                    createStringFunction = createStringFunction,
+                    stringPoolGlobalField = stringPoolField,
+                    additionalTypes = additionalTypes,
+                    wasmElements = wasmElements,
+                    stringArrayType = stringArrayType,
+                    stringAddressesAndLengthsGlobal = stringAddressesAndLengthsGlobal,
+                    wasmLongArrayDeclaration = wasmLongArrayDeclaration,
+                    stringLiteralType = StringLiteralType.JsString,
+                )
+            definedFunctions.add(stringLiteralFunctionJsString)
+        }
 
         val stringLiteralFunctionLatin1 =
             createStringLiteralFunction(
@@ -202,7 +222,7 @@ class WasmCompiledModuleFragment(
                 stringArrayType = stringArrayType,
                 stringAddressesAndLengthsGlobal = stringAddressesAndLengthsGlobal,
                 wasmLongArrayDeclaration = wasmLongArrayDeclaration,
-                isLatin1 = true,
+                stringLiteralType = StringLiteralType.Latin1,
             )
         definedFunctions.add(stringLiteralFunctionLatin1)
 
@@ -215,7 +235,7 @@ class WasmCompiledModuleFragment(
                 stringArrayType = stringArrayType,
                 stringAddressesAndLengthsGlobal = stringAddressesAndLengthsGlobal,
                 wasmLongArrayDeclaration = wasmLongArrayDeclaration,
-                isLatin1 = false,
+                stringLiteralType = StringLiteralType.Utf16,
             )
         definedFunctions.add(stringLiteralFunctionUtf16)
 
@@ -246,12 +266,22 @@ class WasmCompiledModuleFragment(
         val syntheticTypes = mutableListOf<WasmTypeDeclaration>()
         createAndBindSpecialITableTypes(syntheticTypes)
         val globals = getGlobals(syntheticTypes)
+        val stringPoolSizeWithGlobals = bindGlobalLiterals(globals, stringPoolSize)
 
         val additionalTypes = mutableListOf<WasmTypeDeclaration>()
         additionalTypes.add(parameterlessNoReturnFunctionType)
 
         val elements = mutableListOf<WasmElement>()
-        createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, initializeUnit, elements, exports, globals)
+        createAndExportServiceFunctions(
+            definedFunctions,
+            additionalTypes,
+            stringPoolSize,
+            initializeUnit,
+            stringPoolSizeWithGlobals,
+            elements,
+            exports,
+            globals
+        )
 
         val tags = getTags()
         require(tags.size <= 1) { "Having more than 1 tag is not supported" }
@@ -261,11 +291,13 @@ class WasmCompiledModuleFragment(
 
         val (importedGlobals, definedGlobals) = globals.partition { it.importPair != null }
 
-        val importsInOrder = mutableListOf<WasmNamedModuleField>()
-        importsInOrder.addAll(importedFunctions)
-        importsInOrder.addAll(importedTags)
-        importsInOrder.addAll(importedGlobals)
-        importsInOrder.addAll(importedMemories)
+        val importsInOrder = mutableListOf<WasmNamedModuleField>().apply {
+            addAll(importedFunctions)
+            addAll(importedTags)
+            addAll(importedGlobals) // <-- add imported globals to the import section
+            addAll(importedMemories)
+        }
+
 
         val recursiveTypeGroups = getTypes(syntheticTypes, canonicalFunctionTypes, additionalTypes)
 
@@ -661,6 +693,12 @@ class WasmCompiledModuleFragment(
         return global to wasmStringArrayDeclaration
     }
 
+    private enum class StringLiteralType {
+        JsString,
+        Latin1,
+        Utf16
+    }
+
     private fun createStringLiteralFunction(
         createStringFunction: WasmFunction,
         stringPoolGlobalField: WasmGlobal,
@@ -669,27 +707,42 @@ class WasmCompiledModuleFragment(
         stringArrayType: WasmArrayDeclaration,
         stringAddressesAndLengthsGlobal: WasmGlobal,
         wasmLongArrayDeclaration: WasmArrayDeclaration,
-        isLatin1: Boolean,
+        stringLiteralType: StringLiteralType,
     ): WasmFunction.Defined {
         val kotlinStringType = createStringFunction.type.owner.resultTypes[0]
         val wasmCharArrayType = createStringFunction.type.owner.parameterTypes[0]
         val wasmCharArrayDeclaration = (wasmCharArrayType.getHeapType() as WasmHeapType.Type).type.owner
 
-        val stringLiteralFunctionType = WasmFunctionType(listOf(WasmI32), listOf(kotlinStringType))
+        val isJsString = stringLiteralType == StringLiteralType.JsString
+        val isLatin1 = stringLiteralType == StringLiteralType.Latin1
+
+        val args: MutableList<WasmType> = mutableListOf(WasmI32)
+        if (isJsString) {
+            args.add(WasmRefType(WasmHeapType.Simple.Extern))
+        }
+
+        val stringLiteralFunctionType = WasmFunctionType(args, listOf(kotlinStringType))
         additionalTypes.add(stringLiteralFunctionType)
 
         val byteArray = WasmArrayDeclaration("byte_array", WasmStructFieldDeclaration("byte", WasmI8, false))
         additionalTypes.add(byteArray)
 
-        val poolIdLocal = WasmLocal(0, "poolId", WasmI32, true)
+        var localIter = 0
+        val poolIdLocal = WasmLocal(localIter++, "poolId", WasmI32, true)
 
-        val startAddress = WasmLocal(1, "startAddress", WasmI32, false)
-        val length = WasmLocal(2, "length", WasmI32, false)
-        val addressAndLength = WasmLocal(3, "addressAndLength", WasmI64, false)
-        val temporary = WasmLocal(4, "temporary", kotlinStringType, false)
+        val jsString: WasmLocal? =
+            if (isJsString)
+                WasmLocal(localIter++, "jsString", WasmRefType(WasmHeapType.Simple.Extern), true)
+            else
+                null
+
+        val startAddress = WasmLocal(localIter++, "startAddress", WasmI32, false)
+        val length = WasmLocal(localIter++, "length", WasmI32, false)
+        val addressAndLength = WasmLocal(localIter++, "addressAndLength", WasmI64, false)
+        val temporary = WasmLocal(localIter++, "temporary", kotlinStringType, false)
 
         val stringLiteralFunction = WasmFunction.Defined(
-            name = "_stringLiteral${if (isLatin1) "Latin1" else "Utf16"}",
+            name = "_stringLiteral${stringLiteralType.name}",
             type = WasmSymbol(stringLiteralFunctionType),
             locals = mutableListOf(startAddress, length, addressAndLength, temporary)
         )
@@ -704,100 +757,107 @@ class WasmCompiledModuleFragment(
                 )
                 buildBrInstr(WasmOp.BR_ON_NON_NULL, blockResult, serviceCodeLocation)
 
-                // cache miss
-                buildGetGlobal(WasmSymbol(stringAddressesAndLengthsGlobal), serviceCodeLocation)
-                buildGetLocal(poolIdLocal, serviceCodeLocation)
-                buildInstr(
-                    op = WasmOp.ARRAY_GET,
-                    location = serviceCodeLocation,
-                    WasmImmediate.TypeIdx(wasmLongArrayDeclaration)
-                )
-                buildSetLocal(addressAndLength, serviceCodeLocation)
-
-                //Get length
-                buildGetLocal(addressAndLength, serviceCodeLocation)
-                buildConstI64(32L, serviceCodeLocation)
-                buildInstr(
-                    op = WasmOp.I64_SHR_S,
-                    location = serviceCodeLocation,
-                )
-                buildInstr(
-                    op = WasmOp.I32_WRAP_I64,
-                    location = serviceCodeLocation,
-                )
-                buildSetLocal(length, serviceCodeLocation)
-
-                //Get startAddress
-                buildGetLocal(addressAndLength, serviceCodeLocation)
-                buildInstr(
-                    op = WasmOp.I32_WRAP_I64,
-                    location = serviceCodeLocation,
-                )
-                buildSetLocal(startAddress, serviceCodeLocation)
-
-                // create new string
-                buildGetLocal(startAddress, serviceCodeLocation)
-                buildGetLocal(length, serviceCodeLocation)
-
-                if (!isLatin1) {
-                    buildInstr(
-                        op = WasmOp.ARRAY_NEW_DATA,
-                        location = serviceCodeLocation,
-                        WasmImmediate.GcType(wasmCharArrayDeclaration), stringDataSectionIndex
-                    )
+                if (isJsString) {
+                    buildGetLocal(jsString ?: error("jsString is not set"), serviceCodeLocation)
+                    val jsToKotlinStringAdapter = tryFindBuiltInFunction { it.jsToKotlinStringAdapter }
+                    buildCall(WasmSymbol(jsToKotlinStringAdapter), serviceCodeLocation)
+                    buildSetLocal(temporary, serviceCodeLocation)
                 } else {
-                    val iterator = WasmLocal(5, "intIterator", WasmI32, false)
-                    stringLiteralFunction.locals.add(iterator)
-                    val wasmByteArray = WasmLocal(6, "byteArray", WasmRefType(WasmHeapType.Type(WasmSymbol(byteArray))), false)
-                    stringLiteralFunction.locals.add(wasmByteArray)
-                    val wasmCharArray = WasmLocal(7, "charArray", wasmCharArrayType, false)
-                    stringLiteralFunction.locals.add(wasmCharArray)
-
+                    // cache miss
+                    buildGetGlobal(WasmSymbol(stringAddressesAndLengthsGlobal), serviceCodeLocation)
+                    buildGetLocal(poolIdLocal, serviceCodeLocation)
                     buildInstr(
-                        op = WasmOp.ARRAY_NEW_DATA,
+                        op = WasmOp.ARRAY_GET,
                         location = serviceCodeLocation,
-                        WasmImmediate.GcType(byteArray), stringDataSectionIndex
+                        WasmImmediate.TypeIdx(wasmLongArrayDeclaration)
                     )
-                    buildSetLocal(wasmByteArray, serviceCodeLocation)
+                    buildSetLocal(addressAndLength, serviceCodeLocation)
 
+                    //Get length
+                    buildGetLocal(addressAndLength, serviceCodeLocation)
+                    buildConstI64(32L, serviceCodeLocation)
+                    buildInstr(
+                        op = WasmOp.I64_SHR_S,
+                        location = serviceCodeLocation,
+                    )
+                    buildInstr(
+                        op = WasmOp.I32_WRAP_I64,
+                        location = serviceCodeLocation,
+                    )
+                    buildSetLocal(length, serviceCodeLocation)
+
+                    //Get startAddress
+                    buildGetLocal(addressAndLength, serviceCodeLocation)
+                    buildInstr(
+                        op = WasmOp.I32_WRAP_I64,
+                        location = serviceCodeLocation,
+                    )
+                    buildSetLocal(startAddress, serviceCodeLocation)
+
+                    // create new string
+                    buildGetLocal(startAddress, serviceCodeLocation)
                     buildGetLocal(length, serviceCodeLocation)
-                    buildInstr(
-                        op = WasmOp.ARRAY_NEW_DEFAULT,
-                        location = serviceCodeLocation,
-                        WasmImmediate.GcType(wasmCharArrayDeclaration)
-                    )
-                    buildSetLocal(wasmCharArray, serviceCodeLocation)
 
-                    buildBlock("loop_body") { loopExit ->
-                        buildLoop("copy_loop") { loop ->
-                            buildGetLocal(iterator, serviceCodeLocation)
-                            buildGetLocal(length, serviceCodeLocation)
-                            buildInstr(WasmOp.I32_EQ, serviceCodeLocation)
-                            buildBrIf(loopExit, serviceCodeLocation)
+                    if (!isLatin1) {
+                        buildInstr(
+                            op = WasmOp.ARRAY_NEW_DATA,
+                            location = serviceCodeLocation,
+                            WasmImmediate.GcType(wasmCharArrayDeclaration), stringDataSectionIndex
+                        )
+                    } else {
+                        val iterator = WasmLocal(localIter++, "intIterator", WasmI32, false)
+                        stringLiteralFunction.locals.add(iterator)
+                        val wasmByteArray = WasmLocal(localIter++, "byteArray", WasmRefType(WasmHeapType.Type(WasmSymbol(byteArray))), false)
+                        stringLiteralFunction.locals.add(wasmByteArray)
+                        val wasmCharArray = WasmLocal(localIter++, "charArray", wasmCharArrayType, false)
+                        stringLiteralFunction.locals.add(wasmCharArray)
 
-                            // char array set
-                            buildGetLocal(wasmCharArray, serviceCodeLocation)
-                            buildGetLocal(iterator, serviceCodeLocation)
+                        buildInstr(
+                            op = WasmOp.ARRAY_NEW_DATA,
+                            location = serviceCodeLocation,
+                            WasmImmediate.GcType(byteArray), stringDataSectionIndex
+                        )
+                        buildSetLocal(wasmByteArray, serviceCodeLocation)
 
-                            // byte array get
-                            buildGetLocal(wasmByteArray, serviceCodeLocation)
-                            buildGetLocal(iterator, serviceCodeLocation)
-                            buildInstr(WasmOp.ARRAY_GET_U, serviceCodeLocation, WasmImmediate.GcType(byteArray))
+                        buildGetLocal(length, serviceCodeLocation)
+                        buildInstr(
+                            op = WasmOp.ARRAY_NEW_DEFAULT,
+                            location = serviceCodeLocation,
+                            WasmImmediate.GcType(wasmCharArrayDeclaration)
+                        )
+                        buildSetLocal(wasmCharArray, serviceCodeLocation)
 
-                            buildInstr(WasmOp.ARRAY_SET, serviceCodeLocation, WasmImmediate.GcType(wasmCharArrayDeclaration))
+                        buildBlock("loop_body") { loopExit ->
+                            buildLoop("copy_loop") { loop ->
+                                buildGetLocal(iterator, serviceCodeLocation)
+                                buildGetLocal(length, serviceCodeLocation)
+                                buildInstr(WasmOp.I32_EQ, serviceCodeLocation)
+                                buildBrIf(loopExit, serviceCodeLocation)
 
-                            buildGetLocal(iterator, serviceCodeLocation)
-                            buildConstI32(1, serviceCodeLocation)
-                            buildInstr(WasmOp.I32_ADD, serviceCodeLocation)
-                            buildSetLocal(iterator, serviceCodeLocation)
-                            buildBr(loop, serviceCodeLocation)
+                                // char array set
+                                buildGetLocal(wasmCharArray, serviceCodeLocation)
+                                buildGetLocal(iterator, serviceCodeLocation)
+
+                                // byte array get
+                                buildGetLocal(wasmByteArray, serviceCodeLocation)
+                                buildGetLocal(iterator, serviceCodeLocation)
+                                buildInstr(WasmOp.ARRAY_GET_U, serviceCodeLocation, WasmImmediate.GcType(byteArray))
+
+                                buildInstr(WasmOp.ARRAY_SET, serviceCodeLocation, WasmImmediate.GcType(wasmCharArrayDeclaration))
+
+                                buildGetLocal(iterator, serviceCodeLocation)
+                                buildConstI32(1, serviceCodeLocation)
+                                buildInstr(WasmOp.I32_ADD, serviceCodeLocation)
+                                buildSetLocal(iterator, serviceCodeLocation)
+                                buildBr(loop, serviceCodeLocation)
+                            }
                         }
+                        buildGetLocal(wasmCharArray, serviceCodeLocation)
                     }
-                    buildGetLocal(wasmCharArray, serviceCodeLocation)
-                }
 
-                buildCall(WasmSymbol(createStringFunction), serviceCodeLocation)
-                buildSetLocal(temporary, serviceCodeLocation)
+                    buildCall(WasmSymbol(createStringFunction), serviceCodeLocation)
+                    buildSetLocal(temporary, serviceCodeLocation)
+                }
 
                 //remember and return string
                 buildGetGlobal(WasmSymbol(stringPoolGlobalField), serviceCodeLocation)
@@ -823,12 +883,15 @@ class WasmCompiledModuleFragment(
         )
 
         wasmCompiledFileFragments.forEach { fragment ->
-            if (isLatin1) {
+            if (isJsString) {
+                fragment.wasmStringsElements?.createStringLiteralJsString?.bind(stringLiteralFunction)
+            } else if (isLatin1) {
                 fragment.wasmStringsElements?.createStringLiteralLatin1?.bind(stringLiteralFunction)
+                fragment.wasmStringsElements?.createStringLiteralType?.bind(stringLiteralFunctionType)
             } else {
                 fragment.wasmStringsElements?.createStringLiteralUtf16?.bind(stringLiteralFunction)
+                fragment.wasmStringsElements?.createStringLiteralType?.bind(stringLiteralFunctionType)
             }
-            fragment.wasmStringsElements?.createStringLiteralType?.bind(stringLiteralFunctionType)
         }
 
         return stringLiteralFunction
@@ -879,6 +942,44 @@ class WasmCompiledModuleFragment(
             }
         }
         return canonicalFunctionTypes
+    }
+
+    private fun bindGlobalLiterals(globals: MutableList<WasmGlobal>, stringPoolSize: Int): Int {
+        var literalCounter = stringPoolSize
+        val literalGlobalMap = mutableMapOf<String, Pair<WasmGlobal, Int>>()
+        wasmCompiledFileFragments.forEach { fragment ->
+            for ((stringValue, stringLiteralSymbol) in fragment.globalLiterals.unbound) {
+                val literalIdSymbol = fragment.globalLiteralsIds.unbound[stringValue]!!
+                val literalGlobal: WasmGlobal
+                val stringId: Int
+                val storedValues = literalGlobalMap[stringValue]
+                if (storedValues == null) {
+                    literalGlobal = WasmGlobal(
+                        name = "global_$literalCounter",
+                        type = WasmRefType(WasmHeapType.Simple.Extern), // createStringFn.type.owner.resultTypes[0], // WasmRefType(WasmHeapType.Simple.Extern),
+                        isMutable = false,
+                        init = emptyList(),
+                        importPair = WasmImportDescriptor("strings", WasmSymbol(stringValue))
+                    )
+                    stringId = literalCounter
+                    literalGlobalMap[stringValue] = Pair(literalGlobal, stringId)
+                    literalCounter++
+                } else {
+                    literalGlobal = storedValues.first
+                    stringId = storedValues.second
+                }
+                literalIdSymbol.bind(stringId)
+                stringLiteralSymbol.bind(literalGlobal)
+            }
+        }
+        // Add distinct globals to avoid duplicates
+        globals.addAll(
+            wasmCompiledFileFragments
+                .flatMap { it.globalLiterals.unbound.values }
+                .map { it.owner }
+                .distinct()
+        )
+        return literalCounter
     }
 
     private fun bindStringPoolSymbolsAndGetSize(data: MutableList<WasmData>): Int {

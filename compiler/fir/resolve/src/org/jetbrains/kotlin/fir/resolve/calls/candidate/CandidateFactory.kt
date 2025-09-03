@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeImplicitPropertyTypeOnInvokeLikeCallWithExtReceiver
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
@@ -144,14 +147,26 @@ class CandidateFactory private constructor(
             // Flag all references that are resolved from an convention operator call.
             normalizedSymbol?.let { result.addDiagnostic(NotFunctionAsOperator(normalizedSymbol)) }
         }
-        if (symbol is FirPropertySymbol &&
-            !context.session.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)
-        ) {
-            val containingClass = symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.fir
-            if (containingClass != null && symbol.fir.isEnumEntries(containingClass)) {
-                result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
+        if (symbol is FirPropertySymbol) {
+            if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)) {
+                val containingClass = symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.fir
+                if (containingClass != null && symbol.fir.isEnumEntries(containingClass)) {
+                    result.addDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
+                }
+            }
+
+            if (!symbol.isLocal &&
+                symbol.fir.returnTypeRef.let { it is FirImplicitTypeRef || it.source?.kind == KtFakeSourceElementKind.ImplicitTypeRef } &&
+                (callInfo.callSite as? FirFunctionCall)?.explicitReceiver != null
+            ) {
+                callInfo.callSite.let {
+                    it.replaceNonFatalDiagnostics(
+                        it.nonFatalDiagnostics + ConeImplicitPropertyTypeOnInvokeLikeCallWithExtReceiver(symbol)
+                    )
+                }
             }
         }
+
         return result
     }
 

@@ -39,7 +39,7 @@ fun test() {
     val inst = A()
     val ia = inst.<!INVISIBLE_REFERENCE!>a<!>
     val iv = inst.<!INVISIBLE_REFERENCE!>v<!>
-    inst.<!INVISIBLE_REFERENCE!>a<!>()
+    inst.<!IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL, IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL, INVISIBLE_REFERENCE!>a<!>()
     inst.<!INVISIBLE_REFERENCE!>B<!>()
 }
 
@@ -52,7 +52,7 @@ inline fun testInline() {
     val inst = A()
     val ia = inst.<!INVISIBLE_REFERENCE!>a<!>
     val iv = inst.<!INVISIBLE_REFERENCE!>v<!>
-    inst.<!INVISIBLE_REFERENCE!>a<!>()
+    inst.<!IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL, IMPLICIT_PROPERTY_TYPE_ON_INVOKE_LIKE_CALL, INVISIBLE_REFERENCE!>a<!>()
     inst.<!INVISIBLE_REFERENCE!>B<!>()
 }
 

@@ -85,27 +85,29 @@ val emptyJavadocJar by tasks.registering(Jar::class) {
 
 publishing {
     publications {
-        withType<MavenPublication>().configureEach {
+        named<MavenPublication>("js") {
             artifact(emptyJavadocJar)
-            val packaging = if (name == "kotlinMultiplatform") "pom" else "klib"
+            artifactId = project.name
+
             configureKotlinPomAttributes(
                 project,
                 explicitDescription = "Kotlin DOM API compatibility library",
-                packaging = packaging,
+                packaging = "klib",
             )
         }
-
-        configureSbom(
-            target = "Main",
-            gradleConfigurations = setOf(),
-            publication = named<MavenPublication>("kotlinMultiplatform"),
-        )
 
         configureSbom(
             target = "Js",
             gradleConfigurations = setOf("jsRuntimeClasspath"),
             publication = named<MavenPublication>("js"),
         )
+    }
+}
+
+// Disabling tasks for KMP/root publication as JS one should replace it
+tasks.configureEach {
+    if (name.contains("KotlinMultiplatformPublication")) {
+        enabled = false
     }
 }
 

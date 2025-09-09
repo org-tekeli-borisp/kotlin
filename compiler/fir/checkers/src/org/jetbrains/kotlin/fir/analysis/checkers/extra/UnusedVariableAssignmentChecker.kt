@@ -140,7 +140,7 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
     private class AddAllWrites(private val data: Data) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
-        override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
+        override fun visitVariableDeclarationExitNode(node: VariableDeclarationExitNode) {
             // `name.isSpecial` checks in this analysis are required to avoid cases like KT-72164:
             // In cases of incorrect syntactic constructions, the analysis is still performed.
             // However, some invalid constructions can be considered as variable declarations.
@@ -202,8 +202,8 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
             }
         }
 
-        override fun visitVariableDeclarationNode(
-            node: VariableDeclarationNode,
+        override fun visitVariableDeclarationExitNode(
+            node: VariableDeclarationExitNode,
             data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
         ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
             return when {
@@ -280,8 +280,8 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
             }
         }
 
-        override fun visitVariableDeclarationNode(
-            node: VariableDeclarationNode,
+        override fun visitVariableDeclarationExitNode(
+            node: VariableDeclarationExitNode,
             data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
         ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> =
             if (node.fir.name.isSpecial) data

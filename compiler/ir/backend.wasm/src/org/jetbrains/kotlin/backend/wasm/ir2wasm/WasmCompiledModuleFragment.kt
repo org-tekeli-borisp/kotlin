@@ -61,12 +61,13 @@ class WasmStringsElements(
 class WasmCompiledFileFragment(
     val fragmentTag: String?,
     val functions: ReferencableAndDefinable<IdSignature, WasmFunction> = ReferencableAndDefinable(),
-    val globalFields: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
-    val globalVTables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
-    val globalClassITables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
     val functionTypes: ReferencableAndDefinable<IdSignature, WasmFunctionType> = ReferencableAndDefinable(),
+    val globalFields: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
     val gcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
+    val globalVTables: MutableList<WasmGlobal> = mutableListOf(),
     val vTableGcTypes: ReferencableAndDefinable<IdSignature, WasmTypeDeclaration> = ReferencableAndDefinable(),
+    val newObjectFunctions: ReferencableAndDefinable<IdSignature, WasmFunction> = ReferencableAndDefinable(),
+    val newObjectFunctionTypes: MutableList<WasmFunctionType> = mutableListOf(),
     val stringLiteralId: ReferencableElements<String, Int> = ReferencableElements(),
     val constantArrayDataSegmentId: ReferencableElements<Pair<List<Long>, WasmType>, Int> = ReferencableElements(),
     val jsFuns: MutableMap<IdSignature, JsCodeSnippet> = mutableMapOf(),
@@ -154,6 +155,12 @@ class WasmCompiledModuleFragment(
         val importedFunctions = mutableListOf<WasmFunction.Imported>()
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.functions.elements.forEach { function ->
+                when (function) {
+                    is WasmFunction.Defined -> definedFunctions.add(function)
+                    is WasmFunction.Imported -> importedFunctions.add(function)
+                }
+            }
+            fragment.newObjectFunctions.elements.forEach { function ->
                 when (function) {
                     is WasmFunction.Defined -> definedFunctions.add(function)
                     is WasmFunction.Imported -> importedFunctions.add(function)
@@ -417,14 +424,19 @@ class WasmCompiledModuleFragment(
 
         additionalTypes.forEach { groupsWithMixIns.add(listOf(it)) }
 
+        wasmCompiledFileFragments.forEach { fragment ->
+            fragment.newObjectFunctionTypes.forEach {
+                groupsWithMixIns.add(listOf(it))
+            }
+        }
+
         return groupsWithMixIns
     }
 
     private fun getGlobals(additionalTypes: MutableList<WasmTypeDeclaration>) = mutableListOf<WasmGlobal>().apply {
         wasmCompiledFileFragments.forEach { fragment ->
             addAll(fragment.globalFields.elements)
-            addAll(fragment.globalVTables.elements)
-            addAll(fragment.globalClassITables.elements.distinct())
+            addAll(fragment.globalVTables)
         }
         createRttiTypeAndProcessRttiGlobals(this, additionalTypes)
     }
@@ -812,11 +824,10 @@ class WasmCompiledModuleFragment(
     private fun bindUnboundSymbols() {
         bindFileFragments(wasmCompiledFileFragments, { it.functions.unbound }, { it.functions.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.globalFields.unbound }, { it.globalFields.defined })
-        bindFileFragments(wasmCompiledFileFragments, { it.globalVTables.unbound }, { it.globalVTables.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.gcTypes.unbound }, { it.gcTypes.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.vTableGcTypes.unbound }, { it.vTableGcTypes.defined })
-        bindFileFragments(wasmCompiledFileFragments, { it.globalClassITables.unbound }, { it.globalClassITables.defined })
         bindFileFragments(wasmCompiledFileFragments, { it.functionTypes.unbound }, { it.functionTypes.defined })
+        bindFileFragments(wasmCompiledFileFragments, { it.newObjectFunctions.unbound }, { it.newObjectFunctions.defined })
         rebindEquivalentFunctions()
         bindUniqueJsFunNames()
     }

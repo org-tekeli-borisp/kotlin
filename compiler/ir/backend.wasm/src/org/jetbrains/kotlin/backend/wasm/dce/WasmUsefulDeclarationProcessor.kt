@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.wasm.ir.WasmImmediate
+import org.jetbrains.kotlin.wasm.ir.WasmImmediate.GcType
 
 internal class WasmUsefulDeclarationProcessor(
     override val context: WasmBackendContext,
@@ -46,9 +48,8 @@ internal class WasmUsefulDeclarationProcessor(
         }
 
         override fun visitVararg(expression: IrVararg, data: IrDeclaration) {
-            expression.type.getClass()!!
-                .constructors
-                .firstOrNull { it.hasWasmPrimitiveConstructorAnnotation() }
+            expression.type.getClass()
+                ?.primaryConstructor
                 ?.enqueue(data, "implicit vararg constructor")
             super.visitVararg(expression, data)
         }
@@ -232,15 +233,6 @@ internal class WasmUsefulDeclarationProcessor(
         val constructedClass = irConstructor.constructedClass
         if (!context.inlineClassesUtils.isClassInlineLike(constructedClass)) {
             processIrFunction(irConstructor)
-        }
-
-        // Primitive constructors has no body, since that such constructors implicitly initialize all fields, so we have to preserve them
-        if (irConstructor.hasWasmPrimitiveConstructorAnnotation()) {
-            constructedClass.declarations.forEach { declaration ->
-                if (declaration is IrField) {
-                    declaration.enqueue(constructedClass, "preserve all fields for primitive constructors")
-                }
-            }
         }
     }
 

@@ -18,7 +18,7 @@ internal external class JsStringRef internal constructor() : JsAny
 
 internal typealias ExternalInterfaceType = JsAny
 
-internal class JsExternalBox @WasmPrimitiveConstructor constructor(val ref: ExternalInterfaceType) {
+internal class JsExternalBox constructor(val ref: ExternalInterfaceType) {
     override fun toString(): String =
         externrefToString(ref)
 

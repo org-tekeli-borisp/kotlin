@@ -12,7 +12,7 @@ import kotlin.math.min
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
  * implemented as instances of this class.
  */
-public actual class String internal @WasmPrimitiveConstructor constructor(
+public actual class String internal constructor(
     private var leftIfInSum: String?,
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override val length: Int,

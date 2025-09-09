@@ -132,19 +132,20 @@ class BodyGenerator(
     override fun visitVararg(expression: IrVararg) {
         val arrayClass = expression.type.getClass()!!
 
-        val wasmArrayType = arrayClass.constructors
-            .mapNotNull { it.parameters.singleOrNull()?.type }
-            .firstOrNull { it.getClass()?.getWasmArrayAnnotation() != null }
-            ?.getRuntimeClass(irBuiltIns)?.symbol
-            ?.let(wasmFileCodegenContext::referenceGcType)
-            ?.let(WasmImmediate::GcType)
+        val primaryConstructor = arrayClass.primaryConstructor
+        check(primaryConstructor != null)
+        val constructorParameter = primaryConstructor.parameters.single()
 
-        check(wasmArrayType != null)
+        val wasmArrayType = constructorParameter.type
+            .getRuntimeClass(irBuiltIns).symbol
+            .let(wasmFileCodegenContext::referenceGcType)
+            .let(WasmImmediate::GcType)
 
         val location = expression.getSourceLocation()
-        generateAnyParameters(arrayClass.symbol, location)
+
+        body.buildCall(wasmFileCodegenContext.referenceNewObjectFunction(arrayClass.symbol), location)
         if (!tryGenerateConstVarargArray(expression, wasmArrayType)) tryGenerateVarargArray(expression, wasmArrayType)
-        body.buildStructNew(wasmFileCodegenContext.referenceGcType(expression.type.getRuntimeClass(irBuiltIns).symbol), location)
+        body.buildCall(wasmFileCodegenContext.referenceFunction(arrayClass.primaryConstructor!!.symbol), location)
     }
 
     override fun visitThrow(expression: IrThrow) {
@@ -646,56 +647,8 @@ class BodyGenerator(
             return
         }
 
-        if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
-            generateAnyParameters(klassSymbol, location)
-            expression.arguments.forEach { generateExpression(it!!) }
-
-            body.buildStructNew(wasmGcType, location)
-            body.commentPreviousInstr { "@WasmPrimitiveConstructor ctor call: ${klass.fqNameWhenAvailable}" }
-            return
-        }
-
-        body.buildRefNull(WasmHeapType.Simple.None, location) // this = null
+        body.buildCall(wasmFileCodegenContext.referenceNewObjectFunction(klassSymbol), location)
         generateCall(expression)
-    }
-
-    private fun generateAnyParameters(klassSymbol: IrClassSymbol, location: SourceLocation) {
-        //ClassITable and VTable load
-        body.commentGroupStart { "Any parameters" }
-        body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalVTable(klassSymbol), location)
-        if (klassSymbol.owner.hasInterfaceSuperClass()) {
-            body.buildGetGlobal(wasmFileCodegenContext.referenceGlobalClassITable(klassSymbol), location)
-        } else {
-            body.buildRefNull(WasmHeapType.Simple.None, location)
-        }
-
-        body.buildGetGlobal(wasmFileCodegenContext.referenceRttiGlobal(klassSymbol), location)
-        body.buildConstI32(0, location) // Any::_hashCode
-        body.commentGroupEnd()
-    }
-
-    fun generateObjectCreationPrefixIfNeeded(constructor: IrConstructor) {
-        val parentClass = constructor.parentAsClass
-        if (constructor.origin == PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR) return
-        if (parentClass.isAbstractOrSealed) return
-        val thisParameter = functionContext.referenceLocal(parentClass.thisReceiver!!.symbol)
-        body.commentGroupStart { "Object creation prefix" }
-        SourceLocation.NoLocation("Constructor preamble").let { location ->
-            body.buildGetLocal(thisParameter, location)
-            body.buildInstr(WasmOp.REF_IS_NULL, location)
-            body.buildIf("this_init")
-            generateAnyParameters(parentClass.symbol, location)
-            val irFields: List<IrField> = parentClass.allFields(backendContext.irBuiltIns)
-            irFields.forEachIndexed { index, field ->
-                if (index > 0) {
-                    generateDefaultInitializerForType(wasmModuleTypeTransformer.transformType(field.type), body)
-                }
-            }
-            body.buildStructNew(wasmFileCodegenContext.referenceGcType(parentClass.symbol), location)
-            body.buildSetLocal(thisParameter, location)
-            body.buildEnd()
-        }
-        body.commentGroupEnd()
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
@@ -714,9 +667,17 @@ class BodyGenerator(
     private fun generateBox(expression: IrExpression, type: IrType) {
         val klassSymbol = type.getRuntimeClass(irBuiltIns).symbol
         val location = expression.getSourceLocation()
-        generateAnyParameters(klassSymbol, location)
+
+        val gcType = wasmFileCodegenContext.referenceGcType(klassSymbol)
+        val intermediateLocal = functionContext.referenceLocal(gcType)
+
+        body.buildCall(wasmFileCodegenContext.referenceNewObjectFunction(klassSymbol), location)
+        body.buildTeeLocal(intermediateLocal, location)
+        body.buildGetLocal(intermediateLocal, location)
+
         generateExpression(expression)
-        body.buildStructNew(wasmFileCodegenContext.referenceGcType(klassSymbol), location)
+        body.buildStructSet(gcType, WasmSymbol(4), location)
+
         body.commentPreviousInstr { "box" }
     }
 
@@ -778,9 +739,6 @@ class BodyGenerator(
                 body.buildGetUnit()
             return
         }
-
-        // We skip now calling any ctor because it is empty
-        if (callFunction.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) return
 
         val function: IrFunction = callFunction.realOverrideTarget
         val isSuperCall = call is IrCall && call.superQualifierSymbol != null

@@ -6,7 +6,7 @@ package kotlin.wasm.internal
 
 import kotlin.reflect.KClass
 
-internal class KClassImpl<T : Any> @WasmPrimitiveConstructor constructor(internal val rtti: kotlin.wasm.internal.reftypes.structref) : KClass<T> {
+internal class KClassImpl<T : Any> constructor(internal val rtti: kotlin.wasm.internal.reftypes.structref) : KClass<T> {
     override val simpleName: String?
         get() = if (isAnonymousClass(rtti)) null else getSimpleName(rtti)
 

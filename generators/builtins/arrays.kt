@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsGenerator
 import org.jetbrains.kotlin.generators.builtins.numbers.primitives.*
 import java.io.PrintWriter
+import kotlin.IllegalArgumentException
 
 abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Boolean) : BuiltInsGenerator {
     override fun generate() {
@@ -53,15 +54,27 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                         else -> "zero"
                     }
                     primaryConstructor {
-                        appendDoc("Creates a new array of the specified [size], with all elements initialized to $defaultValue.")
-                        appendDoc("@throws RuntimeException if the specified [size] is negative.")
-                        visibility = MethodVisibility.PUBLIC
-                        expectActual = ExpectActualModifier.Inherited(from = this@klass::expectActual)
+                        visibility = MethodVisibility.INTERNAL
                         parameter {
-                            name = "size"
+                            name = "storage"
                             type = PrimitiveType.INT.capitalized
                         }
-                    }.modifyPrimaryConstructor()
+
+                    }
+
+//                    public actual constructor(size: Int) :
+//                    this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmByteArray(size))
+
+//                    primaryConstructor {
+//                        appendDoc("Creates a new array of the specified [size], with all elements initialized to $defaultValue.")
+//                        appendDoc("@throws RuntimeException if the specified [size] is negative.")
+//                        visibility = MethodVisibility.PUBLIC
+//                        expectActual = ExpectActualModifier.Inherited(from = this@klass::expectActual)
+//                        parameter {
+//                            name = "size"
+//                            type = PrimitiveType.INT.capitalized
+//                        }
+//                    }.modifyPrimaryConstructor()
                 }
                 appendDoc("")
                 appendDoc("See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)")
@@ -326,7 +339,6 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
                     storage = $storageArrayType(size)
                 }
                 
-                @WasmPrimitiveConstructor
                 @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
                 internal constructor(storage: $storageArrayType)
             """.trimIndent()

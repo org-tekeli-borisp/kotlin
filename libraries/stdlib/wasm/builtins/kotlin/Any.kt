@@ -12,7 +12,7 @@ import kotlin.random.*
 /**
  * The root of the Kotlin class hierarchy. Every Kotlin class has [Any] as a superclass.
  */
-public actual open class Any @WasmPrimitiveConstructor actual constructor() {
+public actual open class Any actual constructor() {
     /**
      * Indicates whether some other object is "equal to" this one.
      *

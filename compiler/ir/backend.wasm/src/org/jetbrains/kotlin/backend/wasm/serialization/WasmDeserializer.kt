@@ -591,12 +591,13 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeCompiledFileFragment() = WasmCompiledFileFragment(
         fragmentTag = deserializeNullable(::deserializeString),
         functions = deserializeFunctions(),
-        globalFields = deserializeGlobalFields(),
-        globalVTables = deserializeGlobalVTables(),
-        globalClassITables = deserializeGlobalClassITables(),
         functionTypes = deserializeFunctionTypes(),
+        globalFields = deserializeGlobalFields(),
         gcTypes = deserializeGcTypes(),
+        globalVTables = deserializeGlobalVTables(),
         vTableGcTypes = deserializeVTableGcTypes(),
+        newObjectFunctions = deserializeFunctions(),
+        newObjectFunctionTypes = deserializeList(::deserializeFunctionType),
         stringLiteralId = deserializeStringLiteralId(),
         constantArrayDataSegmentId = deserializeConstantArrayDataSegmentId(),
         jsFuns = deserializeJsFuns(),
@@ -618,8 +619,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private fun deserializeFunctions() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
     private fun deserializeGlobalFields() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
-    private fun deserializeGlobalVTables() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
-    private fun deserializeGlobalClassITables() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeGlobal)
+    private fun deserializeGlobalVTables() = deserializeList(::deserializeGlobal)
     private fun deserializeFunctionTypes() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunctionType)
     private fun deserializeGcTypes() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration)
     private fun deserializeVTableGcTypes() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration)

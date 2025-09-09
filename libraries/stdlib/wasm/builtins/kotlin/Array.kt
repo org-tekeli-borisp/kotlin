@@ -22,7 +22,7 @@ import kotlin.wasm.internal.*
  */
 public actual class Array<T>
 @PublishedApi
-internal constructor(size: Int) {
+internal constructor(internal val storage: WasmAnyArray) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -35,16 +35,8 @@ internal constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> T) : this(size)
 
-    internal val storage: WasmAnyArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmAnyArray(size)
-    }
-
-    @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
-    internal constructor(storage: WasmAnyArray)
+    public constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmAnyArray(size))
 
     /**
      * Returns the array element at the given [index].

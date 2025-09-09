@@ -25,7 +25,6 @@ private val wasmImportFqName: FqName = FqName("kotlin.wasm.WasmImport")
 private val wasmOpFqName = FqName("kotlin.wasm.internal.WasmOp")
 private val wasmNoOpCastFqName = FqName("kotlin.wasm.internal.WasmNoOpCast")
 private val wasmAutoboxedFqName = FqName("kotlin.wasm.internal.WasmAutoboxed")
-private val wasmPrimitiveConstructorFqName = FqName("kotlin.wasm.internal.WasmPrimitiveConstructor")
 private val wasmArrayOfFqName = FqName("kotlin.wasm.internal.WasmArrayOf")
 private val jsFunFqName = FqName("kotlin.JsFun")
 private val jsPrimitiveFqName = FqName("kotlin.wasm.internal.JsPrimitive")
@@ -69,9 +68,6 @@ fun IrAnnotationContainer.hasWasmNoOpCastAnnotation(): Boolean =
 
 fun IrAnnotationContainer.hasWasmAutoboxedAnnotation(): Boolean =
     hasAnnotation(wasmAutoboxedFqName)
-
-fun IrAnnotationContainer.hasWasmPrimitiveConstructorAnnotation(): Boolean =
-    hasAnnotation(wasmPrimitiveConstructorFqName)
 
 class WasmArrayInfo(val klass: IrClass, val isNullable: Boolean, val isMutable: Boolean) {
     val type = klass.defaultType.let { if (isNullable) it.makeNullable() else it }

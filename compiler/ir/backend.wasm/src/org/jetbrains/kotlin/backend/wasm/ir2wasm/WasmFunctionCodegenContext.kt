@@ -10,15 +10,18 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.wasm.ir.*
+import java.util.IdentityHashMap
 import java.util.LinkedList
 
 enum class LoopLabelType { BREAK, CONTINUE }
-enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, IS_INTERFACE_ANY_ARRAY, TABLE_SWITCH_SELECTOR, BOX_INTERMEDIATE }
 
 class WasmFunctionCodegenContext(
     val irFunction: IrFunction?,
@@ -34,6 +37,7 @@ class WasmFunctionCodegenContext(
 
     private val wasmLocals = LinkedHashMap<IrValueSymbol, WasmLocal>()
     private val wasmSyntheticLocals = LinkedHashMap<SyntheticLocalType, WasmLocal>()
+    private val wasmSyntheticTypedLocals = IdentityHashMap<WasmSymbol<WasmTypeDeclaration>, WasmLocal>()
     private val loopLevels = LinkedHashMap<Pair<IrLoop, LoopLabelType>, Int>()
     private val nonLocalReturnLevels = LinkedHashMap<IrReturnableBlockSymbol, Int>()
 
@@ -73,6 +77,8 @@ class WasmFunctionCodegenContext(
         get() = when (this) {
             SyntheticLocalType.IS_INTERFACE_PARAMETER ->
                 WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)))
+            SyntheticLocalType.BOX_INTERMEDIATE ->
+                WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(backendContext.irBuiltIns.anyClass)))
             SyntheticLocalType.IS_INTERFACE_ANY_ARRAY ->
                 WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType))
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
@@ -83,6 +89,17 @@ class WasmFunctionCodegenContext(
             wasmFunction.locals.size,
             type.name,
             type.wasmType,
+            isParameter = false
+        ).also {
+            wasmFunction.locals += it
+        }
+    }
+
+    fun referenceLocal(reference: WasmSymbol<WasmTypeDeclaration>): WasmLocal = wasmSyntheticTypedLocals.getOrPut(reference) {
+        WasmLocal(
+            wasmFunction.locals.size,
+            "tmp",
+            WasmRefNullType(WasmHeapType.Type(reference)),
             isParameter = false
         ).also {
             wasmFunction.locals += it

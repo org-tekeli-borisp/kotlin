@@ -23,7 +23,7 @@ public actual class ByteArray
  * Creates a new array of the specified [size], with all elements initialized to zero.
  * @throws RuntimeException if the specified [size] is negative.
  */
-public actual constructor(size: Int) {
+internal constructor(internal val storage: WasmByteArray) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -36,16 +36,8 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Byte) : this(size)
 
-    internal val storage: WasmByteArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmByteArray(size)
-    }
-
-    @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
-    internal constructor(storage: WasmByteArray)
+    public actual constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmByteArray(size))
 
     /**
      * Returns the array element at the given [index].
@@ -109,7 +101,7 @@ public actual class CharArray
  * Creates a new array of the specified [size], with all elements initialized to null char (`\u0000').
  * @throws RuntimeException if the specified [size] is negative.
  */
-public actual constructor(size: Int) {
+internal constructor(internal val storage: WasmCharArray) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -122,16 +114,8 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Char) : this(size)
 
-    internal val storage: WasmCharArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmCharArray(size)
-    }
-
-    @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
-    internal constructor(storage: WasmCharArray)
+    public actual constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmCharArray(size))
 
     /**
      * Returns the array element at the given [index].
@@ -195,7 +179,7 @@ public actual class ShortArray
  * Creates a new array of the specified [size], with all elements initialized to zero.
  * @throws RuntimeException if the specified [size] is negative.
  */
-public actual constructor(size: Int) {
+internal constructor(internal val storage: WasmShortArray) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -208,16 +192,8 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Short) : this(size)
 
-    internal val storage: WasmShortArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmShortArray(size)
-    }
-
-    @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
-    internal constructor(storage: WasmShortArray)
+    public actual constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmShortArray(size))
 
     /**
      * Returns the array element at the given [index].
@@ -281,7 +257,7 @@ public actual class IntArray
  * Creates a new array of the specified [size], with all elements initialized to zero.
  * @throws RuntimeException if the specified [size] is negative.
  */
-public actual constructor(size: Int) {
+internal constructor(internal val storage: WasmIntArray) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -294,16 +270,8 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Int) : this(size)
 
-    internal val storage: WasmIntArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmIntArray(size)
-    }
-
-    @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
-    internal constructor(storage: WasmIntArray)
+    public actual constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmIntArray(size))
 
     /**
      * Returns the array element at the given [index].
@@ -367,7 +335,7 @@ public actual class LongArray
  * Creates a new array of the specified [size], with all elements initialized to zero.
  * @throws RuntimeException if the specified [size] is negative.
  */
-public actual constructor(size: Int) {
+internal constructor(internal val storage: WasmLongArray) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -380,16 +348,8 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Long) : this(size)
 
-    internal val storage: WasmLongArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmLongArray(size)
-    }
-
-    @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
-    internal constructor(storage: WasmLongArray)
+    public actual constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmLongArray(size))
 
     /**
      * Returns the array element at the given [index].
@@ -453,7 +413,7 @@ public actual class FloatArray
  * Creates a new array of the specified [size], with all elements initialized to zero.
  * @throws RuntimeException if the specified [size] is negative.
  */
-public actual constructor(size: Int) {
+internal constructor(internal val storage: WasmFloatArray) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -466,16 +426,8 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Float) : this(size)
 
-    internal val storage: WasmFloatArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmFloatArray(size)
-    }
-
-    @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
-    internal constructor(storage: WasmFloatArray)
+    public actual constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmFloatArray(size))
 
     /**
      * Returns the array element at the given [index].
@@ -539,7 +491,7 @@ public actual class DoubleArray
  * Creates a new array of the specified [size], with all elements initialized to zero.
  * @throws RuntimeException if the specified [size] is negative.
  */
-public actual constructor(size: Int) {
+internal constructor(internal val storage: WasmDoubleArray) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -552,16 +504,8 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Double) : this(size)
 
-    internal val storage: WasmDoubleArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmDoubleArray(size)
-    }
-
-    @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
-    internal constructor(storage: WasmDoubleArray)
+    public actual constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmDoubleArray(size))
 
     /**
      * Returns the array element at the given [index].
@@ -625,7 +569,7 @@ public actual class BooleanArray
  * Creates a new array of the specified [size], with all elements initialized to `false`.
  * @throws RuntimeException if the specified [size] is negative.
  */
-public actual constructor(size: Int) {
+internal constructor(internal val storage: WasmByteArray) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function.
@@ -638,16 +582,8 @@ public actual constructor(size: Int) {
     @Suppress("WRONG_MODIFIER_TARGET", "TYPE_PARAMETER_AS_REIFIED")
     public actual inline constructor(size: Int, init: (Int) -> Boolean) : this(size)
 
-    internal val storage: WasmByteArray
-
-    init {
-        if (size < 0) throw IllegalArgumentException("Negative array size")
-        storage = WasmByteArray(size)
-    }
-
-    @WasmPrimitiveConstructor
     @Suppress("PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")
-    internal constructor(storage: WasmByteArray)
+    public actual constructor(size: Int) : this(if (size < 0) throw IllegalArgumentException("Negative array size") else WasmByteArray(size))
 
     /**
      * Returns the array element at the given [index].

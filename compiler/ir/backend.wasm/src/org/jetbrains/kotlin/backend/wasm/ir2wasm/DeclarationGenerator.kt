@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.originalFqName
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -20,7 +23,9 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -58,11 +63,76 @@ class DeclarationGenerator(
         // Type aliases are not material
     }
 
+    private fun generateObjectCreationFunction(
+        klassSymbol: IrClassSymbol,
+        watName: String,
+        objectType: WasmStructDeclaration,
+        vTable: WasmGlobal,
+        iTable: WasmGlobal?,
+        rtti: WasmGlobal
+    ) {
+        val klass = klassSymbol.owner
+
+        val objectTypeSymbol = WasmSymbol(objectType)
+
+        if (klass.isAbstractOrSealed) return
+
+        val objectWasmRefType = WasmRefType(WasmHeapType.Type(objectTypeSymbol))
+
+        val objectCreatorFunctionType = WasmFunctionType(emptyList(), listOf(objectWasmRefType))
+        wasmFileCodegenContext.addNewObjectFunctionType(objectCreatorFunctionType)
+
+        val objectCreator = WasmFunction.Defined(
+            name = "${watName}_new",
+            type = WasmSymbol(objectCreatorFunctionType)
+        )
+
+        val bodyBuilder = BodyGenerator(
+            backendContext,
+            wasmFileCodegenContext,
+            WasmFunctionCodegenContext(
+                irFunction = null,
+                wasmFunction = objectCreator,
+                backendContext = backendContext,
+                wasmFileCodegenContext = wasmFileCodegenContext,
+                wasmModuleTypeTransformer = wasmModuleTypeTransformer,
+                functionFileEntry = klass.getSourceFile()!!,
+                skipCommentInstructions = skipCommentInstructions
+            ),
+            wasmModuleMetadataCache,
+            wasmModuleTypeTransformer,
+        )
+
+        with(bodyBuilder.body) builder@{
+            val location = SourceLocation.NoLocation("Object construction")
+            commentGroupStart { "Object creation" }
+            //ClassITable and VTable load
+            buildGetGlobal(WasmSymbol(vTable), location)
+            if (iTable != null) {
+                buildGetGlobal(WasmSymbol(iTable), location)
+            } else {
+                buildRefNull(WasmHeapType.Simple.None, location)
+            }
+            buildGetGlobal(WasmSymbol(rtti), location)
+            klass.allFields(backendContext.irBuiltIns).forEach { field ->
+                generateDefaultInitializerForType(wasmModuleTypeTransformer.transformType(field.type), this@builder)
+            }
+            buildStructNew(objectTypeSymbol, location)
+            commentGroupEnd()
+        }
+
+        wasmFileCodegenContext.defineNewObjectFunction(klassSymbol, objectCreator)
+    }
+
     override fun visitFunction(declaration: IrFunction) {
-        // Constructor of inline class or with `@WasmPrimitiveConstructor` is empty
+        // Constructor of inline class
         if (declaration is IrConstructor &&
-            (backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass) || declaration.hasWasmPrimitiveConstructorAnnotation())
+            (backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass))
         ) {
+            return
+        }
+
+        if (declaration is IrConstructor && declaration.returnType.isNothing()) {
             return
         }
 
@@ -175,11 +245,22 @@ class DeclarationGenerator(
         val declarationBody = declaration.body
         require(declarationBody is IrBlockBody) { "Only IrBlockBody is supported" }
 
-        if (declaration is IrConstructor) {
-            bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
-        }
+//        if (declaration is IrConstructor) {
+//            val parentClass = declaration.parentAsClass.symbol
+//            if (backendContext.irBuiltIns.arrayClass == parentClass || parentClass in backendContext.irBuiltIns.primitiveArraysToPrimitiveTypes) {
+//                if (declaration.visibility == DescriptorVisibilities.INTERNAL) {
+//                    exprGen.buildGetLocal(function.locals[1], SourceLocation.NoLocation("Get implicit dispatch receiver"))
+//                    exprGen.buildGetLocal(function.locals[0], SourceLocation.NoLocation("Get implicit dispatch receiver"))
+//                    exprGen.buildStructSet(wasmFileCodegenContext.referenceGcType(parentClass), WasmSymbol(4), SourceLocation.NoLocation("Get implicit dispatch receiver"))
+//                }
+//            }
+//        } else {
+//            declarationBody.acceptVoid(bodyBuilder)
+//        }
 
         declarationBody.acceptVoid(bodyBuilder)
+
+
 
         // Return implicit this from constructions to avoid extra tmp
         // variables on constructor call sites.
@@ -303,7 +384,7 @@ class DeclarationGenerator(
         builder.buildStructNew(wasmFileCodegenContext.interfaceTableTypes.specialSlotITableType, location)
     }
 
-    private fun createVTable(metadata: ClassMetadata) {
+    private fun createVTable(metadata: ClassMetadata): WasmGlobal? {
         val klass = metadata.klass
         val symbol = klass.symbol
 
@@ -316,7 +397,7 @@ class DeclarationGenerator(
         )
         wasmFileCodegenContext.defineVTableGcType(metadata.klass.symbol, vtableStruct)
 
-        if (klass.isAbstractOrSealed) return
+        if (klass.isAbstractOrSealed) return null
 
         val vTableTypeReference = wasmFileCodegenContext.referenceVTableGcType(symbol)
         val vTableRefGcType = WasmRefType(WasmHeapType.Type(vTableTypeReference))
@@ -337,10 +418,10 @@ class DeclarationGenerator(
             }
             buildStructNew(vTableTypeReference, location)
         }
-        wasmFileCodegenContext.defineGlobalVTable(
-            irClass = symbol,
-            wasmGlobal = WasmGlobal("<classVTable>", vTableRefGcType, false, initVTableGlobal)
-        )
+
+        val vTableGlobal = WasmGlobal("<classVTable>", vTableRefGcType, false, initVTableGlobal)
+        wasmFileCodegenContext.addGlobalVTable(vTableGlobal)
+        return vTableGlobal
     }
 
     internal fun addInterfaceMethod(
@@ -367,7 +448,7 @@ class DeclarationGenerator(
         }
     }
 
-    private fun createRtti(metadata: ClassMetadata) {
+    private fun createRtti(metadata: ClassMetadata): WasmGlobal {
         val klass = metadata.klass
         val symbol = klass.symbol
         val superType = klass.getSuperClass(irBuiltIns)?.symbol
@@ -436,12 +517,13 @@ class DeclarationGenerator(
         )
 
         wasmFileCodegenContext.defineRttiGlobal(rttiGlobal, symbol, superType)
+        return rttiGlobal
     }
 
-    private fun createClassITable(metadata: ClassMetadata) {
+    private fun createClassITable(metadata: ClassMetadata): WasmGlobal? {
         val klass = metadata.klass
-        if (klass.isAbstractOrSealed) return
-        if (!klass.hasInterfaceSuperClass()) return
+        if (klass.isAbstractOrSealed) return null
+        if (!klass.hasInterfaceSuperClass()) return null
 
         val location = SourceLocation.NoLocation("Create instance of itable struct")
 
@@ -469,7 +551,8 @@ class DeclarationGenerator(
             isMutable = false,
             init = initITableGlobal
         )
-        wasmFileCodegenContext.defineGlobalClassITable(klass.symbol, wasmClassIFaceGlobal)
+        wasmFileCodegenContext.addGlobalVTable(wasmClassIFaceGlobal)
+        return wasmClassIFaceGlobal
     }
 
     override fun visitClass(declaration: IrClass) {
@@ -505,9 +588,9 @@ class DeclarationGenerator(
         } else {
             val metadata = wasmModuleMetadataCache.getClassMetadata(symbol)
 
-            createVTable(metadata)
-            createClassITable(metadata)
-            createRtti(metadata)
+            val vTable = createVTable(metadata)
+            val iTable = createClassITable(metadata)
+            val rtti = createRtti(metadata)
 
             val vtableRefGcType = WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.referenceVTableGcType(symbol)))
             val fields = mutableListOf<WasmStructFieldDeclaration>()
@@ -530,6 +613,10 @@ class DeclarationGenerator(
                 isFinal = declaration.modality == Modality.FINAL
             )
             wasmFileCodegenContext.defineGcType(symbol, structType)
+
+            if (vTable != null) {
+                generateObjectCreationFunction(symbol, nameStr, structType, vTable, iTable, rtti)
+            }
         }
 
         for (member in declaration.declarations) {

@@ -536,6 +536,7 @@ internal abstract class FunctionalStubBuilder(
 
     protected fun buildFunctionAnnotations(func: FunctionDecl, stubName: String = func.name) =
             cCall(
+                    func.name,
                     direct = { AnnotationStub.CCall.Direct(func.binaryName) },
                     indirect = { AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${stubName}") }
             )
@@ -597,6 +598,7 @@ internal abstract class FunctionalStubBuilder(
 }
 
 private inline fun StubElementBuilder.cCall(
+        funcName: String,
         direct: () -> AnnotationStub.CCall.Direct,
         indirect: () -> AnnotationStub.CCall.Symbol,
 ): List<AnnotationStub> = buildList {
@@ -606,10 +608,27 @@ private inline fun StubElementBuilder.cCall(
         add(direct())
     }
 
-    if (cCallMode != CCallMode.DIRECT) {
+    if (cCallMode != CCallMode.DIRECT || funcName in allowedFunctions) {
         add(indirect())
     }
 }
+
+private val allowedFunctions = setOf(
+        "posix_errno",
+        "set_posix_errno",
+        "dispatch_get_main_queue",
+        "init_sockets",
+        "CFBridgingRelease",
+        "CFBridgingRetain",
+        "CGPointMake",
+        "CGRectMake",
+        "CGSizeMake",
+        "UIEdgeInsetsInsetRect",
+        "native_pthread_mutex_create",
+        "native_pthread_mutex_destroy",
+        "native_pthread_mutex_lock",
+        "native_pthread_mutex_unlock",
+)
 
 internal class FunctionStubBuilder(
     context: StubsBuildingContext,

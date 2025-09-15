@@ -266,7 +266,7 @@ fun Test.setupWasmEdge() {
 testsJar {}
 
 projectTests {
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt")
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt", generateTestsInBuildDirectory = true)
 
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
         testTask(
@@ -306,4 +306,17 @@ projectTests {
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
         include("**/Diagnostics*.class")
     }
+
+    testData(project(":compiler").isolated, "testData/klib/partial-linkage")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/codegen/box")
+    testData(project(":compiler").isolated, "testData/codegen/boxInline")
+    testData(project(":compiler").isolated, "testData/codegen/boxWasmJsInterop")
+    testData(project(":compiler").isolated, "testData/codegen/boxWasmWasi")
+    testData(project(":compiler").isolated, "testData/debug/stepping")
+    testData(project(":compiler").isolated, "testData/klib/syntheticAccessors")
+
+    testData(project(":js:js.translator").isolated, "testData/incremental")
+    testData(project(":js:js.translator").isolated, "testData/box")
+    testData(project(":js:js.translator").isolated, "testData/typescript-export/wasm/")
 }

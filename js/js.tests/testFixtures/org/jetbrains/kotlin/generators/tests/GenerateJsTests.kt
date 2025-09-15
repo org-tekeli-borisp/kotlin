@@ -18,8 +18,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
-    System.setProperty("java.awt.headless", "true")
-
+    val testsRoot = args[0]
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
     val k1BoxTestDir = "multiplatform/k1"
     val k2BoxTestDir = "multiplatform/k2"
@@ -31,7 +30,7 @@ fun main(args: Array<String>) {
     generateTypeScriptJsExportOnFiles("js/js.translator/testData/typescript-export/js")
 
     generateTestGroupSuiteWithJUnit4(args) {
-        testGroup("js/js.tests/tests-gen", "compiler/testData/klib/evolution", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/klib/evolution", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirJsKlibEvolutionTest> {
                 model(targetBackend = TargetBackend.JS_IR)
             }
@@ -39,7 +38,7 @@ fun main(args: Array<String>) {
     }
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("js/js.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
+        testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
             testClass<AbstractJsPartialLinkageWithICTestCase>(annotations = listOf(*legacyFrontend())) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -51,7 +50,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "compiler/testData/klib/syntheticAccessors") {
+        testGroup(testsRoot, "compiler/testData/klib/syntheticAccessors") {
             testClass<AbstractFirJsKlibSyntheticAccessorTest> {
                 model()
             }
@@ -62,7 +61,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
+        testGroup(testsRoot, "js/js.translator/testData/incremental") {
             testClass<AbstractJsFirInvalidationPerFileTest> {
                 model("invalidation/", pattern = "^([^_](.+))$", recursive = false)
             }
@@ -88,7 +87,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/sourcemap", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData/sourcemap", testRunnerMethodName = "runTest0") {
             testClass<AbstractSourceMapGenerationSmokeTest>(annotations = listOf(*legacyFrontend())) {
                 model()
             }
@@ -97,7 +96,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/multiModuleOrder/", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData/multiModuleOrder/", testRunnerMethodName = "runTest0") {
             testClass<AbstractMultiModuleOrderTest>(annotations = listOf(*legacyFrontend())) {
                 model()
             }
@@ -106,7 +105,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
             testClass<AbstractIrBoxJsTest>(annotations = listOf(*legacyFrontend())) {
                 model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
@@ -128,7 +127,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
             testClass<AbstractIrJsTypeScriptExportTest>(annotations = listOf(*legacyFrontend())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
@@ -150,13 +149,13 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/webDemoExamples", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData/webDemoExamples", testRunnerMethodName = "runTest0") {
             testClass<AbstractWebDemoExamplesTest>(annotations = listOf(*legacyFrontend())) {
                 model()
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/lineNumbers", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData/lineNumbers", testRunnerMethodName = "runTest0") {
             testClass<AbstractJsIrLineNumberTest>(annotations = listOf(*legacyFrontend())) {
                 model()
             }
@@ -169,7 +168,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest0") {
             testClass<AbstractIrJsCodegenBoxTest>(annotations = listOf(*legacyFrontend())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
@@ -247,7 +246,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "compiler/testData/debug", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/debug", testRunnerMethodName = "runTest0") {
             testClass<AbstractIrJsSteppingTest>(annotations = listOf(*legacyFrontend())) {
                 model("stepping")
             }
@@ -280,7 +279,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "compiler/testData/diagnostics", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/diagnostics", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsKlibDiagnosticsTestGenerated") {
                 model(
                     relativeRootPath = "klibSerializationTests",
@@ -364,7 +363,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
             testClass<AbstractClassicJsIrTextTest>(annotations = listOf(*legacyFrontend())) {
                 model(
                     excludeDirs = listOf("declarations/multiplatform/k2")
@@ -384,7 +383,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirLoadK2CompiledJsKotlinTest> {
                 model("compiledKotlin", extension = "kt")
                 model("compiledKotlinWithStdlib", extension = "kt")

@@ -266,7 +266,15 @@ projectTests {
         forwardProperties()
     }
 
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt", generateTestsInBuildDirectory = true)
+
+    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/debug")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/ir/irText")
+    testData(project(":compiler").isolated, "testData/loadJava")
+    testData(project(":js:js.translator").isolated, "testData")
 }
 
 testsJar {}

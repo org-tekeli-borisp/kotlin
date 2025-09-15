@@ -1,0 +1,6 @@
+#!/bin/bash
+set -eou pipefail
+
+DIR="${BASH_SOURCE[0]%/*}"
+
+exec "$DIR/with-link-args" -Pkotlin.native.home="$DIR/../../../kotlin-native/dist" -- "$@"

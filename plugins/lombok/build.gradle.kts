@@ -58,7 +58,6 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" { generatedTestDir() }
     "testFixtures" { projectDefault() }
 }
 
@@ -77,7 +76,7 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
     withScriptRuntime()

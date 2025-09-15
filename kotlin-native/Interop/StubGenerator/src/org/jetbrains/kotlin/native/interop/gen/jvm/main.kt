@@ -419,7 +419,11 @@ private fun processCLib(
             runCmd(linkerCmd, verbose)
             outOFile.absolutePath
         }
-        KotlinPlatform.NATIVE if configuration.cCallMode == CCallMode.DIRECT && !moduleName.startsWith("org.jetbrains.kotlin.native.platform.") -> {
+        KotlinPlatform.NATIVE if configuration.cCallMode == CCallMode.DIRECT &&
+                !moduleName.startsWith("org.jetbrains.kotlin.native.platform.") &&
+                moduleName != "io.realm.kotlin:cinterop-cinterop-realm_wrapper" &&
+                !moduleName.contains("firebase")
+            -> {
             // Don't generate the bitcode (and don't pack it into the resulting klib),
             // because indirect CCall is the main reason for having it.
             // We could introduce another flag to control that, but let's keep things simple for now.

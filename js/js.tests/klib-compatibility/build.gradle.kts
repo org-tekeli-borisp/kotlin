@@ -33,7 +33,6 @@ optInToExperimentalCompilerApi()
 sourceSets {
     "main" { }
     "testFixtures" { projectDefault() }
-    "test" { generatedTestDir() }
 }
 
 testsJar {}
@@ -135,6 +134,9 @@ tasks.test {
 }
 
 projectTests {
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt")
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true)
+
+    testData(project(":compiler").isolated, "testData/codegen/box")
+    testData(project(":compiler").isolated, "testData/codegen/boxInline")
 }
 

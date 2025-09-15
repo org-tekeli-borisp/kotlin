@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.js.test.klib.AbstractCustomJsCompilerSecondPhaseTest
 import org.jetbrains.kotlin.test.HeavyTest
 
 fun main(args: Array<String>) {
-    System.setProperty("java.awt.headless", "true")
+    val testsRoot = args[0]
 
     val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("js/js.tests/klib-compatibility/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest") {
+        testGroup(testsRoot, "compiler/testData/codegen") {
             testClass<AbstractCustomJsCompilerFirstPhaseTest>(
                 annotations = listOf(annotation(HeavyTest::class.java))
             ) {
@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
                 model("boxInline")
             }
         }
-        testGroup("js/js.tests/klib-compatibility/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest") {
+        testGroup(testsRoot, "compiler/testData/codegen") {
             testClass<AbstractCustomJsCompilerSecondPhaseTest>(
                 annotations = listOf(annotation(HeavyTest::class.java))
             ) {

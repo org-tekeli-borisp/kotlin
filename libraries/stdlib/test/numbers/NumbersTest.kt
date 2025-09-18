@@ -38,6 +38,10 @@ class NumbersTest {
 
     var two: Int = 2
 
+    @Test fun demoFail() {
+        assertFails("The test intentionally must fail") {}
+    }
+
     @Test fun intMinMaxValues() {
         assertTrue(Int.MIN_VALUE < 0)
         assertTrue(Int.MAX_VALUE > 0)

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.kmp.infra.ParseMode
 import org.jetbrains.kotlin.kmp.infra.PsiTestParser
 import org.jetbrains.kotlin.kmp.infra.TestParseNode
 import org.junit.jupiter.api.Test
+import kotlin.test.assertFails
 
 abstract class AbstractParserTests<OldParseElement> : AbstractRecognizerTests<
         OldParseElement,
@@ -28,6 +29,11 @@ abstract class AbstractParserTests<OldParseElement> : AbstractRecognizerTests<
 
     override fun recognizeNewSyntaxElement(fileName: String, text: String): TestParseNode<out NewParserTestNode> =
         NewTestParser(parseMode).parse(fileName, text)
+
+    @Test
+    fun demoFail() {
+        assertFails("The test intentionally must fail") {}
+    }
 
     @Test
     fun testBlockInsideBlock() {

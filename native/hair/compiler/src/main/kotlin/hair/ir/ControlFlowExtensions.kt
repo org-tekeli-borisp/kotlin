@@ -18,7 +18,7 @@ val Block.phies: Sequence<Phi>
 val Block.spine: Sequence<Controlled>
     get() = generateSequence(this.nextControl) {
         when (it) {
-            is Throwing ->
+            is Throwing -> TODO()
             is Controlling -> it.nextControl
             is BlockEnd -> null
             else -> shouldNotReachHere(it)

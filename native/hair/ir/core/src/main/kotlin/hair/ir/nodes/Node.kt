@@ -4,20 +4,21 @@ interface Node {
     // structure
     val id: Int
     val form: Form
-    val session get() = form.session
-    val args: ArgsList
 
-    // derived
-    val uses: MutableList<Node>
+    val args: ArgsList
+    val uses: Array<Node>
+
+    val session get() = form.session
 
     val registered: Boolean
 
     fun ensureUnique(): Node = form.ensureUnique(this)
 
     fun addUse(use: Node) {
-        if (use !in uses) uses += use // FIXME linear search
+        if (use !in uses) {
+            i
+        }
     }
-
 
     // FIXME careful!!
     fun removeUse(use: Node) {

@@ -36,7 +36,7 @@ interface ObjCExportTranslator {
     fun generateBaseDeclarations(): List<ObjCTopLevel>
     fun getClassIfExtension(receiverType: KotlinType): ClassDescriptor?
     fun translateFile(file: SourceFile, declarations: List<CallableMemberDescriptor>): ObjCInterface
-    fun translateClass(descriptor: ClassDescriptor): ObjCInterface
+    fun translateClass(descriptor: ClassDescriptor): List<ObjCTopLevel>
     fun translateInterface(descriptor: ClassDescriptor): ObjCProtocol
     fun translateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>): ObjCInterface
 }
@@ -172,10 +172,10 @@ class ObjCExportTranslatorImpl(
         )
     }
 
-    override fun translateClass(descriptor: ClassDescriptor): ObjCInterface {
+    override fun translateClass(descriptor: ClassDescriptor): List<ObjCTopLevel> {
         require(!descriptor.isInterface)
         if (!mapper.shouldBeExposed(descriptor)) {
-            return translateUnexposedClassAsUnavailableStub(descriptor)
+            return listOf(translateUnexposedClassAsUnavailableStub(descriptor))
         }
 
         val genericExportScope = createGenericExportScope(descriptor)
@@ -201,6 +201,7 @@ class ObjCExportTranslatorImpl(
         }
 
         val superProtocols: List<String> = descriptor.superProtocols
+        val additionalArtifacts = mutableListOf<ObjCTopLevel>()
         val members: List<ObjCExportStub> = buildMembers {
             val presentConstructors = mutableSetOf<String>()
 
@@ -284,6 +285,9 @@ class ObjCExportTranslatorImpl(
                 ClassKind.ENUM_CLASS -> {
                     val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCRootExportScope)
 
+                    additionalArtifacts.add(
+                        ObjCNativeEnum(descriptor.name.asString(), descriptor.enumEntries.map { it.name.asString() } ))
+
                     descriptor.enumEntries.forEach {
                         val entryName = namer.getEnumEntrySelector(it)
                         val swiftName = namer.getEnumEntrySwiftName(it)
@@ -337,7 +341,7 @@ class ObjCExportTranslatorImpl(
         val generics = mapTypeConstructorParameters(descriptor)
         val superClassGenerics = superClassGenerics(genericExportScope)
 
-        return objCInterface(
+        return additionalArtifacts + listOf(objCInterface(
             name,
             generics = generics,
             descriptor = descriptor,
@@ -347,7 +351,7 @@ class ObjCExportTranslatorImpl(
             members = members,
             attributes = attributes,
             comment = objCCommentOrNull(mustBeDocumentedAttributeList(descriptor.annotations))
-        )
+        ))
     }
 
     internal fun createGenericExportScope(descriptor: ClassDescriptor): ObjCExportScope = if (objcGenerics) {

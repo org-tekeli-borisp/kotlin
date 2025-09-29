@@ -84,6 +84,9 @@ object StubRenderer {
                 is ObjCProperty -> {
                     +renderProperty(this)
                 }
+                is ObjCNativeEnum -> {
+                    +renderNativeEnum(this)
+                }
                 else -> throw IllegalArgumentException("unsupported stub: " + stub::class)
             }
         }
@@ -117,6 +120,14 @@ object StubRenderer {
         appendTypeAndName()
         appendPostfixDeclarationAttributes(property.declarationAttributes)
         append(';')
+    }
+
+    private fun renderNativeEnum(nativeEnum: ObjCNativeEnum): String = buildString {
+        append(" typedef NS_ENUM(int32_t, ${nativeEnum.name}) {\n")
+        for ((index, literal) in nativeEnum.literals.withIndex()) {
+            append("  $literal = $index,\n")
+        }
+        append("  };\n")
     }
 
     private fun renderMethod(method: ObjCMethod): String = buildString {

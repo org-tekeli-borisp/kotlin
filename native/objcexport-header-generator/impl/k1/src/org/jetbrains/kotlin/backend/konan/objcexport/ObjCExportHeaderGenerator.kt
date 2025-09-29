@@ -198,7 +198,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
 
     private fun generateClass(descriptor: ClassDescriptor) {
         if (!generatedClasses.add(descriptor)) return
-        stubs.add(translator.translateClass(descriptor))
+        stubs.addAll(translator.translateClass(descriptor))
     }
 
     private fun generateInterface(descriptor: ClassDescriptor) {

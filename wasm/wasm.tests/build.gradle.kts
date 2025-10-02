@@ -1,8 +1,17 @@
-import org.gradle.internal.os.OperatingSystem
-import java.net.URI
 import com.github.gradle.node.npm.task.NpmTask
+import org.gradle.api.internal.file.archive.compression.*
+import org.gradle.api.resources.internal.ReadableResourceInternal
+import org.gradle.internal.os.OperatingSystem
+import java.io.InputStream
+import java.net.URI
 import java.nio.file.Files
 import java.util.*
+
+buildscript {
+    dependencies {
+        classpath("org.tukaani:xz:1.10") // to extract `tar.xz`
+    }
+}
 
 plugins {
     kotlin("jvm")
@@ -37,6 +46,14 @@ repositories {
         }
         metadataSources { artifact() }
         content { includeModule("org.wasmedge", "wasmedge") }
+    }
+    ivy {
+        url = URI("https://github.com/bytecodealliance/wasmtime/releases/download/")
+        patternLayout {
+            artifact("v[revision]/wasmtime-v[revision]-[classifier].[ext]")
+        }
+        metadataSources { artifact() }
+        content { includeModule("dev.wasmtime", "wasmtime") }
     }
 }
 
@@ -103,6 +120,27 @@ val wasmEdge by configurations.creating {
     isCanBeConsumed = false
 }
 
+val wasmtimeVersion = libs.versions.wasmtime
+val wasmtimePlatformSuffix = when (currentOsType) {
+    OsType(OsName.LINUX, OsArch.X86_64) -> "x86_64-linux"
+    OsType(OsName.MAC, OsArch.X86_64) -> "x86_64-macos"
+    OsType(OsName.MAC, OsArch.ARM64) -> "aarch64-macos"
+    OsType(OsName.WINDOWS, OsArch.X86_32),
+    OsType(OsName.WINDOWS, OsArch.X86_64) -> "x86_64-windows"
+    else -> error("unsupported os type $currentOsType")
+}
+val wasmtimeSuffix = wasmtimePlatformSuffix + "@" + when (currentOsType.name) {
+    OsName.LINUX -> "tar.xz"
+    OsName.MAC -> "tar.xz"
+    OsName.WINDOWS -> "zip"
+    else -> error("unsupported os type $currentOsType")
+}
+
+val wasmtime by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
 dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -123,6 +161,12 @@ dependencies {
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:windows@zip")
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:manylinux_2_28_x86_64@tar.gz")
     implicitDependencies("org.wasmedge:wasmedge:${wasmEdgeVersion.get()}:darwin_arm64@tar.gz")
+
+    wasmtime("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:$wasmtimeSuffix")
+
+    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-windows@zip")
+    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-linux@tar.xz")
+    implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:aarch64-macos@tar.xz")
 }
 
 optInToExperimentalCompilerApi()
@@ -246,6 +290,45 @@ val unzipWasmEdge by task<Copy> {
     }
 }
 
+class XzArchiver(private val file: File) : CompressedReadableResource {
+    init {
+        println("### XzArchiver")
+    }
+    override fun read(): InputStream = 
+//        TODO() 
+        org.tukaani.xz.XZInputStream(file.inputStream().buffered())
+        .also {
+        println("### read")
+    }
+    override fun getURI(): URI = URIBuilder(file.toURI()).schemePrefix("xz:").build().also {
+        println("### 1")
+    }
+    override fun getBackingFile(): File = file.also {
+        println("### 2$file")
+    }
+    override fun getBaseName(): String = file.name.also {
+        println("### 3")
+    }
+    override fun getDisplayName(): String = file.path.also {
+        println("### 4")
+    }
+}
+
+val unzipWasmtime by task<Copy> {
+    dependsOn(wasmtime)
+
+    from {
+        if (wasmtime.singleFile.extension == "zip") {
+            zipTree(wasmtime.singleFile)
+        } else {
+            println("### " + wasmtime.singleFile)
+            tarTree(XzArchiver(wasmtime.singleFile))
+        }
+    }
+
+    into(layout.buildDirectory.dir("tools/Wasmtime-${wasmtimeVersion.get()}-$wasmtimePlatformSuffix"))
+}
+
 fun Test.setupSpiderMonkey() {
     dependsOn(unzipJsShell)
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
@@ -261,6 +344,18 @@ fun Test.setupWasmEdge() {
         .withPropertyName("wasmEdgeDirectory")
 
     jvmArgumentProviders.add { listOf("-Dwasm.engine.path.WasmEdge=${wasmEdgeDirectory.get().resolve("bin/wasmedge")}") }
+}
+
+fun Test.setupWasmtime() {
+    dependsOn(unzipWasmtime)
+//    val wasmtimeDirectory = layout.buildDirectory.dir("tools").get().asFile.resolve("Wasmtime-${wasmtimeVersion.get()}-$wasmtimePlatformSuffix")
+    val wasmtimeDirectory = unzipWasmtime.map { it.destinationDir.resolve("Wasmtime-${wasmtimeVersion.get()}-$wasmtimePlatformSuffix") }
+
+    inputs.dir(wasmtimeDirectory)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("wasmtimeDirectory")
+
+    jvmArgumentProviders.add { listOf("-Dwasm.engine.path.Wasmtime=${wasmtimeDirectory.get().resolve("wasmtime")}") }
 }
 
 testsJar {}
@@ -295,6 +390,7 @@ projectTests {
             }
             setupSpiderMonkey()
             setupWasmEdge()
+            setupWasmtime()
             useJUnitPlatform()
             setupWasmStdlib("js")
             setupWasmStdlib("wasi")

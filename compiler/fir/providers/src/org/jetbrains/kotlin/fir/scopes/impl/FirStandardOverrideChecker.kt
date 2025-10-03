@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractOverrideChecker() {
+class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractOverrideChecker() { // Bookmark. Implementation in FIR
     private val context = session.typeContext
 
     private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
@@ -88,7 +88,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
             .all { (aBound, bBound) -> isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor) }
     }
 
-    override fun buildTypeParametersSubstitutorIfCompatible(
+    override fun buildTypeParametersSubstitutorIfCompatible( // cool
         overrideCandidate: FirCallableDeclaration,
         baseDeclaration: FirCallableDeclaration
     ): ConeSubstitutor? {

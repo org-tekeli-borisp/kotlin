@@ -1,6 +1,8 @@
 // ISSUE: KT-75316
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
+// WASM_CHECK_INSTRUCTION_IN_SCOPE: instruction=br_table scope_function=message
+// WASM_COUNT_INSTRUCTION_IN_SCOPE: instruction=if scope_function=problematic count=8
 
 enum class Problem {
     CONNECTION, AUTHENTICATION, DATABASE, UNKNOWN

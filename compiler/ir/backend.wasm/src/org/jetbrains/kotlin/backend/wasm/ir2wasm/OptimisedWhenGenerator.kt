@@ -65,7 +65,6 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
     if (allConditionsReadsSameValue) return false
 
     val supportedBasicTypes = setOf(
-//        IrConstKind.Char,
         IrConstKind.Int,
     )
 

@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -31,6 +35,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
 import java.io.File
@@ -112,6 +117,11 @@ class WasmLoweringFacade(
             useDebuggerCustomFormatters = useDebuggerCustomFormatters
         )
 
+        val linkedModule = getLinkedModule(
+            allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) },
+            configuration
+        )
+
         val dceDumpNameCache = DceDumpNameCache()
         eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
 
@@ -141,12 +151,25 @@ class WasmLoweringFacade(
         )
 
         return BinaryArtifacts.Wasm(
+            linkedModule,
             compilerResult,
             compilerResultWithDCE,
             runIf(WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives) {
                 compilerResultWithDCE.runThirdPartyOptimizer()
             }
         )
+    }
+
+    private fun getLinkedModule(wasmCompiledFileFragments: List<WasmCompiledFileFragment>, configuration: CompilerConfiguration): WasmModule {
+        val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
+
+        val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
+            wasmCompiledFileFragments,
+            configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS),
+            isWasmJsTarget,
+        )
+
+        return wasmCompiledModuleFragment.linkWasmCompiledFragments()
     }
 
     private fun WasmCompilerResult.runThirdPartyOptimizer(): WasmCompilerResult {

@@ -300,11 +300,11 @@ class ObjCExportTranslatorImpl(
                             ObjCMethod(
                                 null,
                                 null,
-                                false,
+                                true,
                                 ObjCRawType(nsEnumName),
                                 listOf("toNSEnum"),
                                 emptyList<ObjCParameter>(),
-                                listOf(OBJC_METHOD_FAMILY_NONE),
+                                emptyList()
                             )
                         }
                     }

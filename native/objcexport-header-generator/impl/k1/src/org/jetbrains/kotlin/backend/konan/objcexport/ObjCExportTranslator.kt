@@ -33,11 +33,17 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.*
 
+
+data class TranslatedClass(
+    val objCInterface: ObjCInterface,
+    val auxiliaryDeclarations: List<ObjCExportStub> = emptyList(),
+)
+
 interface ObjCExportTranslator {
     fun generateBaseDeclarations(): List<ObjCTopLevel>
     fun getClassIfExtension(receiverType: KotlinType): ClassDescriptor?
     fun translateFile(file: SourceFile, declarations: List<CallableMemberDescriptor>): ObjCInterface
-    fun translateClass(descriptor: ClassDescriptor): ObjCInterface
+    fun translateClass(descriptor: ClassDescriptor): TranslatedClass
     fun translateInterface(descriptor: ClassDescriptor): ObjCProtocol
     fun translateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>): ObjCInterface
 }
@@ -173,12 +179,13 @@ class ObjCExportTranslatorImpl(
         )
     }
 
-    override fun translateClass(descriptor: ClassDescriptor): ObjCInterface {
+    override fun translateClass(descriptor: ClassDescriptor): TranslatedClass {
         require(!descriptor.isInterface)
         if (!mapper.shouldBeExposed(descriptor)) {
-            return translateUnexposedClassAsUnavailableStub(descriptor)
+            return TranslatedClass(translateUnexposedClassAsUnavailableStub(descriptor))
         }
 
+        val auxiliaryDeclarations = mutableListOf<ObjCExportStub>()
         val genericExportScope = createGenericExportScope(descriptor)
 
         fun superClassGenerics(genericExportScope: ObjCExportScope): List<ObjCNonNullReferenceType> {
@@ -201,7 +208,6 @@ class ObjCExportTranslatorImpl(
             referenceClass(superClass)
         }
 
-        var nativeEnum: ObjCNativeEnum? = null
         val superProtocols: List<String> = descriptor.superProtocols
         val members: List<ObjCExportStub> = buildMembers {
             val presentConstructors = mutableSetOf<String>()
@@ -286,11 +292,9 @@ class ObjCExportTranslatorImpl(
                 ClassKind.ENUM_CLASS -> {
                     val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCRootExportScope)
 
-                    descriptor.annotations.findAnnotation(FqName("kotlin.native.ObjCEnum"))?.let {
-                        val name = it.allValueArguments.entries.find { it.key.asString() == "name" }?.value?.value?.toString()
-                        val nsEnumName = name ?: "${namer.getClassOrProtocolName(descriptor).objCName}_Enum"
-                        nativeEnum =
-                            ObjCNativeEnum(nsEnumName, descriptor.enumEntries.map { it.name.asString() } )
+                    namer.getNSEnumFunctionName(descriptor)?.let { nsEnumName ->
+                        auxiliaryDeclarations.add(
+                            ObjCNativeEnum(nsEnumName, descriptor.enumEntries.map { it.name.asString() } ))
 
                         add {
                             ObjCMethod(
@@ -358,7 +362,7 @@ class ObjCExportTranslatorImpl(
         val generics = mapTypeConstructorParameters(descriptor)
         val superClassGenerics = superClassGenerics(genericExportScope)
 
-        return objCInterface(
+        return TranslatedClass(objCInterface(
             name,
             generics = generics,
             descriptor = descriptor,
@@ -368,8 +372,7 @@ class ObjCExportTranslatorImpl(
             members = members,
             attributes = attributes,
             comment = objCCommentOrNull(mustBeDocumentedAttributeList(descriptor.annotations)),
-            nativeEnum = nativeEnum,
-        )
+        ), auxiliaryDeclarations.toList())
     }
 
     internal fun createGenericExportScope(descriptor: ClassDescriptor): ObjCExportScope = if (objcGenerics) {

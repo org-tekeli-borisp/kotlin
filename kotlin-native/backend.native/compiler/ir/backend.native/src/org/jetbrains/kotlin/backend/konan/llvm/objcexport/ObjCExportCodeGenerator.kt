@@ -1430,9 +1430,9 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             is ObjCInitMethodForKotlinConstructor -> {
                 adapters += createConstructorAdapter(it.baseMethod)
             }
-            is ObjCGetterForNSEnumType -> {
+/*            is ObjCGetterForNSEnumType -> {
                 adapters += createNSEnumAdapter(it.irClass)
-            }
+            } */
             is ObjCFactoryMethodForKotlinArrayConstructor -> {
                 classAdapters += createArrayConstructorAdapter(it.baseMethod)
             }

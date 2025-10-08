@@ -356,7 +356,7 @@ class ObjCExportLazyImpl(
 
         override val origin: ObjCExportStubOrigin? by lazy { ObjCExportStubOrigin(descriptor) }
 
-        override fun computeRealStub(): ObjCInterface = lazy.translator.translateClass(descriptor)
+        override fun computeRealStub(): ObjCInterface = lazy.translator.translateClass(descriptor).objCInterface
     }
 
     private class LazyObjCFileInterface(
@@ -433,9 +433,6 @@ private abstract class LazyObjCInterface(
 
     final override val comment: ObjCComment?
         get() = realStub.comment
-
-    override val nativeEnum: ObjCNativeEnum?
-        get() = realStub.nativeEnum
 }
 
 private abstract class LazyObjCProtocol(

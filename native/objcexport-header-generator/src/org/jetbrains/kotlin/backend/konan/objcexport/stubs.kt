@@ -70,7 +70,6 @@ abstract class ObjCInterface : ObjCClass() {
     abstract val generics: List<ObjCGenericTypeDeclaration>
     abstract val superClass: String?
     abstract val superClassGenerics: List<ObjCNonNullReferenceType>
-    abstract val nativeEnum: ObjCNativeEnum?
 }
 
 class ObjCComment(val contentLines: List<String>) {
@@ -104,7 +103,6 @@ class ObjCInterfaceImpl(
     override val superClass: String?,
     override val superClassGenerics: List<ObjCNonNullReferenceType>,
     override val extras: Extras = emptyExtras(),
-    override val nativeEnum: ObjCNativeEnum?,
 ) : ObjCInterface()
 
 class ObjCMethod(

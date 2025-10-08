@@ -69,7 +69,6 @@ fun ObjCInterfaceImpl(
     generics = generics,
     superClass = superClass,
     superClassGenerics = superClassGenerics,
-    nativeEnum = nativeEnum
 )
 
 fun ObjCMethod(

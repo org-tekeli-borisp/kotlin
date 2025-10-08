@@ -71,20 +71,16 @@ object StubRenderer {
                     +"@end"
                 }
                 is ObjCInterface -> {
-                    nativeEnum?.let { +renderNativeEnumType(it) }
-                    attributes.forEach {
-                        +renderAttribute(it)
-                    }
                     +renderInterfaceHeader()
-                    renderMembers(this, shouldExportKDoc)
-                    nativeEnum?.let { +renderNativeEnumAccessor(it) }
-                    +"@end"
                 }
                 is ObjCMethod -> {
                     +renderMethod(this)
                 }
                 is ObjCProperty -> {
                     +renderProperty(this)
+                }
+                is ObjCNativeEnum -> {
+                    +renderNativeEnumType(this)
                 }
                 else -> throw IllegalArgumentException("unsupported stub: " + stub::class)
             }
@@ -128,8 +124,6 @@ object StubRenderer {
         }
         append("};")
     }
-
-    private fun renderNativeEnumAccessor(nativeEnum: ObjCNativeEnum) = "+(${nativeEnum.name})toNSEnum;"
 
     private fun renderMethod(method: ObjCMethod): String = buildString {
         fun appendStaticness() {

@@ -90,8 +90,13 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
             }
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
-                // TODO: Gate by annotation
-                methods.add(ObjCGetterForNSEnumType(irClassSymbol.owner)) // This looks dodgy
+                namer.getNSEnumFunctionName(descriptor)?.let { selector ->
+                    val ordinalDescriptor = descriptor.contributedMethods.find { it.name.asString() == "ordinal" }!!
+                    val bridge = mapper.bridgeMethod(ordinalDescriptor)
+                    val symbol = symbolTable.descriptorExtension.referenceSimpleFunction(ordinalDescriptor)
+                    val method = ObjCMethodSpec.BaseMethod(symbol, bridge, selector)
+                    methods.add(ObjCMethodForKotlinMethod(method))
+                }
 
                 descriptor.enumEntries.mapTo(methods) {
                     ObjCGetterForKotlinEnumEntry(symbolTable.descriptorExtension.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
@@ -228,12 +233,13 @@ internal class ObjCGetterForKotlinEnumEntry(
             "ObjC spec of getter `$selector` for `$irEnumEntrySymbol`"
 }
 
+/*
 internal class ObjCGetterForNSEnumType(
         val irClass: IrClass
 ) : ObjCMethodSpec() {
     override fun toString(): String =
             "ObjC spec of toNSEnum()"
-}
+}*/
 
 internal class ObjCClassMethodForKotlinEnumValuesOrEntries(
         val valuesFunctionSymbol: IrFunctionSymbol,

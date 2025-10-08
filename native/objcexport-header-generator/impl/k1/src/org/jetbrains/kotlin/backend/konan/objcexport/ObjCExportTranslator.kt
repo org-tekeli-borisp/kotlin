@@ -1114,7 +1114,6 @@ private fun objCInterface(
     members: List<ObjCExportStub> = emptyList(),
     attributes: List<String> = emptyList(),
     comment: ObjCComment? = null,
-    nativeEnum: ObjCNativeEnum? = null,
 ): ObjCInterface = ObjCInterfaceImpl(
     name.objCName,
     generics,
@@ -1125,8 +1124,7 @@ private fun objCInterface(
     null,
     members,
     attributes + name.toNameAttributes(),
-    comment,
-    nativeEnum,
+    comment
 )
 
 private fun objCProtocol(

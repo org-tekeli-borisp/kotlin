@@ -117,8 +117,7 @@ private fun buildExtensionFacade(objCName: String, members: List<ObjCExportStub>
         categoryName = extensionsCategoryName,
         generics = emptyList(),
         superClass = null,
-        superClassGenerics = emptyList(),
-        nativeEnum = null,
+        superClassGenerics = emptyList()
     )
 }
 

@@ -79,8 +79,7 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCClass? = 
         categoryName = categoryName,
         generics = generics,
         superClass = superClass.superClassName.objCName,
-        superClassGenerics = superClass.superClassGenerics,
-        nativeEnum = null,
+        superClassGenerics = superClass.superClassGenerics
     )
 }
 

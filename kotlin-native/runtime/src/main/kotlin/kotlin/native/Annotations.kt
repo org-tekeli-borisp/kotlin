@@ -113,7 +113,7 @@ public actual annotation class CName(actual val externName: String = "", actual 
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCName
-@SinceKotlin("2.2.21")
+@SinceKotlin("1.8")
 public actual annotation class ObjCName(actual val name: String = "", actual val swiftName: String = "", actual val exact: Boolean = false)
 
 /**

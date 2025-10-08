@@ -66,7 +66,7 @@ fun objCBaseDeclarations(
             attributes = emptyList(),
             members = emptyList(),
             superClass = null,
-            superClassGenerics = emptyList(),
+            superClassGenerics = emptyList()
         )
     }
 
@@ -117,7 +117,7 @@ fun objCBaseDeclarations(
             superProtocols = emptyList(),
             generics = emptyList(),
             superClass = null,
-            superClassGenerics = emptyList(),
+            superClassGenerics = emptyList()
         )
     }
 
@@ -233,7 +233,7 @@ private fun objCInterface(
     members = members,
     attributes = attributes.plus(name.toNameAttributes()),
     comment = comment,
-    categoryName = null,
+    categoryName = null
 )
 
 private fun objCProtocol(

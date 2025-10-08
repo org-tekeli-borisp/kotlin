@@ -1,4 +1,3 @@
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // MODULE: lib
 // FILE: Z.kt
 package z

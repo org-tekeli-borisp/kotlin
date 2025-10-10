@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 
 
 class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -385,6 +384,13 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
         val fromType = argument.type
         if (isExternalType(fromType) != isExternalType(toType)) {
+            if (fromType.classifierOrNull == symbols.jsRelatedSymbols.jsReferenceClass) {
+                // special case: JsReference<C> can be implicitly converted to Any and than treated as C.
+                // On another hand, it can be unsafely cast from another external type, so do not
+                // resolve it to constants even for `JsReference<C> is C` checks.
+                val argumentAsAny = narrowType(fromType, context.irBuiltIns.anyType, argument)
+                return generateIsSubClassTest(argumentAsAny, toType)
+            }
             return builder.irFalse()
         }
 
@@ -397,6 +403,10 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             return builder.irFalse()
         }
 
+        return generateIsSubClassTest(argument, toType)
+    }
+
+    private fun generateIsSubClassTest(argument: IrExpression, toType: IrType): IrCall {
         return builder.irCall(symbols.refTest).apply {
             arguments[0] = argument
             typeArguments[0] = toType

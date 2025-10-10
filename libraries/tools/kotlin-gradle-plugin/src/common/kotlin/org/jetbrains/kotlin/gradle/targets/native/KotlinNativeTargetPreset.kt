@@ -9,17 +9,18 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOrRegisterDownloadKotlinNativeDistributionTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
-import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
-import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.lenient
+import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 

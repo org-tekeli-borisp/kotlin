@@ -6,6 +6,7 @@
 package kotlin.native
 
 import kotlin.experimental.ExperimentalNativeApi
+import kotlin.experimental.ExperimentalObjCEnum
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
 
@@ -125,7 +126,7 @@ public actual annotation class ObjCName(actual val name: String = "", actual val
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-@ExperimentalObjCName
+@ExperimentalObjCEnum
 @SinceKotlin("2.2.21")
 public actual annotation class ObjCEnum(actual val name: String = "")
 

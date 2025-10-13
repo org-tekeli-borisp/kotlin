@@ -143,6 +143,7 @@ internal fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo): Boolean {
     val bothAreClasses = l.isClass && r.isClass
 
     return when {
+        l.type.classId == StandardClassIds.JsReference -> false // special case - can contain any Kotlin type
         oneIsFinal -> areUnrelated(l, r)
         bothAreConcrete && bothAreClasses -> areUnrelated(l, r)
         else -> false

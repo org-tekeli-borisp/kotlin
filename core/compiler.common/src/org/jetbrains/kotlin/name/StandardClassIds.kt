@@ -184,8 +184,6 @@ object StandardClassIds {
         Long to AtomicLongArray,
     )
 
-    val JsReference = "JsReference".jsId()
-
     object Annotations {
         val Suppress = "Suppress".baseId()
         val PublishedApi = "PublishedApi".baseId()

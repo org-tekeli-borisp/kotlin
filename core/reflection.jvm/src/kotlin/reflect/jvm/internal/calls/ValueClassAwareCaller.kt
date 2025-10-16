@@ -213,7 +213,7 @@ internal fun KType?.toInlineClass(): Class<*>? {
 private fun ReflectKCallable<*>.isGetterOfUnderlyingPropertyOfValueClass(): Boolean =
     this is KProperty.Getter<*> && (property as ReflectKProperty<*>).isUnderlyingPropertyOfValueClass()
 
-private fun ReflectKProperty<*>.isUnderlyingPropertyOfValueClass(): Boolean =
+internal fun ReflectKProperty<*>.isUnderlyingPropertyOfValueClass(): Boolean =
     allParameters.all { it.kind == KParameter.Kind.INSTANCE } &&
             name == (container as? KClassImpl<*>)?.inlineClassUnderlyingPropertyName
 
@@ -225,3 +225,12 @@ private fun KType.isPrimitiveType(): Boolean {
 
 private fun KType.unsubstitutedUnderlyingType(): KType? =
     (classifier as? KClassImpl<*>)?.inlineClassUnderlyingType
+
+internal fun Any?.coerceToExpectedReceiverType(callable: KotlinKCallable<*>): Any? {
+    if (callable is ReflectKProperty<*> && callable.isUnderlyingPropertyOfValueClass()) return this
+
+    val expectedReceiverType = callable.allParameters.singleOrNull { it.kind != KParameter.Kind.VALUE }?.type
+    val unboxMethod = expectedReceiverType?.toInlineClass()?.getInlineClassUnboxMethod(callable) ?: return this
+
+    return unboxMethod.invoke(this)
+}

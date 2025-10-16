@@ -55836,6 +55836,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
           }
 
           @Test
+          @TestMetadata("extensionsAndParameters.kt")
+          public void testExtensionsAndParameters() {
+            runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/extensionsAndParameters.kt");
+          }
+
+          @Test
           @TestMetadata("javaAnnotation.kt")
           public void testJavaAnnotation() {
             runTest("compiler/testData/codegen/box/reflection/annotations/repeatable/javaAnnotation.kt");

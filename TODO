@@ -1,0 +1,9 @@
+- Check tests on:
+    - KMutableProperty.Setter.* for non-default setter, as well as parameter's name, index, kind, annotations, etc.
+        - Cases when visibility/modality of setter differs from property
+    - KProperty.Getter.isInline when only property / both property and getter are inline
+    - KotlinKProperty.isUnderlyingPropertyOfInlineClass (calling inline class property via a bound reference)
+        - Also WTF is InternalUnderlyingValOfInlineClass
+    - isNotNullProperty in computeCallerForAccessor: check nullable/non-null/dnn type parameter types
+- Check if every property needs to be stored or computed
+    - Maybe InstanceParameter/ExtensionReceiverParameter.type should be lazy, etc.

@@ -4,6 +4,7 @@
 
 import kotlin.reflect.*
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 var default: Int = 0
 
@@ -17,6 +18,8 @@ fun checkPropertySetterParam(property: KMutableProperty<*>, name: String?) {
     val parameter = property.setter.parameters.single()
     assertEquals(0, parameter.index)
     assertEquals(name, parameter.name)
+    assertFalse(parameter.isOptional)
+    assertFalse(parameter.isVararg)
 }
 
 fun box(): String {

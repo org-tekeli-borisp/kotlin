@@ -102,6 +102,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirGenericArrayClassLiteralSupport::class, FirGenericArrayClassLiteralSupport.Disabled)
     register(FirMissingDependencyStorage::class, FirMissingDependencyStorage(this))
     register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
+    register(FirPlatformSpecificEqualityChecker::class, FirPlatformSpecificEqualityChecker.Default)
     register(FirComposedDiagnosticRendererFactory::class, FirComposedDiagnosticRendererFactory())
     register(FirMustUseReturnValueStatusComponent::class, FirMustUseReturnValueStatusComponent.create(languageVersionSettings))
 }
@@ -200,6 +201,7 @@ fun FirSession.registerDefaultComponents() {
     register(FirOverridesBackwardCompatibilityHelper::class, FirDefaultOverridesBackwardCompatibilityHelper)
     register(FirDelegatedMembersFilter::class, FirDelegatedMembersFilter.Default)
     register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
+    register(FirPlatformSpecificEqualityChecker::class, FirPlatformSpecificEqualityChecker.Default)
     register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(CommonDefaultImportsProvider))
     register(FirIdentityLessPlatformDeterminer::class, FirIdentityLessPlatformDeterminer.Default)
 }

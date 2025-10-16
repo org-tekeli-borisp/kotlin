@@ -18,8 +18,8 @@ fun testTypeOperations(obj: JsReference<C>) : String? {
         return "is JsString"
     if (obj != c)
         return "!= C"
-//    if (obj !== c)
-//        return "!== C"
+    if (obj !== c)
+        return "!== C"
     return null
 }
 
@@ -36,8 +36,8 @@ fun testTypeOperations(obj: JsReference<String>) : String? {
         return "is JsString"
     if (obj != c)
         return "!= C"
-//    if (obj !== c)
-//        return "!== C"
+    if (obj !== c)
+        return "!== C"
     return null
 }
 
@@ -50,8 +50,8 @@ fun testTypeOperations(obj: JsAny) : String? {
         return "is JsString"
     if (obj != c)
         return "!= C"
-//    if (obj !== c)
-//        return "!== C"
+    if (obj !== c)
+        return "!== C"
     return null
 }
 

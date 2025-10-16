@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.FirPlatformSpecificEqualityChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.FirWasmJsCastChecker
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.FirWasmJsEqualityChecker
 import org.jetbrains.kotlin.fir.checkers.registerWasmCheckers
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -57,6 +59,7 @@ object FirWasmSessionFactory : AbstractFirKlibSessionFactory<FirWasmSessionFacto
         register(FirDefaultImportsProviderHolder::class, FirDefaultImportsProviderHolder(defaultImportsProvider))
         if (wasmTarget == WasmTarget.JS) {
             register(FirPlatformSpecificCastChecker::class, FirWasmJsCastChecker)
+            register(FirPlatformSpecificEqualityChecker::class, FirWasmJsEqualityChecker)
         }
     }
 

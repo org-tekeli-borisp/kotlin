@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.psi.KtElement
  * is based on the original `findKDoc` logic from Kotlin IDE Plugin.
  */
 @KaNonPublicApi
-@SubclassOptInRequired(KaImplementationDetail::class)
+@KaSessionComponentImplementationDetail
+@SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaKDocProvider : KaSessionComponent {
 
     /**

@@ -392,6 +392,12 @@ public class FirWasmJsCodegenSingleModuleInteropTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("jsReferenceCasts.kt")
+  public void testJsReferenceCasts() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsReferenceCasts.kt");
+  }
+
+  @Test
   @TestMetadata("jsToKotlinAdapters.kt")
   public void testJsToKotlinAdapters() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");

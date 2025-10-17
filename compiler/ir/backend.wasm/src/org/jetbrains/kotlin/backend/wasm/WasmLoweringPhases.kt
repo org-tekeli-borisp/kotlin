@@ -153,7 +153,7 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
 )
 
 private val removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase = makeIrModulePhase(
-    { RemoveInlineDeclarationsWithReifiedTypeParametersLowering() },
+    ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
     name = "RemoveInlineFunctionsWithReifiedTypeParametersLowering",
     prerequisite = setOf(inlineAllFunctionsPhase)
 )
@@ -389,7 +389,7 @@ private val defaultParameterCleanerPhase = makeIrModulePhase(
 )
 
 private val propertiesLoweringPhase = makeIrModulePhase<WasmBackendContext>(
-    { PropertiesLowering() },
+    ::PropertiesLowering,
     name = "PropertiesLowering",
 )
 

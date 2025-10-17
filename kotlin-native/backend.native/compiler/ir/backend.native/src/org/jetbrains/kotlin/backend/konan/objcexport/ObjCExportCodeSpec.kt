@@ -100,7 +100,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                     val bridge = mapper.bridgeMethod(ordinalDescriptor)
                     val symbol = symbolTable.descriptorExtension.referenceSimpleFunction(ordinalDescriptor)
                     val method = ObjCMethodSpec.BaseMethod(symbol, bridge, selector)
-                    methods += ObjCGetterForNSEnumType(symbol.owner, method)
+                    methods += ObjCGetterForNSEnumType(symbol, method)
                 }
 
                 descriptor.enumEntries.mapTo(methods) {
@@ -242,7 +242,7 @@ internal class ObjCGetterForKotlinEnumEntry(
 
 
 internal class ObjCGetterForNSEnumType(
-        val implementation: IrFunction,
+        val symbol: IrSimpleFunctionSymbol,
         val baseMethod: BaseMethod<IrSimpleFunctionSymbol>
 ) : ObjCMethodSpec() {
     override fun toString(): String =

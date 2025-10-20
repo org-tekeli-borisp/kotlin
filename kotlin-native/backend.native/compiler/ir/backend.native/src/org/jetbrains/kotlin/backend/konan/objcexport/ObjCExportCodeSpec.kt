@@ -88,15 +88,12 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
             }
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
-                namer.getNSEnumFunctionTypeName(descriptor)?.let { selector ->
+                if (namer.getNSEnumFunctionTypeName(descriptor) != null) {
                     val superClass = descriptor.getSuperClassNotAny()!!  // ordinal is declared in KotlinEnum
-                    val ordinalDescriptor = superClass.contributedMethods.find { it.name.asString() == "<get-ordinal>" }!!
-                    // if (ordinalDescriptor == null) {
-                    //    throw RuntimeException("ordinal not found; contributedMethods: ${descriptor.contributedMethods} super: ${superClass.contributedMethods}")
-                    // }
+                    val ordinalDescriptor = superClass.contributedMethods.first { it.name.asString() == "<get-ordinal>" }
                     val bridge = mapper.bridgeMethod(ordinalDescriptor)
                     val symbol = symbolTable.descriptorExtension.referenceSimpleFunction(ordinalDescriptor)
-                    val method = ObjCMethodSpec.BaseMethod(symbol, bridge, selector)
+                    val method = ObjCMethodSpec.BaseMethod(symbol, bridge, "toNSEnum")
                     methods += ObjCGetterForNSEnumType(symbol, method)
                 }
 

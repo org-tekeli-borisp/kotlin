@@ -125,7 +125,7 @@ object StubRenderer {
     private fun renderNativeEnumType(nativeEnum: ObjCNativeEnum): String = buildString {
         append("typedef NS_ENUM(int32_t, ${nativeEnum.name}) {\n")
         for ((index, literal) in nativeEnum.literals.withIndex()) {
-            append("  ${nativeEnum.name}_$literal = $index,\n")
+            append("  ${nativeEnum.name}$literal = $index,\n")
         }
         append("};")
     }

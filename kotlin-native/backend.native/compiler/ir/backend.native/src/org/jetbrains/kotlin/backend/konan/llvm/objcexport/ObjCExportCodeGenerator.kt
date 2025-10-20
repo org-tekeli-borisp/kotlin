@@ -1722,13 +1722,6 @@ private fun ObjCExportCodeGenerator.createObjectInstanceAdapter(
     return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
-private fun ObjCExportCodeGenerator.createNSEnumAdapter(irClass: IrClass): ObjCToKotlinMethodAdapter {
-    val bridgeName = irClass.computeTypeInfoSymbolName()  // ???
-    return generateObjCToKotlinSyntheticGetter("toNSEnum", bridgeName) {  // bridgeName sounds weird as suffix
-        // get "ordinal"
-    }
-}
-
 private fun ObjCExportCodeGenerator.createEnumEntryAdapter(
         irEnumEntry: IrEnumEntry,
         selector: String

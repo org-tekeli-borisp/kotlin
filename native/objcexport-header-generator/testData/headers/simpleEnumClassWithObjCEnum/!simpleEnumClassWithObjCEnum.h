@@ -38,22 +38,23 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
 @end
 
+typedef NS_ENUM(int32_t, OBJCFoo) {
+  OBJCFooA = 0,
+  OBJCFooB = 1,
+  OBJCFooC = 2,
+};
+
 
 /**
  * @note annotations
- *   kotlin.experimental.ExperimentalObjCEnum
  *   kotlin.native.ObjCEnum(name="OBJCFoo")
 */
-typedef NS_ENUM(int32_t, OBJCFoo_Enum) {
-  OBJCFoo_Enum_A = 0,
-  OBJCFoo_Enum_B = 1,
-  OBJCFoo_Enum_C = 2,
-};
 __attribute__((objc_subclassing_restricted))
 @interface Foo : KotlinEnum<Foo *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (OBJCFoo)toNSEnum;
 @property (class, readonly) Foo *a __attribute__((swift_name("a")));
 @property (class, readonly) Foo *b __attribute__((swift_name("b")));
 @property (class, readonly) Foo *c __attribute__((swift_name("c")));

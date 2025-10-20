@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import java.io.PrintStream
@@ -91,7 +88,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
             }
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
-                namer.getNSEnumFunctionName(descriptor)?.let { selector ->
+                namer.getNSEnumFunctionTypeName(descriptor)?.let { selector ->
                     val superClass = descriptor.getSuperClassNotAny()!!  // ordinal is declared in KotlinEnum
                     val ordinalDescriptor = superClass.contributedMethods.find { it.name.asString() == "<get-ordinal>" }!!
                     // if (ordinalDescriptor == null) {

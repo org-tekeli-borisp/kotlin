@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -292,7 +291,7 @@ class ObjCExportTranslatorImpl(
                 ClassKind.ENUM_CLASS -> {
                     val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCRootExportScope)
 
-                    namer.getNSEnumFunctionName(descriptor)?.let { nsEnumName ->
+                    namer.getNSEnumFunctionTypeName(descriptor)?.let { nsEnumName ->
                         auxiliaryDeclarations.add(
                             ObjCNativeEnum(nsEnumName, descriptor.enumEntries.map { it.name.asString() } ))
 

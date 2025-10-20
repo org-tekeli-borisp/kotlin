@@ -119,8 +119,8 @@ public actual annotation class ObjCName(actual val name: String = "", actual val
 
 /**
  * Instructs the Kotlin compiler to generate a NS_ENUM typedef for the annotated enum class. The name of the generated type will
- * be the name of the enum type with "_Enum" appended. This name can be overridden with the "name" parameter, which is treated
- * as an exact name. The enum literals will be prefixed with the type name and an underscore, as they live in a global namespace.
+ * be the name of the enum type with "Enum" appended. This name can be overridden with the "name" parameter, which is treated
+ * as an exact name. The enum literals will be prefixed with the type name, as they live in a global namespace.
  * Swift naming will automatically remove these prefixes.
  */
 @Target(AnnotationTarget.CLASS)

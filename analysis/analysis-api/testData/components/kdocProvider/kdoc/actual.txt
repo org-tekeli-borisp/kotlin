@@ -1,13 +1,13 @@
-/main(): kotlin.Unit
+----------/main(): kotlin.Unit--------------------------------------------------
 null
 
-val f: Foo
+----------val f: Foo------------------------------------------------------------
 null
 
-<constructor>(): Foo
+----------<constructor>(): Foo--------------------------------------------------
 null
 
-/Foo.documented(<dispatch receiver>: Foo, a: kotlin.String): kotlin.Unit
+----------/Foo.documented(<dispatch receiver>: Foo, a: kotlin.String): kotlin.Unit
 <primary tag="null" subject="null">
 Actual KDoc
 
@@ -16,6 +16,7 @@ Actual KDoc
 Actual KDoc
 
 
-a: kotlin.String
+----------a: kotlin.String------------------------------------------------------
 <primary tag="param" subject="a">
 in actual
+

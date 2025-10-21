@@ -50,12 +50,6 @@ abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
                         override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {
                             val symbol = declaration.symbol
                             appendLine(symbol.renderKDoc())
-
-                            if (symbol is KaFunctionSymbol) {
-                                symbol.valueParameters.forEach { param ->
-                                    appendLine(param.renderKDoc())
-                                }
-                            }
                             appendLine()
 
                             return super.visitDeclaration(declaration, indent + 2)
@@ -68,9 +62,9 @@ abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
     }
 }
 
-
 context(session: KaSession)
 private fun KaSymbol.renderKDoc(): String = buildString {
-    appendLine(stringRepresentation(this@renderKDoc))
+    val symbolStr = stringRepresentation(this@renderKDoc)
+    appendLine("-".repeat(10) + symbolStr.padEnd(maxOf(70, symbolStr.length), '-'))
     append(stringRepresentation(this@renderKDoc.findKDoc()))
 }

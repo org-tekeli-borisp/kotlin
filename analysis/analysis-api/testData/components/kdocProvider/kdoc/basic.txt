@@ -1,4 +1,4 @@
-/Foo
+----------/Foo------------------------------------------------------------------
 <primary tag="null" subject="null">
 Class KDoc
 
@@ -13,7 +13,7 @@ my property
 my property
 
 
-<constructor>(a: kotlin.String, b: kotlin.Int): Foo
+----------<constructor>(a: kotlin.String, b: kotlin.Int): Foo-------------------
 <primary tag="null" subject="null">
 Class KDoc
 
@@ -27,24 +27,17 @@ my property
 <section="property" subject="b">
 my property
 
-a: kotlin.String
+
+----------a: kotlin.String------------------------------------------------------
 <primary tag="property" subject="a">
 my property
-b: kotlin.Int
+
+----------b: kotlin.Int---------------------------------------------------------
 <primary tag="property" subject="b">
 my property
 
 
-a: kotlin.String
-<primary tag="property" subject="a">
-my property
-
-b: kotlin.Int
-<primary tag="property" subject="b">
-my property
-
-
-<constructor>(a: kotlin.String): Foo
+----------<constructor>(a: kotlin.String): Foo----------------------------------
 <primary tag="null" subject="null">
 Secondary constructor docs
 
@@ -53,21 +46,18 @@ Secondary constructor docs
 Secondary constructor docs
 
 
-a: kotlin.String
+
+----------a: kotlin.String------------------------------------------------------
 <primary tag="param" subject="a">
 parameter
 
-a: kotlin.String
-<primary tag="param" subject="a">
-parameter
-
-val property: kotlin.String
+----------val property: kotlin.String-------------------------------------------
 <primary tag="null" subject="null">
 Property KDoc
 <section="null" subject="null">
 Property KDoc
 
-/Foo.foo(<dispatch receiver>: Foo, a: kotlin.String): kotlin.Int
+----------/Foo.foo(<dispatch receiver>: Foo, a: kotlin.String): kotlin.Int------
 <primary tag="null" subject="null">
 Fun KDoc
 
@@ -76,10 +66,8 @@ Fun KDoc
 Fun KDoc
 
 
-a: kotlin.String
+
+----------a: kotlin.String------------------------------------------------------
 <primary tag="param" subject="a">
 param
 
-a: kotlin.String
-<primary tag="param" subject="a">
-param

@@ -1,4 +1,4 @@
-/Foo
+----------/Foo------------------------------------------------------------------
 <primary tag="null" subject="null">
 Foo KDoc
 
@@ -12,7 +12,7 @@ property
 <section="property" subject="b">
 property
 
-<constructor>(a: kotlin.String): Foo
+----------<constructor>(a: kotlin.String): Foo----------------------------------
 <primary tag="null" subject="null">
 Foo KDoc
 
@@ -25,19 +25,16 @@ Foo KDoc
 property
 <section="property" subject="b">
 property
-a: kotlin.String
+
+----------a: kotlin.String------------------------------------------------------
 <primary tag="property" subject="a">
 property
 
-a: kotlin.String
-<primary tag="property" subject="a">
-property
-
-val b: kotlin.String
+----------val b: kotlin.String--------------------------------------------------
 <primary tag="property" subject="b">
 property
 
-/Bar
+----------/Bar------------------------------------------------------------------
 <primary tag="null" subject="null">
 Bar KDoc
 
@@ -47,7 +44,7 @@ Bar KDoc
 
 
 
-<constructor>(a: kotlin.String): Bar
+----------<constructor>(a: kotlin.String): Bar----------------------------------
 <primary tag="null" subject="null">
 Bar KDoc
 
@@ -56,13 +53,11 @@ Bar KDoc
 Bar KDoc
 
 
-a: kotlin.String
+
+----------a: kotlin.String------------------------------------------------------
 <primary tag="param" subject="a">
 property
 
-a: kotlin.String
-<primary tag="param" subject="a">
-property
-
-val b: kotlin.String
+----------val b: kotlin.String--------------------------------------------------
 null
+

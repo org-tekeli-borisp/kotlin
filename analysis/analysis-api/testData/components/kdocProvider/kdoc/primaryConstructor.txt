@@ -1,4 +1,4 @@
-/Foo
+----------/Foo------------------------------------------------------------------
 <primary tag="null" subject="null">
 Foo KDoc
 
@@ -14,25 +14,19 @@ my property
 <section="property" subject="b">
 my property
 
-<constructor>(a: kotlin.String, b: kotlin.Int): Foo
+----------<constructor>(a: kotlin.String, b: kotlin.Int): Foo-------------------
 <primary tag="constructor" subject="null">
 Primary constructor
-a: kotlin.String
-<primary tag="property" subject="a">
-my property
-b: kotlin.Int
-<primary tag="property" subject="b">
-my property
 
-a: kotlin.String
+----------a: kotlin.String------------------------------------------------------
 <primary tag="property" subject="a">
 my property
 
-b: kotlin.Int
+----------b: kotlin.Int---------------------------------------------------------
 <primary tag="property" subject="b">
 my property
 
-/Bar
+----------/Bar------------------------------------------------------------------
 <primary tag="null" subject="null">
 Bar KDoc
 
@@ -44,7 +38,7 @@ Bar KDoc
 Primary constructor
 
 
-<constructor>(a: kotlin.String, b: kotlin.Int): Bar
+----------<constructor>(a: kotlin.String, b: kotlin.Int): Bar-------------------
 <primary tag="null" subject="null">
 Bar KDoc
 
@@ -55,17 +49,12 @@ Bar KDoc
 
 Primary constructor
 
-a: kotlin.String
-<primary tag="param" subject="a">
-my property
-b: kotlin.Int
-<primary tag="param" subject="b">
-my property
 
-a: kotlin.String
+----------a: kotlin.String------------------------------------------------------
 <primary tag="param" subject="a">
 my property
 
-b: kotlin.Int
+----------b: kotlin.Int---------------------------------------------------------
 <primary tag="param" subject="b">
 my property
+

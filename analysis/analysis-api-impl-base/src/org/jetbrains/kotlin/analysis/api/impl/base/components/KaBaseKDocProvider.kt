@@ -44,10 +44,10 @@ internal class KaKDocCommentImpl(
 
 @KaImplementationDetail
 abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaKDocProvider {
-    override fun KtElement.findKDoc(): KaKDocComment? = this.lookupOwnedKDoc() ?: this.lookupKDocInParent()
+    override fun KtDeclaration.findKDoc(): KaKDocComment? = this.lookupOwnedKDoc() ?: this.lookupKDocInParent()
 
     override fun KaSymbol.findKDoc(): KaKDocComment? = with(analysisSession) {
-        val ktElement = psi?.navigationElement as? KtElement
+        val ktElement = psi?.navigationElement as? KtDeclaration
         ktElement?.findKDoc()?.let { return it }
 
         if (this@findKDoc is KaCallableSymbol) {
@@ -117,7 +117,7 @@ abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), 
             .filter { it.findTagByName(tag.name.toLowerCaseAsciiOnly()) != null }
     }
 
-    private fun KtElement.lookupKDocInParent(): KaKDocComment? {
+    private fun KtDeclaration.lookupKDocInParent(): KaKDocComment? {
         val subjectName = name
         val containingDeclaration = PsiTreeUtil.findFirstParent(this, true) {
             (it is KtDeclarationWithBody && it !is KtPrimaryConstructor) || it is KtClassOrObject

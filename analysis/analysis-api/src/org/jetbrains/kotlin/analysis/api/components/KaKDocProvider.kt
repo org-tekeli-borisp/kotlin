@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
 
 /**
- * Component that locates KDoc for [KtElement] and [KaSymbol].
+ * Component that locates KDoc for [KtDeclaration] and [KaSymbol].
  *
  * This is part of a non-public API intended for use only by IDE and Dokka. Current implementation
  * is based on the original `findKDoc` logic from Kotlin IDE Plugin.
@@ -28,31 +27,31 @@ import org.jetbrains.kotlin.psi.KtElement
 public interface KaKDocProvider : KaSessionComponent {
 
     /**
-     * Resolves KDoc for this [KtElement].
+     * Resolves KDoc for this [KtDeclaration].
      *
      * This is part of a non-public API intended for use only by IDE and Dokka. Current implementation
      * is based on the original `findKDoc` logic from Kotlin IDE Plugin.
      *
-     * [KaKDocComment] for the given [KtElement] is resolved using the following algorithm:
+     * [KaKDocComment] for the given [KtDeclaration] is resolved using the following algorithm:
      *
-     * 1. [KtElement] is a [KtDeclaration] with a KDoc, i.e. [KtDeclaration.getDocComment] returns non-null value.
+     * 1. [KtDeclaration] has its own KDoc, i.e. [KtDeclaration.getDocComment] returns non-null value.
      * In this case, [KaKDocComment.primaryTag] is the KDoc's default section and [KaKDocComment.additionalSections]
      * contain all sections of that KDoc (including the default one).
      *
-     * 2. [KtElement] does not have its own KDoc, but its documentation can be derived from its parent's KDoc.
+     * 2. [KtDeclaration] does not have its own KDoc, but its documentation can be derived from its parent's KDoc.
      * This rule is applied in four different cases:
      *
-     *         - [KtElement] is a primary constructor and the enclosing class KDoc has a `@constructor` section.
+     *         - [KtDeclaration] is a primary constructor and the enclosing class KDoc has a `@constructor` section.
      *         That section is used as [KaKDocComment.primaryTag], and [KaKDocComment.additionalSections] contains
      *         the sections that include `@param` tags from the class's KDoc.
      *
-     *         - [KtElement] is a [KtParameter] of the primary constructor. [KaKDocComment.primaryTag] is resolved
+     *         - [KtDeclaration] is a [KtParameter] of the primary constructor. [KaKDocComment.primaryTag] is resolved
      *         from the `@property` or `@param` tags of the class's KDoc. [KaKDocComment.additionalSections] is empty.
      *
-     *         - [KtElement] is a [KtParameter] or [KtTypeParameter]. [KaKDocComment.primaryTag] is resolved
+     *         - [KtDeclaration] is a [KtParameter] or [KtTypeParameter]. [KaKDocComment.primaryTag] is resolved
      *         from the `@param` tags of the parent's KDoc. [KaKDocComment.additionalSections] is empty.
      *
-     *         - [KtElement] is a [KtProperty] that is declared inside a class/object with a KDoc, but referenced
+     *         - [KtDeclaration] is a [KtProperty] that is declared inside a class/object with a KDoc, but referenced
      *         with a `@property` tag in the class/object KDoc. [KaKDocComment.primaryTag] is the `@property` tag,
      *         and [KaKDocComment.additionalSections] is empty.
      *
@@ -63,7 +62,7 @@ public interface KaKDocProvider : KaSessionComponent {
      * - This method only resolves KDoc for Kotlin elements. Java elements and Javadoc are not supported.
      */
     @KaNonPublicApi
-    public fun KtElement.findKDoc(): KaKDocComment?
+    public fun KtDeclaration.findKDoc(): KaKDocComment?
 
 
     /**
@@ -130,31 +129,31 @@ public interface KaKDocComment {
 }
 
 /**
- * Resolves KDoc for this [KtElement].
+ * Resolves KDoc for this [KtDeclaration].
  *
  * This is part of a non-public API intended for use only by IDE and Dokka. Current implementation
  * is based on the original `findKDoc` logic from Kotlin IDE Plugin.
  *
- * [KaKDocComment] for the given [KtElement] is resolved using the following algorithm:
+ * [KaKDocComment] for the given [KtDeclaration] is resolved using the following algorithm:
  *
- * 1. [KtElement] is a [KtDeclaration] with a KDoc, i.e. [KtDeclaration.getDocComment] returns non-null value.
+ * 1. [KtDeclaration] has its own KDoc, i.e. [KtDeclaration.getDocComment] returns non-null value.
  * In this case, [KaKDocComment.primaryTag] is the KDoc's default section and [KaKDocComment.additionalSections]
  * contain all sections of that KDoc (including the default one).
  *
- * 2. [KtElement] does not have its own KDoc, but its documentation can be derived from its parent's KDoc.
+ * 2. [KtDeclaration] does not have its own KDoc, but its documentation can be derived from its parent's KDoc.
  * This rule is applied in four different cases:
  *
- *         - [KtElement] is a primary constructor and the enclosing class KDoc has a `@constructor` section.
+ *         - [KtDeclaration] is a primary constructor and the enclosing class KDoc has a `@constructor` section.
  *         That section is used as [KaKDocComment.primaryTag], and [KaKDocComment.additionalSections] contains
  *         the sections that include `@param` tags from the class's KDoc.
  *
- *         - [KtElement] is a [KtParameter] of the primary constructor. [KaKDocComment.primaryTag] is resolved
+ *         - [KtDeclaration] is a [KtParameter] of the primary constructor. [KaKDocComment.primaryTag] is resolved
  *         from the `@property` or `@param` tags of the class's KDoc. [KaKDocComment.additionalSections] is empty.
  *
- *         - [KtElement] is a [KtParameter] or [KtTypeParameter]. [KaKDocComment.primaryTag] is resolved
+ *         - [KtDeclaration] is a [KtParameter] or [KtTypeParameter]. [KaKDocComment.primaryTag] is resolved
  *         from the `@param` tags of the parent's KDoc. [KaKDocComment.additionalSections] is empty.
  *
- *         - [KtElement] is a [KtProperty] that is declared inside a class/object with a KDoc, but referenced
+ *         - [KtDeclaration] is a [KtProperty] that is declared inside a class/object with a KDoc, but referenced
  *         with a `@property` tag in the class/object KDoc. [KaKDocComment.primaryTag] is the `@property` tag,
  *         and [KaKDocComment.additionalSections] is empty.
  *
@@ -168,7 +167,7 @@ public interface KaKDocComment {
 @KaNonPublicApi
 @KaContextParameterApi
 context(s: KaSession)
-public fun KtElement.findKDoc(): KaKDocComment? {
+public fun KtDeclaration.findKDoc(): KaKDocComment? {
     return with(s) {
         findKDoc()
     }

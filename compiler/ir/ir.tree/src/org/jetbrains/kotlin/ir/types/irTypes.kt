@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
@@ -48,7 +48,7 @@ fun IrSimpleType.withNullability(newNullability: Boolean): IrSimpleType {
         }
 }
 
-fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
+fun IrType.addAnnotations(newAnnotations: List<IrAnnotation>): IrType =
     if (newAnnotations.isEmpty())
         this
     else when (this) {
@@ -62,7 +62,7 @@ fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
             this
     }
 
-fun IrType.removeAnnotations(predicate: (IrConstructorCall) -> Boolean): IrType =
+fun IrType.removeAnnotations(predicate: (IrAnnotation) -> Boolean): IrType =
     when (this) {
         is IrSimpleType ->
             toBuilder().apply {

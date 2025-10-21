@@ -11,6 +11,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 
 class IrAnonymousInitializerImpl @IrImplementationDetail constructor(
@@ -31,7 +31,7 @@ class IrAnonymousInitializerImpl @IrImplementationDetail constructor(
 ) : IrAnonymousInitializer() {
     override var attributeOwnerId: IrElement = this
 
-    override var annotations: List<IrConstructorCall> = emptyList()
+    override var annotations: List<IrAnnotation> = emptyList()
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor

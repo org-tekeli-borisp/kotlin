@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -100,7 +101,7 @@ class IrDeclarationDeserializer(
     }
 
     // Deserializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
-    internal fun deserializeAnnotations(annotations: List<ProtoConstructorCall>): List<IrConstructorCall> {
+    internal fun deserializeAnnotations(annotations: List<ProtoConstructorCall>): List<IrAnnotation> {
         return annotations.memoryOptimizedMap { bodyDeserializer.deserializeAnnotation(it) }
     }
 

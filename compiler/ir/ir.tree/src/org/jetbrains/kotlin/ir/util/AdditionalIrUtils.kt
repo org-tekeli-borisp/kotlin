@@ -171,12 +171,12 @@ fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String
     }
 }
 
-fun List<IrConstructorCall>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
+fun List<IrAnnotation>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
 
-fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
+fun List<IrAnnotation>.hasAnnotation(fqName: FqName): Boolean =
     any { it.isAnnotationWithEqualFqName(fqName) }
 
-fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
+fun List<IrAnnotation>.findAnnotation(fqName: FqName): IrAnnotation? =
     firstOrNull { it.isAnnotationWithEqualFqName(fqName) }
 
 val IrDeclaration.fileEntry: IrFileEntry

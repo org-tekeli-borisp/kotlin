@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.Opera
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.ir.IrAnnotation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -294,7 +295,7 @@ class IrBodyDeserializer(
         }
     }
 
-    fun deserializeAnnotation(proto: ProtoConstructorCall): IrConstructorCall {
+    fun deserializeAnnotation(proto: ProtoConstructorCall): IrAnnotation {
         // TODO: use real coordinates
         val startOffset = 0
         val endOffset = 0

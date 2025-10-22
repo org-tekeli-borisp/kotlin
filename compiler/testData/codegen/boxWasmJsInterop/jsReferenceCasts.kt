@@ -14,8 +14,6 @@ fun testTypeOperations(obj: JsReference<C>) : String? {
         return "!is C"
     if (obj is String)
         return "is String"
-    if (obj is JsString)
-        return "is JsString"
     if (obj != c)
         return "!= C"
     if (obj !== c)
@@ -32,8 +30,6 @@ fun testTypeOperations(obj: JsReference<String>) : String? {
         return "!is C"
     if (obj is String)
         return "is String"
-    if (obj is JsString)
-        return "is JsString"
     if (obj != c)
         return "!= C"
     if (obj !== c)
@@ -46,8 +42,6 @@ fun testTypeOperations(obj: JsAny) : String? {
         return "!is Any"
     if (obj !is C)
         return "!is C"
-    if (obj is JsString)
-        return "is JsString"
     if (obj != c)
         return "!= C"
     if (obj !== c)
@@ -75,5 +69,3 @@ fun box(): String {
 
     return "OK"
 }
-
-

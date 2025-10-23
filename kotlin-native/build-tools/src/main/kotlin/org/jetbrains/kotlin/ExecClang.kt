@@ -36,21 +36,78 @@ abstract class ExecClang @Inject constructor(
     @get:Inject
     protected abstract val execOperations: ExecOperations
 
-    private fun clangArgsForCppRuntime(target: KonanTarget, compiler: String): List<String> {
-        val clangArgs = platformManager.platform(target).clang
+    // FIXME: See KT-65542 for details
+    private fun fixBrokenMacroExpansionInXcode15_3(target: String?) = fixBrokenMacroExpansionInXcode15_3(platformManager.targetManager(target).target)
 
-        // Note: should be changed to clangArgsForKonan(C|CXX)Sources after bootstrap update.
-        // Or to clang(|XX)Args + clangArgsSpecificForKonanSources directly.
+    private fun fixBrokenMacroExpansionInXcode15_3(target: KonanTarget): List<String> {
+        return when (target) {
+            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
+                "TARGET_OS_OSX" to "1",
+            )
+            KonanTarget.IOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_IOS" to "1",
+            )
+            KonanTarget.TVOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_TV" to "1",
+            )
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_WATCH" to "1",
+            )
+            else -> emptyMap()
+        }.map { "-D${it.key}=${it.value}" }
+    }
+
+    private fun clangArgsSpecificForKonanSources(target: KonanTaret): List<String> {
+        val konanOptions = listOfNotNull(
+                target.architecture.name.takeIf { target != KonanTarget.WATCHOS_ARM64 },
+                "ARM32".takeIf { target == KonanTarget.WATCHOS_ARM64 },
+                target.family.name.takeIf { target.family != Family.MINGW },
+                "WINDOWS".takeIf { target.family == Family.MINGW },
+                "MACOSX".takeIf { target.family == Family.OSX },
+                "APPLE".takeIf { target.family.isAppleFamily },
+
+                "NO_64BIT_ATOMIC".takeUnless { target.supports64BitAtomics() },
+                "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },
+                "FORBID_BUILTIN_MUL_OVERFLOW".takeUnless { target.supports64BitMulOverflow() },
+
+                "OBJC_INTEROP".takeIf { target.supportsObjcInterop() },
+                "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
+                "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
+                "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
+                "SUPPORTS_GRAND_CENTRAL_DISPATCH".takeIf { target.supportsGrandCentralDispatch },
+                "SUPPORTS_SIGNPOSTS".takeIf { target.supportsSignposts },
+        ).map { "KONAN_$it=1" }
+        val otherOptions = listOfNotNull(
+                "USE_ELF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.ELF },
+                "ELFSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.ELF },
+                "MACHSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.MACH_O },
+                "__ANDROID__".takeIf { target.family == Family.ANDROID },
+                "USE_PE_COFF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.PE_COFF },
+                "UNICODE".takeIf { target.family == Family.MINGW },
+                "USE_WINAPI_UNWIND=1".takeIf { target.supportsWinAPIUnwind() },
+                "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() }
+        )
+        return (konanOptions + otherOptions).map { "-D$it" } + fixBrokenMacroExpansionInXcode15_3(target)
+    }
+
+    private fun clangArgsForCompiler(target: KonanTarget, compiler: String): List<String> {
+        val clangArgs = platformManager.platform(target).clang
         return when (compiler) {
-            "clang" -> clangArgs.clangArgsForKonanSources.asList().filter { it != "-stdlib=libc++" }
-            "clang++" -> clangArgs.clangArgsForKonanSources.asList()
+            "clang" -> clangArgs.clangArgs.asList()
+            "clang++" -> clangArgs.clangXXArgs.asList()
             else -> throw GradleException("unsupported clang executable: $compiler")
         }
     }
 
     fun clangArgsForCppRuntime(targetName: String?, compiler: String): List<String> {
         val target = platformManager.targetManager(targetName).target
-        return clangArgsForCppRuntime(target, compiler)
+        return clangArgsForCompiler(target, compiler) + clangArgsSpecificForKonanSources(target)
     }
 
     fun resolveExecutable(executableOrNull: String?): String {
@@ -80,37 +137,10 @@ abstract class ExecClang @Inject constructor(
     // The target can be specified as KonanTarget or as a
     // (nullable, which means host) target name.
 
-    // FIXME: See KT-65542 for details
-    private fun fixBrokenMacroExpansionInXcode15_3(target: String?) = fixBrokenMacroExpansionInXcode15_3(platformManager.targetManager(target).target)
-
-    private fun fixBrokenMacroExpansionInXcode15_3(target: KonanTarget): List<String> {
-        return when (target) {
-            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
-                "TARGET_OS_OSX" to "1",
-            )
-            KonanTarget.IOS_ARM64 -> hashMapOf(
-                "TARGET_OS_EMBEDDED" to "1",
-                "TARGET_OS_IPHONE" to "1",
-                "TARGET_OS_IOS" to "1",
-            )
-            KonanTarget.TVOS_ARM64 -> hashMapOf(
-                "TARGET_OS_EMBEDDED" to "1",
-                "TARGET_OS_IPHONE" to "1",
-                "TARGET_OS_TV" to "1",
-            )
-            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
-                "TARGET_OS_EMBEDDED" to "1",
-                "TARGET_OS_IPHONE" to "1",
-                "TARGET_OS_WATCH" to "1",
-            )
-            else -> emptyMap()
-        }.map { "-D${it.key}=${it.value}" }
-    }
-
     fun execKonanClang(target: String, compiler: String, action: Action<in ExecSpec>): ExecResult {
         return this.execClang(
                 compiler,
-                clangArgsForCppRuntime(target, compiler) + fixBrokenMacroExpansionInXcode15_3(target),
+                clangArgsForCppRuntime(target, compiler),
                 action
         )
     }

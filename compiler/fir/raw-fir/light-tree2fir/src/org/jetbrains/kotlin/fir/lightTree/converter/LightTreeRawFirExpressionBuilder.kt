@@ -58,13 +58,15 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
+/**
+ * @see AbstractLightTreeRawFirBuilder
+ */
 class LightTreeRawFirExpressionBuilder(
     session: FirSession,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     private val declarationBuilder: LightTreeRawFirDeclarationBuilder,
     context: Context<LighterASTNode> = Context(),
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
-
     internal inline fun <reified R : FirExpression> getAsFirExpression(
         expression: LighterASTNode,
         errorReason: String = "",
@@ -181,7 +183,7 @@ class LightTreeRawFirExpressionBuilder(
         var block: LighterASTNode? = null
         var hasArrow = false
 
-        val functionSymbol = FirAnonymousFunctionSymbol()
+        val functionSymbol = FirAnonymousFunctionSymbol(symbolIdFactory.unique())
         lambdaExpression.getChildNodesByType(FUNCTION_LITERAL).first().forEachChildren {
             when (it.tokenType) {
                 VALUE_PARAMETER_LIST -> valueParameterList += declarationBuilder.convertValueParameters(
@@ -225,7 +227,7 @@ class LightTreeRawFirExpressionBuilder(
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = valueParameter.firValueParameter.returnTypeRef
                         this.name = name
-                        symbol = FirValueParameterSymbol()
+                        symbol = FirValueParameterSymbol(symbolIdFactory.unique())
                         defaultValue = null
                         isCrossinline = false
                         isNoinline = false
@@ -881,11 +883,11 @@ class LightTreeRawFirExpressionBuilder(
                         name = variable.name
                         initializer = variable.initializer
                         isVar = false
-                        symbol = FirLocalPropertySymbol()
+                        symbol = FirLocalPropertySymbol(symbolIdFactory.unique())
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         receiverParameter = variable.receiverParameter?.let { receiverParameter ->
                             buildReceiverParameterCopy(receiverParameter) {
-                                symbol = FirReceiverParameterSymbol()
+                                symbol = FirReceiverParameterSymbol(symbolIdFactory.unique())
                                 containingDeclarationSymbol = this@buildProperty.symbol
                             }
                         }
@@ -912,7 +914,7 @@ class LightTreeRawFirExpressionBuilder(
                 this.name = name
                 initializer = subjectExpression
                 isVar = false
-                symbol = FirLocalPropertySymbol()
+                symbol = FirLocalPropertySymbol(symbolIdFactory.unique())
                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
             }
         }
@@ -1419,7 +1421,7 @@ class LightTreeRawFirExpressionBuilder(
                         isVar = false
                         status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                         this.name = parameter.name
-                        symbol = FirLocalPropertySymbol()
+                        symbol = FirLocalPropertySymbol(symbolIdFactory.unique())
                         annotations += parameter.annotations
                     }.also {
                         it.isCatchParameter = true
@@ -1441,7 +1443,7 @@ class LightTreeRawFirExpressionBuilder(
             when (it.tokenType) {
                 VALUE_PARAMETER_LIST -> valueParameter = declarationBuilder.convertValueParameters(
                     valueParameters = it,
-                    FirAnonymousFunctionSymbol(),
+                    FirAnonymousFunctionSymbol(symbolIdFactory.unique()),
                     ValueParameterDeclaration.CATCH
                 ).firstOrNull()
                     ?: return null

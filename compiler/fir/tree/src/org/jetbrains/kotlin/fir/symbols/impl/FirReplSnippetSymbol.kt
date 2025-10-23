@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
-import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
 import org.jetbrains.kotlin.name.Name
 
-class FirReplSnippetSymbol(val name: Name) : FirBasedSymbol<FirReplSnippet>() {
+class FirReplSnippetSymbol(
+    override val symbolId: FirSymbolId<FirReplSnippetSymbol>,
+    val name: Name,
+) : FirBasedSymbol<FirReplSnippet>(symbolId) {
     override fun toString(): String = "${this::class.simpleName} ${name.asString()}"
 }

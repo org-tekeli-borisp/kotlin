@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
@@ -350,7 +352,7 @@ class FirTypeIntersectionScopeContext(
             dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!,
             keyFir.name
         )
-        val newSymbol = FirIntersectionOverrideFunctionSymbol(callableId, overrides, containsMultipleNonSubsumed)
+        val newSymbol = FirIntersectionOverrideFunctionSymbol(FirUniqueSymbolId(), callableId, overrides, containsMultipleNonSubsumed)
         val deferredReturnTypeCalculation = deferredReturnTypeCalculationOrNull(mostSpecific)
         FirFakeOverrideGenerator.createCopyForFirFunction(
             newSymbol, keyFir, derivedClassLookupTag = null, session,
@@ -377,7 +379,7 @@ class FirTypeIntersectionScopeContext(
         newVisibility: Visibility,
         containsMultipleNonSubsumed: Boolean,
     ): FirPropertySymbol {
-        return createIntersectionOverrideVariable<FirPropertySymbol, _>(
+        return createIntersectionOverrideVariable<FirPropertySymbol, _, _>(
             mostSpecific,
             overrides,
             containsMultipleNonSubsumed,
@@ -415,11 +417,11 @@ class FirTypeIntersectionScopeContext(
         newVisibility: Visibility,
         containsMultipleNonSubsumed: Boolean,
     ): FirFieldSymbol {
-        return createIntersectionOverrideVariable<FirFieldSymbol, _>(
+        return createIntersectionOverrideVariable<FirFieldSymbol, _, _>(
             mostSpecific,
             overrides,
             containsMultipleNonSubsumed,
-            ::FirIntersectionOverrideFieldSymbol
+            ::FirIntersectionOverrideFieldSymbol,
         ) { symbol, fir, deferredReturnTypeCalculation, returnType ->
             FirFakeOverrideGenerator.createCopyForFirField(
                 symbol, fir, derivedClassLookupTag = null, session,
@@ -436,21 +438,21 @@ class FirTypeIntersectionScopeContext(
         }
     }
 
-    private inline fun <reified S : FirVariableSymbol<F>, F : FirVariable> createIntersectionOverrideVariable(
+    private inline fun <reified T : FirVariableSymbol<F>, S : T, F : FirVariable> createIntersectionOverrideVariable(
         mostSpecific: Collection<FirCallableSymbol<*>>,
         overrides: Collection<FirCallableSymbol<*>>,
         containsMultipleNonSubsumed: Boolean,
-        createIntersectionOverrideSymbol: (CallableId, Collection<FirCallableSymbol<*>>, Boolean) -> S,
+        createIntersectionOverrideSymbol: (FirSymbolId<S>, CallableId, Collection<FirCallableSymbol<*>>, Boolean) -> S,
         createCopy: (S, F, deferredReturnTypeCalculation: DeferredCallableCopyReturnType?, returnType: ConeKotlinType?) -> F
     ): S {
         // Picking a `var` avoids `VAR_OVERRIDDEN_BY_VAL` reported for intersection overrides.
         // It's fine because in cases where the code becomes green due to not reporting this diagnostic,
         // the user is required to provide an explicit override of such a property in a non-abstract subclass.
         // See: compiler/testData/diagnostics/tests/varOverriddenByValThroughIntersection.kt.
-        val key = mostSpecific.find { it is FirPropertySymbol && it.isVar } as? S ?: mostSpecific.first() as S
+        val key = mostSpecific.find { it is FirPropertySymbol && it.isVar } as? T ?: mostSpecific.first() as T
         val keyFir = key.fir
         val callableId = CallableId(dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!, keyFir.name)
-        val newSymbol = createIntersectionOverrideSymbol(callableId, overrides, containsMultipleNonSubsumed)
+        val newSymbol = createIntersectionOverrideSymbol(FirUniqueSymbolId(), callableId, overrides, containsMultipleNonSubsumed)
         val deferredReturnTypeCalculation = deferredReturnTypeCalculationOrNull(mostSpecific)
         val newReturnType =
             runIf(!forClassUseSiteScope && mostSpecific.none { (it as FirVariableSymbol<*>).fir.isVar } && deferredReturnTypeCalculation == null) {

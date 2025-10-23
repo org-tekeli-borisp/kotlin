@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
@@ -70,7 +72,7 @@ fun generateValuesFunction(
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirNamedFunction {
-    return FirNamedFunction {
+    return buildNamedFunction {
         val sourceElement = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.EnumValuesFunction)
 
         source = sourceElement
@@ -98,7 +100,13 @@ fun generateValuesFunction(
             isStatic = true
             isExpect = makeExpect
         }
-        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
+
+        symbol = FirNamedFunctionSymbol(
+            // Some users of `generateValuesFunction` don't have sources, such as FIR metadata class deserialization.
+            moduleData.session.symbolIdFactory.sourceBasedOrUnique(sourceElement),
+            CallableId(packageFqName, classFqName, ENUM_VALUES)
+        )
+
         resolvePhase = classResolvePhase
         body = buildEmptyExpressionBlock().also {
             it.replaceConeTypeOrNull(returnTypeRef.coneType)
@@ -139,7 +147,9 @@ fun generateValueOfFunction(
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirNamedFunction {
+    val symbolIdFactory = moduleData.session.symbolIdFactory
     val sourceElement = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.EnumValueOfFunction)
+
     return buildNamedFunction {
         source = sourceElement
         this.origin = origin
@@ -159,7 +169,11 @@ fun generateValueOfFunction(
             isStatic = true
             isExpect = makeExpect
         }
-        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUE_OF))
+        symbol = FirNamedFunctionSymbol(
+            // Some users of `generateValueOfFunction` don't have sources, such as FIR metadata class deserialization.
+            symbolIdFactory.sourceBasedOrUnique(sourceElement),
+            CallableId(packageFqName, classFqName, ENUM_VALUE_OF),
+        )
         valueParameters += buildValueParameter vp@{
             val valueParameterSource = classSource
                 ?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.EnumValueOfFunctionParameter)
@@ -177,7 +191,7 @@ fun generateValueOfFunction(
                 )
             }
             name = DEFAULT_VALUE_PARAMETER
-            this@vp.symbol = FirValueParameterSymbol()
+            this@vp.symbol = FirValueParameterSymbol(symbolIdFactory.sourceBasedOrUnique(valueParameterSource))
             isCrossinline = false
             isNoinline = false
             isVararg = false
@@ -223,6 +237,8 @@ fun generateEntriesGetter(
     makeExpect: Boolean = false,
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source,
 ): FirProperty {
+    val symbolIdFactory = moduleData.session.symbolIdFactory
+
     return buildProperty {
         val sourceElement = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.EnumEntriesProperty)
 
@@ -250,18 +266,23 @@ fun generateEntriesGetter(
             isExpect = makeExpect
         }
 
-        symbol = FirRegularPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
+        symbol = FirRegularPropertySymbol(
+            symbolIdFactory.sourceBasedOrUnique(sourceElement),
+            CallableId(packageFqName, classFqName, ENUM_ENTRIES),
+        )
         resolvePhase = classResolvePhase
 
         val getterTypeRefSource =
             returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration.EnumEntriesPropertyGetterReturnType)
 
+        val propertyGetterSource = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.EnumEntriesPropertyGetter)
         getter = FirDefaultPropertyGetter(
-            source = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.EnumEntriesPropertyGetter),
+            source = propertyGetterSource,
             moduleData = moduleData,
             origin = origin,
             propertyTypeRef = getterTypeRefSource,
             visibility = Visibilities.Public,
+            symbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBasedOrUnique(propertyGetterSource)),
             propertySymbol = symbol,
             modality = Modality.FINAL,
             resolvePhase = classResolvePhase,

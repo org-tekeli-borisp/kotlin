@@ -112,7 +112,9 @@ class JavaClassUseSiteMemberScope(
                 getterId = callableId,
                 propertyId = CallableId(klass.classId, property.name)
             )
+            this.getterSymbol = FirSyntheticPropertyAccessorSymbol()
             delegateGetter = getterSymbol.fir
+            this.setterSymbol = setterSymbol?.let { FirSyntheticPropertyAccessorSymbol() }
             delegateSetter = setterSymbol?.fir
             customStatus = if (takeModalityFromGetter) {
                 null
@@ -421,6 +423,7 @@ class JavaClassUseSiteMemberScope(
                 coneType = continuationParameterType.typeArguments[0].type ?: return this@replaceWithWrapperSymbolIfNeeded
             }
             (status as FirDeclarationStatusImpl).isSuspend = true
+            // TODO (marco): This is not stored in a cache (as far as I can see). Is it still OK to have a unique symbol ID here?
             symbol = FirNamedFunctionSymbol(callableId)
         }.symbol
     }
@@ -950,6 +953,7 @@ class JavaClassUseSiteMemberScope(
             visibility = status.visibility,
             propertySymbol = symbol,
             modality = status.modality,
+            symbol = FirPropertyAccessorSymbol(),
         )
 
         return syntheticGetter.computeJvmDescriptor(customName, includeReturnType)
@@ -965,6 +969,7 @@ class JavaClassUseSiteMemberScope(
             visibility = status.visibility,
             propertySymbol = symbol,
             modality = status.modality,
+            propertyAccessorSymbol = FirPropertyAccessorSymbol(),
         )
 
         return syntheticSetter.computeJvmDescriptor(customName, includeReturnType)

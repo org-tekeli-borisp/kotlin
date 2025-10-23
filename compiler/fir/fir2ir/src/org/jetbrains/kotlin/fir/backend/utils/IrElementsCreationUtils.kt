@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -238,6 +240,7 @@ private fun createSyntheticFile(
     init: FirFileBuilder.() -> Unit,
 ): FirFile {
     return buildFile {
+        symbol = FirFileSymbol(FirUniqueSymbolId())
         origin = fileOrigin
         moduleData = fileModuleData
         packageDirective = buildPackageDirective {

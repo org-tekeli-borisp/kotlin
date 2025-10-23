@@ -527,76 +527,10 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             }
         }
 
-    private val fixBrokenMacroExpansionInXcode15_3: List<String>
-        get() {
-            return when (target) {
-                KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
-                    "TARGET_OS_OSX" to "1",
-                )
-                KonanTarget.IOS_ARM64 -> hashMapOf(
-                    "TARGET_OS_EMBEDDED" to "1",
-                    "TARGET_OS_IPHONE" to "1",
-                    "TARGET_OS_IOS" to "1",
-                )
-                KonanTarget.TVOS_ARM64 -> hashMapOf(
-                    "TARGET_OS_EMBEDDED" to "1",
-                    "TARGET_OS_IPHONE" to "1",
-                    "TARGET_OS_TV" to "1",
-                )
-                KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
-                    "TARGET_OS_EMBEDDED" to "1",
-                    "TARGET_OS_IPHONE" to "1",
-                    "TARGET_OS_WATCH" to "1",
-                )
-                else -> emptyMap()
-            }.map { "-D${it.key}=${it.value}" }
-        }
-
-    private val clangArgsSpecificForKonanSources: List<String>
-        get() {
-            val konanOptions = listOfNotNull(
-                    target.architecture.name.takeIf { target != KonanTarget.WATCHOS_ARM64 },
-                    "ARM32".takeIf { target == KonanTarget.WATCHOS_ARM64 },
-                    target.family.name.takeIf { target.family != Family.MINGW },
-                    "WINDOWS".takeIf { target.family == Family.MINGW },
-                    "MACOSX".takeIf { target.family == Family.OSX },
-                    "APPLE".takeIf { target.family.isAppleFamily },
-
-                    "NO_64BIT_ATOMIC".takeUnless { target.supports64BitAtomics() },
-                    "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },
-                    "FORBID_BUILTIN_MUL_OVERFLOW".takeUnless { target.supports64BitMulOverflow() },
-
-                    "OBJC_INTEROP".takeIf { target.supportsObjcInterop() },
-                    "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
-                    "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
-                    "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
-                    "SUPPORTS_GRAND_CENTRAL_DISPATCH".takeIf { target.supportsGrandCentralDispatch },
-                    "SUPPORTS_SIGNPOSTS".takeIf { target.supportsSignposts },
-            ).map { "KONAN_$it=1" }
-            val otherOptions = listOfNotNull(
-                    "USE_ELF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.ELF },
-                    "ELFSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.ELF },
-                    "MACHSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.MACH_O },
-                    "__ANDROID__".takeIf { target.family == Family.ANDROID },
-                    "USE_PE_COFF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.PE_COFF },
-                    "UNICODE".takeIf { target.family == Family.MINGW },
-                    "USE_WINAPI_UNWIND=1".takeIf { target.supportsWinAPIUnwind() },
-                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() }
-            )
-            return (konanOptions + otherOptions).map { "-D$it" } + fixBrokenMacroExpansionInXcode15_3
-        }
-
-        // TODO: These should be set by the plugin users.
-        private val DEFAULT_CPP_FLAGS = listOfNotNull(
-                "-gdwarf-2".takeIf { project.kotlinBuildProperties.getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false) },
-                "-std=c++17",
-                "-Werror",
-                "-O2",
-                "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
-                "-Wall",
-                "-Wextra",
-                "-Wno-unused-parameter",  // False positives with polymorphic functions.
-        ) + clangArgsSpecificForKonanSources
+        /**
+         * Set the default value for each [Module.compilerArgs].
+         */
+        abstract val defaultCompilerArgs: ListProperty<String>
 
         private val modules: NamedDomainObjectContainer<Module> = project.objects.polymorphicDomainObjectContainer(Module::class.java).apply {
             registerFactory(Module::class.java) {
@@ -604,7 +538,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     this.srcRoot.convention(project.layout.projectDirectory.dir("src/$name"))
                     this.headersDirs.from(this.srcRoot.dir("cpp"))
                     this.compiler.convention("clang++")
-                    this.compilerArgs.set(DEFAULT_CPP_FLAGS)
+                    this.compilerArgs.set(defaultCompilerArgs)
                     this.compilerWorkingDirectory.set(project.layout.projectDirectory.dir("src"))
                 }
             }

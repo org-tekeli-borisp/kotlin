@@ -181,14 +181,17 @@ sealed class ClangArgs(
 
     // Kept for compatibility, remove later.
     @Deprecated("args for building runtime moved to runtime building code")
+    @Suppress("DEPRECATION")
     val clangArgsForKonanSources =
             clangXXArgs + clangArgsSpecificForKonanSources
 
     @Deprecated("args for building runtime moved to runtime building code")
+    @Suppress("DEPRECATION")
     val clangArgsForKonanCxxSources =
             (clangXXArgs + clangArgsSpecificForKonanSources).asList()
 
     @Deprecated("args for building runtime moved to runtime building code")
+    @Suppress("DEPRECATION")
     val clangArgsForKonanCSources =
             (clangArgs + clangArgsSpecificForKonanSources).asList()
 

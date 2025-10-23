@@ -22,19 +22,15 @@ import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.PlatformManagerPlugin
+import org.jetbrains.kotlin.clangArgs
 import org.jetbrains.kotlin.cpp.*
 import org.jetbrains.kotlin.cpp.ClangFrontend
 import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
 import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.konan.target.SanitizerKind
-import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
-import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
-import org.jetbrains.kotlin.konan.target.enabledTargets
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
+import org.jetbrains.kotlin.resolveLlvmUtility
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
 import org.jetbrains.kotlin.utils.capitalized
 import java.time.Duration
@@ -148,18 +144,6 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         project.executorsClasspathConfiguration()
     }
 
-    // TODO: These should be set by the plugin users.
-    private val DEFAULT_CPP_FLAGS = listOfNotNull(
-            "-gdwarf-2".takeIf { project.kotlinBuildProperties.getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false) },
-            "-std=c++17",
-            "-Werror",
-            "-O2",
-            "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
-            "-Wall",
-            "-Wextra",
-            "-Wno-unused-parameter",  // False positives with polymorphic functions.
-    )
-
     private val allTestsTasks by lazy {
         val name = project.name.capitalized
         val platformManager = project.extensions.getByType<PlatformManager>()
@@ -225,7 +209,6 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
         private val compilationDatabase = project.extensions.getByType<CompilationDatabaseExtension>()
         private val platformManager = project.extensions.getByType<PlatformManager>()
-        private val execClang = ExecClang.create(project.objects, platformManager)
         private val nativeDependencies = project.extensions.getByType<NativeDependenciesExtension>()
 
         private val allCompilerArgs = module.compilerArgs.map {
@@ -266,7 +249,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 entry {
                     directory.set(module.compilerWorkingDirectory)
                     files.setFrom(this@SourceSet.inputFiles)
-                    arguments.set(listOf(execClang.resolveExecutable(module.compiler.get())))
+                    arguments.set(listOf(platformManager.resolveLlvmUtility(module.compiler.get())))
                     val headers = project.objects.cppHeadersSet().apply {
                         workingDir.set(module.compilerWorkingDirectory)
                         from(this@SourceSet.inputFiles.dir)
@@ -274,7 +257,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     }
                     arguments.addAll(ClangFrontend.defaultCompilerFlags(headers))
                     arguments.addAll(allCompilerArgs)
-                    arguments.addAll(execClang.clangArgsForCppRuntime(target.name, module.compiler.get()))
+                    arguments.addAll(platformManager.clangArgs(target, module.compiler.get()))
                     output.set(this@SourceSet.outputDirectory.map { it.asFile.absolutePath })
                 }
                 task.configure {
@@ -544,13 +527,84 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             }
         }
 
+    private val fixBrokenMacroExpansionInXcode15_3: List<String>
+        get() {
+            return when (target) {
+                KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
+                    "TARGET_OS_OSX" to "1",
+                )
+                KonanTarget.IOS_ARM64 -> hashMapOf(
+                    "TARGET_OS_EMBEDDED" to "1",
+                    "TARGET_OS_IPHONE" to "1",
+                    "TARGET_OS_IOS" to "1",
+                )
+                KonanTarget.TVOS_ARM64 -> hashMapOf(
+                    "TARGET_OS_EMBEDDED" to "1",
+                    "TARGET_OS_IPHONE" to "1",
+                    "TARGET_OS_TV" to "1",
+                )
+                KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+                    "TARGET_OS_EMBEDDED" to "1",
+                    "TARGET_OS_IPHONE" to "1",
+                    "TARGET_OS_WATCH" to "1",
+                )
+                else -> emptyMap()
+            }.map { "-D${it.key}=${it.value}" }
+        }
+
+    private val clangArgsSpecificForKonanSources: List<String>
+        get() {
+            val konanOptions = listOfNotNull(
+                    target.architecture.name.takeIf { target != KonanTarget.WATCHOS_ARM64 },
+                    "ARM32".takeIf { target == KonanTarget.WATCHOS_ARM64 },
+                    target.family.name.takeIf { target.family != Family.MINGW },
+                    "WINDOWS".takeIf { target.family == Family.MINGW },
+                    "MACOSX".takeIf { target.family == Family.OSX },
+                    "APPLE".takeIf { target.family.isAppleFamily },
+
+                    "NO_64BIT_ATOMIC".takeUnless { target.supports64BitAtomics() },
+                    "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },
+                    "FORBID_BUILTIN_MUL_OVERFLOW".takeUnless { target.supports64BitMulOverflow() },
+
+                    "OBJC_INTEROP".takeIf { target.supportsObjcInterop() },
+                    "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
+                    "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
+                    "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
+                    "SUPPORTS_GRAND_CENTRAL_DISPATCH".takeIf { target.supportsGrandCentralDispatch },
+                    "SUPPORTS_SIGNPOSTS".takeIf { target.supportsSignposts },
+            ).map { "KONAN_$it=1" }
+            val otherOptions = listOfNotNull(
+                    "USE_ELF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.ELF },
+                    "ELFSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.ELF },
+                    "MACHSIZE=${target.pointerBits()}".takeIf { target.binaryFormat() == BinaryFormat.MACH_O },
+                    "__ANDROID__".takeIf { target.family == Family.ANDROID },
+                    "USE_PE_COFF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.PE_COFF },
+                    "UNICODE".takeIf { target.family == Family.MINGW },
+                    "USE_WINAPI_UNWIND=1".takeIf { target.supportsWinAPIUnwind() },
+                    "USE_GCC_UNWIND=1".takeIf { target.supportsGccUnwind() }
+            )
+            return (konanOptions + otherOptions).map { "-D$it" } + fixBrokenMacroExpansionInXcode15_3
+        }
+
+        // TODO: These should be set by the plugin users.
+        private val DEFAULT_CPP_FLAGS = listOfNotNull(
+                "-gdwarf-2".takeIf { project.kotlinBuildProperties.getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false) },
+                "-std=c++17",
+                "-Werror",
+                "-O2",
+                "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
+                "-Wall",
+                "-Wextra",
+                "-Wno-unused-parameter",  // False positives with polymorphic functions.
+        ) + clangArgsSpecificForKonanSources
+
         private val modules: NamedDomainObjectContainer<Module> = project.objects.polymorphicDomainObjectContainer(Module::class.java).apply {
             registerFactory(Module::class.java) {
                 project.objects.newInstance<Module>(owner, it, _target).apply {
                     this.srcRoot.convention(project.layout.projectDirectory.dir("src/$name"))
                     this.headersDirs.from(this.srcRoot.dir("cpp"))
                     this.compiler.convention("clang++")
-                    this.compilerArgs.set(owner.DEFAULT_CPP_FLAGS)
+                    this.compilerArgs.set(DEFAULT_CPP_FLAGS)
                     this.compilerWorkingDirectory.set(project.layout.projectDirectory.dir("src"))
                 }
             }

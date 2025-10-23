@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.gradle.utils.named
  *
  * All these tasks belong to the same report variant.
  */
-internal class AbiValidationTaskSet(project: Project, variantName: String) {
+internal class AbiValidationTaskSet(project: Project) {
     private val legacyDumpTaskProvider =
-        project.tasks.named<KotlinAbiDumpTaskImpl>(KotlinAbiDumpTaskImpl.nameForVariant(variantName))
+        project.tasks.named<KotlinAbiDumpTaskImpl>(KotlinAbiDumpTaskImpl.NAME)
     private val legacyCheckDumpTaskProvider =
-        project.tasks.named<KotlinAbiCheckTaskImpl>(KotlinAbiCheckTaskImpl.nameForVariant(variantName))
+        project.tasks.named<KotlinAbiCheckTaskImpl>(KotlinAbiCheckTaskImpl.NAME)
 
     /**
      * Add declarations for the JVM target when no other JVM targets are present.

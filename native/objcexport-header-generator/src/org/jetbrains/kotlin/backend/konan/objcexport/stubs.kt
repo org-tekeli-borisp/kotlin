@@ -48,7 +48,7 @@ abstract class ObjCTopLevel : ObjCExportStub
 
 class ObjCNativeEnum(
     override val name: String,
-    val literals: List<String>,
+    val literals: List<ObjcExportNativeEnumEntryName>,
 ) : ObjCExportStub {
     override val comment: ObjCComment?
         get() = null

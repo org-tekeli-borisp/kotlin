@@ -39,9 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 typedef NS_ENUM(int32_t, OBJCFoo) {
-  OBJCFooA = 0,
-  OBJCFooB = 1,
-  OBJCFooC = 2,
+  OBJCFooA NS_SWIFT_NAME(a) = 0,
+  OBJCFooB NS_SWIFT_NAME(b) = 1,
+  OBJCFooC NS_SWIFT_NAME(c) = 2,
 };
 
 

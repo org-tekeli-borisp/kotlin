@@ -103,7 +103,7 @@ interface ObjCExportNamer {
     fun getNSEnumFunctionTypeName(descriptor: ClassDescriptor): String? =
         descriptor.annotations.findAnnotation(FqName("kotlin.native.ObjCEnum"))?.let {
             val name = it.allValueArguments.entries.find { it.key.asString() == "name" }?.value?.value?.toString()
-            name ?: "${getClassOrProtocolName(descriptor).objCName}Enum"
+            name ?: "${getClassOrProtocolName(descriptor).objCName}_Enum"
         }
 
     companion object {

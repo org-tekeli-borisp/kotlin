@@ -6,9 +6,9 @@ private func testNativeEnumValues() throws {
     let nsEnum = ktEnum.toNSEnum()
 
     switch(nsEnum) {
-        case .A: try assertEquals(actual: nsEnum, expected: ktEnum.toNSEnum())
-        case .B: try fail()
-        case .C: try fail()
+        case .a: try assertEquals(actual: nsEnum, expected: ktEnum.toNSEnum())
+        case .b: try fail()
+        case .c: try fail()
     }
 }
 

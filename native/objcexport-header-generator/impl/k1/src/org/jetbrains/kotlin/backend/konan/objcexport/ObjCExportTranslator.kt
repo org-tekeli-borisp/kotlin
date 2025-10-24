@@ -291,16 +291,20 @@ class ObjCExportTranslatorImpl(
                 ClassKind.ENUM_CLASS -> {
                     val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCRootExportScope)
 
-                    namer.getNSEnumFunctionTypeName(descriptor)?.let { nsEnumName ->
+                    namer.getNSEnumFunctionTypeName(descriptor)?.let { nsEnumTypeName ->
                         auxiliaryDeclarations.add(
-                            ObjCNativeEnum(nsEnumName, descriptor.enumEntries.map { it.name.asString() } ))
+                            ObjCNativeEnum(nsEnumTypeName, descriptor.enumEntries.map {
+                                ObjcExportNativeEnumEntryName(
+                                    objCName = namer.getEnumEntrySelector(it).replaceFirstChar { it.uppercaseChar() },
+                                    swiftName = namer.getEnumEntrySwiftName(it))
+                            } ))
 
                         add {
                             ObjCMethod(
                                 null,
                                 null,
                                 true,
-                                ObjCRawType(nsEnumName),
+                                ObjCRawType(nsEnumTypeName),
                                 listOf("toNSEnum"),
                                 emptyList<ObjCParameter>(),
                                 emptyList()

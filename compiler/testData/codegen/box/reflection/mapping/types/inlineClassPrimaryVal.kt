@@ -58,8 +58,7 @@ fun box(): String {
 
     assertEquals("[class test.ZZ]",  ZZ::x.getJavaTypesOfParams())
 
-    // KT-28170
-    assertEquals("int",         ZZ::x.getJavaTypeOfResult())
+    assertEquals("class test.Z1",         ZZ::x.getJavaTypeOfResult())
 
     return "OK"
 }

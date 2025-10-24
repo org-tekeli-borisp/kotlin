@@ -139,10 +139,10 @@ class Fir2IrDataClassMembersGenerator(
             return result
         }
 
-        private fun calculateSyntheticFirFunctions(): Map<Name, FirSimpleFunction> {
+        private fun calculateSyntheticFirFunctions(): Map<Name, FirNamedFunction> {
             val scope = klass.unsubstitutedScope()
             val contributedSyntheticFunctions =
-                buildMap<Name, FirSimpleFunction> {
+                buildMap<Name, FirNamedFunction> {
                     for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
                         scope.processFunctionsByName(name) {
                             // We won't synthesize a function if there is a user-contributed (non-synthetic) one.
@@ -161,7 +161,7 @@ class Fir2IrDataClassMembersGenerator(
 
         private fun createSyntheticIrFunctionFromAny(
             name: Name,
-            syntheticCounterpart: FirSimpleFunction,
+            syntheticCounterpart: FirNamedFunction,
             returnType: IrType,
             otherParameterNeeded: Boolean = false,
             isOperator: Boolean = false,
@@ -294,7 +294,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                 requireNotNull(irValueParameter)
                 // `irClass` is a source class and definitely is not a lazy class
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
-                return irClass.properties.single { irProperty ->
+                return irClass.properties.first { irProperty ->
                     irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
                 }
             }

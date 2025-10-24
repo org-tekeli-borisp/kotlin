@@ -197,7 +197,11 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
                         ),
-                        configuration = "commonFakeApiElements-published",
+                        configuration = if (gradleVersion < GradleVersion.version("8.0")) {
+                            "commonFakeApiElements-published"
+                        } else {
+                            "fallbackVariant_KT-81412"
+                        },
                     ),
                     "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(
@@ -310,7 +314,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                     binaryCoordinates(Regex(".*kotlin-dom-api-compat.*")),
                     dependsOnDependency(":consumer/commonMain"),
                     dependsOnDependency(":consumer/webMain"),
-                    projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/producer-js.klib")),
+                    projectArtifactDependency(Regular, ":producer", FilePathRegex(".*/producer/build/classes/kotlin/js/main")),
                 )
             }
         }

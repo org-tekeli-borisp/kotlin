@@ -33,6 +33,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.directJavaActualization = from.directJavaActualization
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disablePhases = from.disablePhases?.copyOf()
+    to.dontSortSourceFiles = from.dontSortSourceFiles
     to.dontWarnOnErrorSuppression = from.dontWarnOnErrorSuppression
     to.dumpArgumentsDir = from.dumpArgumentsDir
     to.dumpDirectory = from.dumpDirectory
@@ -47,6 +48,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.fragmentRefines = from.fragmentRefines?.copyOf()
     to.fragmentSources = from.fragmentSources?.copyOf()
     to.fragments = from.fragments?.copyOf()
+    to.headerMode = from.headerMode
     to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
     to.incrementalCompilation = from.incrementalCompilation
     to.inlineClasses = from.inlineClasses
@@ -55,6 +57,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.languageVersion = from.languageVersion
     to.lenientMode = from.lenientMode
     to.listPhases = from.listPhases
+    to.localTypeAliases = from.localTypeAliases
     to.manuallyConfiguredFeatures = from.manuallyConfiguredFeatures?.copyOf()
     to.metadataKlib = from.metadataKlib
     to.metadataVersion = from.metadataVersion

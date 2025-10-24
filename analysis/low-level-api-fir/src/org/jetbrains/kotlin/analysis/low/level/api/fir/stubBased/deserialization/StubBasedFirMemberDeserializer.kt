@@ -529,13 +529,13 @@ internal class StubBasedFirMemberDeserializer(
         classSymbol: FirClassSymbol<*>? = null,
         session: FirSession,
         existingSymbol: FirNamedFunctionSymbol? = null,
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         val callableName = function.nameAsSafeName
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
         val symbol = existingSymbol ?: FirNamedFunctionSymbol(callableId)
         val local = c.childContext(function, containingDeclarationSymbol = symbol)
 
-        val simpleFunction = buildSimpleFunction {
+        val simpleFunction = buildNamedFunction {
             moduleData = c.moduleData
             origin = initialOrigin
             source = KtRealPsiSourceElement(function)

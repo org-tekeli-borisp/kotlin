@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
-import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * - It's not designed to work with the JVM backend because the visibility rules on JVM are stricter.
  * - By the point it's executed, all _private_ inline functions have already been inlined.
  */
-@PhaseDescription("SyntheticAccessorLowering")
 class SyntheticAccessorLowering(private val context: LoweringContext, isExecutedOnFirstPhase: Boolean = false) : FileLoweringPass {
     /**
      * Whether the visibility of a generated accessor should be narrowed from _public_ to _internal_ if an accessor is only used
@@ -47,6 +45,13 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
      * This "narrowing" is supposed to be used only during the first phase of compilation.
      */
     private val narrowAccessorVisibilities = isExecutedOnFirstPhase
+
+    /**
+     * Warnings about created synthetic accessors are only meaningful to library's author, to help maintain its ABI.
+     * When accessors are created while consuming a library (the second stage), there is nothing that the user should worry about,
+     * plus nothing they can do about them.
+     */
+    private val emitExplicitApiModeWarnings = isExecutedOnFirstPhase
 
     private val accessorGenerator = KlibSyntheticAccessorGenerator(context)
 
@@ -253,6 +258,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
     }
 
     private fun emitWarningForPublicAccessorsInExplicitAPIMode(accessors: Collection<GeneratedAccessor>, irFile: IrFile) {
+        if (!emitExplicitApiModeWarnings) return
         val explicitApiMode = context.configuration.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
         if (explicitApiMode == ExplicitApiMode.DISABLED) return
 

@@ -32,7 +32,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         // setup phase config for the second compilation stage (Wasm codegen)
         if (arguments.includes != null) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
-                if (arguments.listPhases) it.list(getWasmLowerings(configuration, isIncremental = false))
+                if (arguments.listPhases) it.list(getWasmLowerings(configuration, disableCrossFileOptimisations = false))
             }
         }
     }
@@ -48,11 +48,19 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
         configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
-        configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, arguments.wasmUseNewExceptionProposal)
+
+        val wasmTarget = arguments.wasmTarget?.let(WasmTarget::fromName)
+
+        configuration.put(
+            WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL,
+            (arguments.wasmUseNewExceptionProposal ?: (wasmTarget == WasmTarget.WASI))
+        )
+
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, arguments.wasmNoJsTag)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, arguments.generateDwarf)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, arguments.forceDebugFriendlyCompilation)
-        configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
+        configuration.put(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY, arguments.wasmIncludedModuleOnly)
+        configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, wasmTarget)
         configuration.putIfNotNull(WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE, arguments.irDceDumpDeclarationIrSizesToFile)
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
     }

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.artifacts
 
+import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.internal.tasks.ProducesKlib
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttrib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UKLIB_API_ELEMENTS_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.maybeCreateUklibApiElements
+import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.maybeCreateUklibRuntimeElements
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.wasmDecamelizedDefaultNameOrNul
 import org.jetbrains.kotlin.gradle.utils.decamelize
 import org.jetbrains.kotlin.gradle.utils.libsDirectory
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
+import org.jetbrains.kotlin.gradle.utils.registerKlibArtifact
 
 internal val KotlinJsKlibArtifact = KotlinTargetArtifact { target, apiElements, runtimeElements ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetArtifact
@@ -40,15 +44,24 @@ internal val KotlinJsKlibArtifact = KotlinTargetArtifact { target, apiElements, 
         }
     }
 
-    val artifact = target.createPublishArtifact(jsKlibTask, KLIB_TYPE, apiElements, runtimeElements)
+    target.createPublishArtifact(jsKlibTask, KLIB_TYPE, apiElements, runtimeElements)
+
+    val klibProducingTask = mainCompilation.compileTaskProvider as TaskProvider<out ProducesKlib>
 
     when (target.project.kotlinPropertiesProvider.kmpPublicationStrategy) {
         KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication -> {
             val uklibAttribute = target.uklibFragmentPlatformAttribute.convertToStringForPublicationInUmanifest()
-            target.project.maybeCreateUklibApiElements().outgoing.variants {
-                it.create(uklibAttribute) {
-                    it.artifact(artifact)
-                    it.attributes {
+            listOf(
+                mainCompilation.project.maybeCreateUklibApiElements(),
+                mainCompilation.project.maybeCreateUklibRuntimeElements(),
+            ).forEach {
+                it.outgoing.variants {
+                    val variant = it.maybeCreate(uklibAttribute)
+                    variant.registerKlibArtifact(
+                        klibProducingTask.map { it.klibOutput },
+                        mainCompilation.compilationName,
+                    )
+                    variant.attributes {
                         it.attribute(uklibStateAttribute, uklibStateDecompressed)
                         it.attribute(uklibViewAttribute, uklibAttribute)
                     }

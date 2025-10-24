@@ -541,6 +541,21 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             setLazyPublishedVisibility(c.session)
             getter?.setLazyPublishedVisibility(annotations, this, c.session)
             setter?.setLazyPublishedVisibility(annotations, this, c.session)
+            // Contract deserialization needs access to the property FIR, therefore these contracts deserialized after building the property
+            getter?.let {
+                if (proto.hasGetterContract()) {
+                    contractDeserializer.loadContract(proto.getterContract, it)?.let { contract ->
+                        it.replaceContractDescription(contract)
+                    }
+                }
+            }
+            setter?.let {
+                if (proto.hasSetterContract()) {
+                    contractDeserializer.loadContract(proto.setterContract, it)?.let { contract ->
+                        it.replaceContractDescription(contract)
+                    }
+                }
+            }
         }
     }
 
@@ -602,7 +617,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         classSymbol: FirClassSymbol<*>? = null,
         // TODO: introduce the similar changes for the other deserialized entities
         deserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
         val receiverAnnotations = if (proto.hasReceiver()) {
@@ -619,7 +634,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val local = c.childContext(proto.typeParameterList, containingDeclarationSymbol = symbol)
 
         val versionRequirements = VersionRequirement.create(proto, c)
-        val simpleFunction = buildSimpleFunction {
+        val namedFunction = buildNamedFunction {
             moduleData = c.moduleData
             origin = deserializationOrigin
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
@@ -688,12 +703,12 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
         if (proto.hasContract()) {
             val contractDeserializer = if (proto.typeParameterList.isEmpty()) this.contractDeserializer else FirContractDeserializer(local)
-            val contractDescription = contractDeserializer.loadContract(proto.contract, simpleFunction)
+            val contractDescription = contractDeserializer.loadContract(proto.contract, namedFunction)
             if (contractDescription != null) {
-                simpleFunction.replaceContractDescription(contractDescription)
+                namedFunction.replaceContractDescription(contractDescription)
             }
         }
-        return simpleFunction
+        return namedFunction
     }
 
     fun loadConstructor(

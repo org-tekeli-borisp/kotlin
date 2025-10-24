@@ -37,36 +37,20 @@ internal val UklibPublicationSetupAction = KotlinProjectSetupAction {
          */
         project.reportDiagnostic(
             KotlinToolingDiagnostics.UklibPublicationWithoutCrossCompilation(
-                severity = if (HostManager.hostIsMac) WARNING else ERROR
+                severity = WARNING
             ).get()
         )
     }
 
     project.registerOutgoingUklibVariants(kotlinSoftwareComponent)
     project.changeRootComponentPackaging()
+    project.rewritePomForKotlinDomApiCompat()
 
     /**
      * Check that KGP model is compliant with Uklib limitations; this function does validations as a side effect
      */
     project.launch {
         project.multiplatformExtension.validateKgpModelIsUklibCompliantAndCreateKgpFragments()
-    }
-
-    /**
-     * Cinterop and commonized metadata uklib publication is not yet ready. For now prohibit publishing uklibs if cinterops were declared
-     */
-    project.multiplatformExtension.targets.matching {
-        it is KotlinNativeTarget
-    }.all { target ->
-        target as KotlinNativeTarget
-        target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.all { interop ->
-            project.reportDiagnostic(
-                KotlinToolingDiagnostics.UklibPublicationWithCinterops(
-                    target.targetName,
-                    interop.name,
-                )
-            )
-        }
     }
 }
 

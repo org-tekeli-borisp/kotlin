@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
+import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.attributeValueByName
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
@@ -30,7 +32,6 @@ import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 
 internal const val UKLIB_API_ELEMENTS_NAME = "uklibApiElements"
 internal const val UKLIB_RUNTIME_ELEMENTS_NAME = "uklibRuntimeElements"
-private const val UKLIB_IDE_METADATA_ELEMENTS_NAME = "uklibIdeMetadataElements"
 
 internal const val UKLIB_JAVA_API_ELEMENTS_STUB_NAME = "javaApiElements"
 internal const val UKLIB_JAVA_RUNTIME_ELEMENTS_STUB_NAME = "javaRuntimeElements"
@@ -67,6 +68,7 @@ internal fun Project.locateOrRegisterUklibManifestSerializationWithoutCompilatio
 }
 
 internal fun Project.maybeCreateUklibApiElements() = configurations.maybeCreateConsumable(UKLIB_API_ELEMENTS_NAME)
+internal fun Project.maybeCreateUklibRuntimeElements() = configurations.maybeCreateConsumable(UKLIB_RUNTIME_ELEMENTS_NAME)
 
 private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
     archiveTask: TaskProvider<ArchiveUklibTask>,
@@ -82,6 +84,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
             attribute(isUklib, isUklibTrue)
         }
         inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
+        isVisible = false
     }
 
     val metadataCompilations = publishedCompilations.filter { it.compilation.platformType == KotlinPlatformType.common }
@@ -113,13 +116,14 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
         }
     }
 
-    val uklibRuntimeElements = configurations.maybeCreateConsumable(UKLIB_RUNTIME_ELEMENTS_NAME).apply {
+    val uklibRuntimeElements = maybeCreateUklibRuntimeElements().apply {
         attributes.apply {
             attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_UKLIB_RUNTIME))
             attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             attribute(isUklib, isUklibTrue)
         }
         inheritRuntimeDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
+        isVisible = false
     }
 
     /**
@@ -159,18 +163,14 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
      * usages here or create them using a shared execution path without the copypasted code below when jvm target is not present
      */
     val jvmTarget = project.multiplatformExtension.awaitTargets().singleOrNull { it is KotlinJvmTarget }
-    if (jvmTarget != null) {
-        val kotlinTargetComponent = jvmTarget.components.single() as KotlinTargetSoftwareComponentImpl
-        // FIXME: KT-76687
-        @Suppress("UNCHECKED_CAST")
-        variants += kotlinTargetComponent.kotlinComponent.internal.usages as Set<DefaultKotlinUsageContext>
-    } else {
+    if (jvmTarget == null) {
         // FIXME: Test that stubJvmVariant inherits dependencies from relevant configurations
         val jar = stubJvmJarTask()
         configurations.createConsumable(UKLIB_JAVA_API_ELEMENTS_STUB_NAME) {
             attributes.apply {
                 attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_API))
                 attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.attributeValueByName(TargetJvmEnvironment.STANDARD_JVM))
             }
             inheritCompilationDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
         }
@@ -178,6 +178,7 @@ private suspend fun Project.createOutgoingUklibConfigurationsAndUsages(
             attributes.apply {
                 attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(Usage.JAVA_RUNTIME))
                 attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.attributeValueByName(TargetJvmEnvironment.STANDARD_JVM))
             }
             inheritRuntimeDependenciesFromPublishedCompilations(publishedCompilations.map { it.compilation })
         }
@@ -235,6 +236,14 @@ private fun Configuration.inheritRuntimeDependenciesFromPublishedCompilations(
     publishedCompilations.forEach {
         it.internal.configurations.runtimeDependencyConfiguration?.let {
             extendsFrom(it)
+        }
+        /**
+         * If K/N is one of the published compilations, we must promote its compile dependencies dependencies to runtime
+         *
+         * FIXME: Remove this extendsFrom after OSIP-667
+         */
+        if (it is KotlinNativeCompilation) {
+            extendsFrom(it.internal.configurations.compileDependencyConfiguration)
         }
     }
 }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPERIMENTAL_TRY_NEXT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_GENERATE_COMPILER_REF_INDEX
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INCREMENTAL_FIR
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_ADD_CLASSES_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_IGNORE_WARNING_MODE
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_FILTER_RESOURCES_BY_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ENABLE_UKLIBS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
@@ -194,12 +196,19 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kmpPublicationStrategy: KmpPublicationStrategy
         get() = this.get(KOTLIN_KMP_PUBLICATION_STRATEGY)?.let {
             KmpPublicationStrategy.fromProperty(it)
-        } ?: KmpPublicationStrategy.StandardKMPPublication
+        } ?: if (enableUKlibs)
+            KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication
+        else KmpPublicationStrategy.StandardKMPPublication
 
     val kmpResolutionStrategy: KmpResolutionStrategy
         get() = this.get(KOTLIN_KMP_RESOLUTION_STRATEGY)?.let {
             KmpResolutionStrategy.fromProperty(it)
-        } ?: KmpResolutionStrategy.StandardKMPResolution
+        } ?: if (enableUKlibs)
+            KmpResolutionStrategy.InterlibraryUklibAndPSMResolution_PreferUklibs
+        else KmpResolutionStrategy.StandardKMPResolution
+
+    private val enableUKlibs: Boolean
+        get() = booleanProperty(KOTLIN_KMP_ENABLE_UKLIBS) ?: false
 
     // Throw in IDE resolvers instead of just printing them
     val strictResolveIdeDependencies: Boolean
@@ -409,7 +418,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS) ?: false
 
     val runKotlinCompilerViaBuildToolsApi: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(false)
+        get() = booleanProvider(KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
+
+    val generateCompilerRefIndex: Provider<Boolean>
+        get() = booleanProvider(KOTLIN_GENERATE_COMPILER_REF_INDEX).orElse(false)
 
     val allowLegacyMppDependencies: Boolean
         get() = booleanProperty(KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES) ?: false
@@ -631,6 +643,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val ignoreTcsmOverflow: Provider<Boolean> = booleanProvider(IGNORE_TCSM_OVERFLOW).orElse(false)
 
+    val isFunctionalTestMode: Boolean
+        get() = booleanProperty(PropertyNames.FUNCTIONAL_TEST_MODE_PROPERTY) ?: false
+
     /**
      * Affects classpath snapshot transformation.
      *
@@ -721,6 +736,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING = property("kotlin.options.suppressFreeCompilerArgsModificationWarning")
         val KOTLIN_JVM_ADD_CLASSES_VARIANT = property("kotlin.jvm.addClassesVariant")
         val KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.compiler.runViaBuildToolsApi")
+        val KOTLIN_GENERATE_COMPILER_REF_INDEX = property("kotlin.compiler.generateCompilerRefIndex")
         val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = property("kotlin.mpp.allow.legacy.dependencies")
         val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = property("kotlin.publishJvmEnvironmentAttribute")
         val KOTLIN_EXPERIMENTAL_TRY_NEXT = property("kotlin.experimental.tryNext")
@@ -742,6 +758,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED = property("kotlin.build.archivesTaskOutputAsFriendModule")
         val KOTLIN_KMP_PUBLICATION_STRATEGY = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.kmpPublicationStrategy")
         val KOTLIN_KMP_RESOLUTION_STRATEGY = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.kmpResolutionStrategy")
+        val KOTLIN_KMP_ENABLE_UKLIBS = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.enableUKlibs")
         val KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.strictResolveIdeDependencies")
         val KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT = property("kotlin.kmp.isolated-projects.support")
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
@@ -774,6 +791,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val ABI_VALIDATION_BANNED_TARGETS = property(ABI_VALIDATION_BANNED_TARGETS_NAME)
         val ABI_VALIDATION_DISABLED = property(ABI_VALIDATION_DISABLED_NAME)
         val KOTLIN_PARSE_INLINED_LOCAL_CLASSES = property("$KOTLIN_INTERNAL_NAMESPACE.classpathSnapshot.parseInlinedLocalClasses")
+
+        val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
     }
 
     companion object {

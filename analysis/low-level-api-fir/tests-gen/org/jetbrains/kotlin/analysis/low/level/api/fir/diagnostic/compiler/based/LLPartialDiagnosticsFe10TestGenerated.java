@@ -111,6 +111,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("annotatedClassWithFactoryFunctionAsGenericFunctionBody.kt")
+    public void testAnnotatedClassWithFactoryFunctionAsGenericFunctionBody() {
+      runTest("compiler/testData/diagnostics/tests/annotatedClassWithFactoryFunctionAsGenericFunctionBody.kt");
+    }
+
+    @Test
     @TestMetadata("annotationArgumentWithAliasedArrayType.kt")
     public void testAnnotationArgumentWithAliasedArrayType() {
       runTest("compiler/testData/diagnostics/tests/annotationArgumentWithAliasedArrayType.kt");
@@ -312,6 +318,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     @TestMetadata("companionObjectInEnumAccess.kt")
     public void testCompanionObjectInEnumAccess() {
       runTest("compiler/testData/diagnostics/tests/companionObjectInEnumAccess.kt");
+    }
+
+    @Test
+    @TestMetadata("companionObjectWithFactoryMethodInsideLocalClassOfGenericFunction.kt")
+    public void testCompanionObjectWithFactoryMethodInsideLocalClassOfGenericFunction() {
+      runTest("compiler/testData/diagnostics/tests/companionObjectWithFactoryMethodInsideLocalClassOfGenericFunction.kt");
     }
 
     @Test
@@ -1473,6 +1485,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("nestedInnerObjectCapturesOuterTypeParameters.kt")
+    public void testNestedInnerObjectCapturesOuterTypeParameters() {
+      runTest("compiler/testData/diagnostics/tests/nestedInnerObjectCapturesOuterTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("noLibraryProvidersDuplication.kt")
     public void testNoLibraryProvidersDuplication() {
       runTest("compiler/testData/diagnostics/tests/noLibraryProvidersDuplication.kt");
@@ -1734,6 +1752,24 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     @TestMetadata("ProcessingEmptyImport.kt")
     public void testProcessingEmptyImport() {
       runTest("compiler/testData/diagnostics/tests/ProcessingEmptyImport.kt");
+    }
+
+    @Test
+    @TestMetadata("prohibitInheritingAnnotaitonsDirectly.kt")
+    public void testProhibitInheritingAnnotaitonsDirectly() {
+      runTest("compiler/testData/diagnostics/tests/prohibitInheritingAnnotaitonsDirectly.kt");
+    }
+
+    @Test
+    @TestMetadata("prohibitInheritingAnnotaitonsIndirectly.kt")
+    public void testProhibitInheritingAnnotaitonsIndirectly() {
+      runTest("compiler/testData/diagnostics/tests/prohibitInheritingAnnotaitonsIndirectly.kt");
+    }
+
+    @Test
+    @TestMetadata("prohibitInheritingAnnotaitonsIndirectly_Off.kt")
+    public void testProhibitInheritingAnnotaitonsIndirectly_Off() {
+      runTest("compiler/testData/diagnostics/tests/prohibitInheritingAnnotaitonsIndirectly_Off.kt");
     }
 
     @Test
@@ -7096,6 +7132,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("reifiedWithoutUpperBound.kt")
+      public void testReifiedWithoutUpperBound() {
+        runTest("compiler/testData/diagnostics/tests/classLiteral/reifiedWithoutUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("reifiedWithoutUpperBoundAfter.kt")
+      public void testReifiedWithoutUpperBoundAfter() {
+        runTest("compiler/testData/diagnostics/tests/classLiteral/reifiedWithoutUpperBoundAfter.kt");
+      }
+
+      @Test
       @TestMetadata("simpleClassLiteral.kt")
       public void testSimpleClassLiteral() {
         runTest("compiler/testData/diagnostics/tests/classLiteral/simpleClassLiteral.kt");
@@ -7332,6 +7380,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("arrayLiteralsInCallsReturningAnnotations.kt")
+      public void testArrayLiteralsInCallsReturningAnnotations() {
+        runTest("compiler/testData/diagnostics/tests/collectionLiterals/arrayLiteralsInCallsReturningAnnotations.kt");
+      }
+
+      @Test
       @TestMetadata("basicCollectionLiterals.kt")
       public void testBasicCollectionLiterals() {
         runTest("compiler/testData/diagnostics/tests/collectionLiterals/basicCollectionLiterals.kt");
@@ -7558,6 +7612,54 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("typeAliasToUnsigned.kt")
         public void testTypeAliasToUnsigned() {
           runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/typeAliasToUnsigned.kt");
+        }
+
+        @Test
+        @TestMetadata("uByteOperations_after.kt")
+        public void testUByteOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uByteOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("uByteOperations_before.kt")
+        public void testUByteOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uByteOperations_before.kt");
+        }
+
+        @Test
+        @TestMetadata("uIntOperations_after.kt")
+        public void testUIntOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uIntOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("uIntOperations_before.kt")
+        public void testUIntOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uIntOperations_before.kt");
+        }
+
+        @Test
+        @TestMetadata("uLongOperations_after.kt")
+        public void testULongOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uLongOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("uLongOperations_before.kt")
+        public void testULongOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uLongOperations_before.kt");
+        }
+
+        @Test
+        @TestMetadata("uShortOperations_after.kt")
+        public void testUShortOperations_after() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uShortOperations_after.kt");
+        }
+
+        @Test
+        @TestMetadata("uShortOperations_before.kt")
+        public void testUShortOperations_before() {
+          runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/uShortOperations_before.kt");
         }
 
         @Test
@@ -7893,6 +7995,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("invokeWithReceiverAgainstContextFunctionTypeContextDisabled.kt")
       public void testInvokeWithReceiverAgainstContextFunctionTypeContextDisabled() {
         runTest("compiler/testData/diagnostics/tests/contextParameters/invokeWithReceiverAgainstContextFunctionTypeContextDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("localDeclsDisambiguation.kt")
+      public void testLocalDeclsDisambiguation() {
+        runTest("compiler/testData/diagnostics/tests/contextParameters/localDeclsDisambiguation.kt");
       }
 
       @Test
@@ -17822,9 +17930,45 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("classesAndPropertiesAsExpressions.kt")
+      public void testClassesAndPropertiesAsExpressions() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/classesAndPropertiesAsExpressions.kt");
+      }
+
+      @Test
       @TestMetadata("controlStructuresErrors.kt")
       public void testControlStructuresErrors() {
         runTest("compiler/testData/diagnostics/tests/incompleteCode/controlStructuresErrors.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArguments.kt")
+      public void testEmptyArguments() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArguments.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArgumentsInArrayAccess.kt")
+      public void testEmptyArgumentsInArrayAccess() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArgumentsInArrayAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArgumentsInArrayLiterals.kt")
+      public void testEmptyArgumentsInArrayLiterals() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArgumentsInArrayLiterals.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyArgumentsInConstructors.kt")
+      public void testEmptyArgumentsInConstructors() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyArgumentsInConstructors.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyNamedAndSpreadArguments.kt")
+      public void testEmptyNamedAndSpreadArguments() {
+        runTest("compiler/testData/diagnostics/tests/incompleteCode/emptyNamedAndSpreadArguments.kt");
       }
 
       @Test
@@ -18484,6 +18628,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("inferredToProjectionInsteadOfParameter.kt")
+      public void testInferredToProjectionInsteadOfParameter() {
+        runTest("compiler/testData/diagnostics/tests/inference/inferredToProjectionInsteadOfParameter.kt");
+      }
+
+      @Test
       @TestMetadata("intersectionTypeMultipleBoundsAsReceiver.kt")
       public void testIntersectionTypeMultipleBoundsAsReceiver() {
         runTest("compiler/testData/diagnostics/tests/inference/intersectionTypeMultipleBoundsAsReceiver.kt");
@@ -18745,6 +18895,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("lambdaParameterTypeInElvis.kt")
       public void testLambdaParameterTypeInElvis() {
         runTest("compiler/testData/diagnostics/tests/inference/lambdaParameterTypeInElvis.kt");
+      }
+
+      @Test
+      @TestMetadata("lambdasWithExplicitParametersViaReceivers.kt")
+      public void testLambdasWithExplicitParametersViaReceivers() {
+        runTest("compiler/testData/diagnostics/tests/inference/lambdasWithExplicitParametersViaReceivers.kt");
       }
 
       @Test
@@ -19817,6 +19973,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("anonymousFunctionAsRunArgumentInAssignment.kt")
+        public void testAnonymousFunctionAsRunArgumentInAssignment() {
+          runTest("compiler/testData/diagnostics/tests/inference/completion/anonymousFunctionAsRunArgumentInAssignment.kt");
+        }
+
+        @Test
         @TestMetadata("basic.kt")
         public void testBasic() {
           runTest("compiler/testData/diagnostics/tests/inference/completion/basic.kt");
@@ -20596,6 +20758,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("allowBigIncorporatedConstraints.kt")
         public void testAllowBigIncorporatedConstraints() {
           runTest("compiler/testData/diagnostics/tests/inference/incorporation/allowBigIncorporatedConstraints.kt");
+        }
+
+        @Test
+        @TestMetadata("incorporationOfDeepSuperType.kt")
+        public void testIncorporationOfDeepSuperType() {
+          runTest("compiler/testData/diagnostics/tests/inference/incorporation/incorporationOfDeepSuperType.kt");
         }
       }
 
@@ -24150,6 +24318,24 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("accessingLessVisibleInAnnotation.kt")
       public void testAccessingLessVisibleInAnnotation() {
         runTest("compiler/testData/diagnostics/tests/inline/accessingLessVisibleInAnnotation.kt");
+      }
+
+      @Test
+      @TestMetadata("accessingLessVisibleStaticDeclarations.kt")
+      public void testAccessingLessVisibleStaticDeclarations() {
+        runTest("compiler/testData/diagnostics/tests/inline/accessingLessVisibleStaticDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("accessingPublicFunctionOfPackagePrivateSuperType.kt")
+      public void testAccessingPublicFunctionOfPackagePrivateSuperType() {
+        runTest("compiler/testData/diagnostics/tests/inline/accessingPublicFunctionOfPackagePrivateSuperType.kt");
+      }
+
+      @Test
+      @TestMetadata("accessingPublicValThroughAnonymousObject.kt")
+      public void testAccessingPublicValThroughAnonymousObject() {
+        runTest("compiler/testData/diagnostics/tests/inline/accessingPublicValThroughAnonymousObject.kt");
       }
 
       @Test
@@ -28777,15 +28963,9 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
-        @TestMetadata("ifConstVal_after.kt")
-        public void testIfConstVal_after() {
-          runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal_after.kt");
-        }
-
-        @Test
-        @TestMetadata("ifConstVal_before.kt")
-        public void testIfConstVal_before() {
-          runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal_before.kt");
+        @TestMetadata("ifConstVal.kt")
+        public void testIfConstVal() {
+          runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal.kt");
         }
 
         @Test
@@ -29664,6 +29844,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("errorWhenUseExpectAnnWithoutDefaultConstructor.kt")
+      public void testErrorWhenUseExpectAnnWithoutDefaultConstructor() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/errorWhenUseExpectAnnWithoutDefaultConstructor.kt");
+      }
+
+      @Test
       @TestMetadata("expectAbstractToString.kt")
       public void testExpectAbstractToString() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectAbstractToString.kt");
@@ -29913,6 +30099,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("nestedClassViaActualTypealiasWithTypeParam.kt")
       public void testNestedClassViaActualTypealiasWithTypeParam() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/nestedClassViaActualTypealiasWithTypeParam.kt");
+      }
+
+      @Test
+      @TestMetadata("noImplicitDefaultConstructorOnExpectClass.kt")
+      public void testNoImplicitDefaultConstructorOnExpectClass() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/noImplicitDefaultConstructorOnExpectClass.kt");
       }
 
       @Test
@@ -37920,6 +38112,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("missingOuterClassReceiver.kt")
+      public void testMissingOuterClassReceiver() {
+        runTest("compiler/testData/diagnostics/tests/resolve/missingOuterClassReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("nestedClassUnresolvedReference.kt")
       public void testNestedClassUnresolvedReference() {
         runTest("compiler/testData/diagnostics/tests/resolve/nestedClassUnresolvedReference.kt");
@@ -40056,6 +40254,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("contextParamsAndLocalDeclsDisambiguation.kts")
+      public void testContextParamsAndLocalDeclsDisambiguation() {
+        runTest("compiler/testData/diagnostics/tests/script/contextParamsAndLocalDeclsDisambiguation.kts");
+      }
+
+      @Test
       @TestMetadata("destructuringDeclarationsScript.kts")
       public void testDestructuringDeclarationsScript() {
         runTest("compiler/testData/diagnostics/tests/script/destructuringDeclarationsScript.kts");
@@ -40095,6 +40299,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("LateInit.kts")
       public void testLateInit() {
         runTest("compiler/testData/diagnostics/tests/script/LateInit.kts");
+      }
+
+      @Test
+      @TestMetadata("localTypealiasInScript.kts")
+      public void testLocalTypealiasInScript() {
+        runTest("compiler/testData/diagnostics/tests/script/localTypealiasInScript.kts");
       }
 
       @Test
@@ -48282,6 +48492,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("uselessIsCheckWithSubject.kt")
+      public void testUselessIsCheckWithSubject() {
+        runTest("compiler/testData/diagnostics/tests/when/uselessIsCheckWithSubject.kt");
+      }
+
+      @Test
       @TestMetadata("When.kt")
       public void testWhen() {
         runTest("compiler/testData/diagnostics/tests/when/When.kt");
@@ -50282,6 +50498,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
           }
 
           @Test
+          @TestMetadata("contractWithWrongBody.kt")
+          public void testContractWithWrongBody() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/contractWithWrongBody.kt");
+          }
+
+          @Test
           @TestMetadata("emptyContract.kt")
           public void testEmptyContract() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/emptyContract.kt");
@@ -50303,6 +50525,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
           @TestMetadata("missingArgumentsInEffectDeclarations.kt")
           public void testMissingArgumentsInEffectDeclarations() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/missingArgumentsInEffectDeclarations.kt");
+          }
+
+          @Test
+          @TestMetadata("missingImport.kt")
+          public void testMissingImport() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/missingImport.kt");
           }
 
           @Test
@@ -50626,6 +50854,112 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions")
+      @TestDataPath("$PROJECT_ROOT")
+      public class GenericsInContractTypeAssertions {
+        @Test
+        public void testAllFilesPresentInGenericsInContractTypeAssertions() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("classTypeParam.kt")
+        public void testClassTypeParam() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/classTypeParam.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionOnInterface.kt")
+        public void testExtensionOnInterface() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/extensionOnInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("finalMemberFunction.kt")
+        public void testFinalMemberFunction() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/finalMemberFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionBounds.kt")
+        public void testIntersectionBounds() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/intersectionBounds.kt");
+        }
+
+        @Test
+        @TestMetadata("nullableBound.kt")
+        public void testNullableBound() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/nullableBound.kt");
+        }
+
+        @Test
+        @TestMetadata("override.kt")
+        public void testOverride() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/override.kt");
+        }
+
+        @Test
+        @TestMetadata("samConversion.kt")
+        public void testSamConversion() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/samConversion.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("starProjection.kt")
+        public void testStarProjection() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/starProjection.kt");
+        }
+
+        @Test
+        @TestMetadata("valueClassAndListTypeArg.kt")
+        public void testValueClassAndListTypeArg() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/valueClassAndListTypeArg.kt");
+        }
+
+        @Test
+        @TestMetadata("variance.kt")
+        public void testVariance() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/variance.kt");
+        }
+
+        @Test
+        @TestMetadata("withContextParameters.kt")
+        public void testWithContextParameters() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/withContextParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("withGenericListTypeArg.kt")
+        public void testWithGenericListTypeArg() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/withGenericListTypeArg.kt");
+        }
+
+        @Test
+        @TestMetadata("withReturnsNotNull.kt")
+        public void testWithReturnsNotNull() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/withReturnsNotNull.kt");
+        }
+
+        @Test
+        @TestMetadata("withTypealias.kt")
+        public void testWithTypealias() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/withTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("withСallsinplace.kt")
+        public void testWithСallsinplace() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/withСallsinplace.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax")
       @TestDataPath("$PROJECT_ROOT")
       public class NewSyntax {
@@ -50660,6 +50994,160 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors")
+      @TestDataPath("$PROJECT_ROOT")
+      public class PropertyAccessors {
+        @Test
+        public void testAllFilesPresentInPropertyAccessors() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("annotationInContract.kt")
+        public void testAnnotationInContract() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/annotationInContract.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlace.kt")
+        public void testCallsInPlace() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/callsInPlace.kt");
+        }
+
+        @Test
+        @TestMetadata("callsInPlaceMember.kt")
+        public void testCallsInPlaceMember() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/callsInPlaceMember.kt");
+        }
+
+        @Test
+        @TestMetadata("collectionsIllegalDescription.kt")
+        public void testCollectionsIllegalDescription() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/collectionsIllegalDescription.kt");
+        }
+
+        @Test
+        @TestMetadata("combinedImplications.kt")
+        public void testCombinedImplications() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/combinedImplications.kt");
+        }
+
+        @Test
+        @TestMetadata("erasure.kt")
+        public void testErasure() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/erasure.kt");
+        }
+
+        @Test
+        @TestMetadata("erasureMember.kt")
+        public void testErasureMember() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/erasureMember.kt");
+        }
+
+        @Test
+        @TestMetadata("fullImplication.kt")
+        public void testFullImplication() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/fullImplication.kt");
+        }
+
+        @Test
+        @TestMetadata("impliesReversed.kt")
+        public void testImpliesReversed() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/impliesReversed.kt");
+        }
+
+        @Test
+        @TestMetadata("impliesReversedMember.kt")
+        public void testImpliesReversedMember() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/impliesReversedMember.kt");
+        }
+
+        @Test
+        @TestMetadata("inline.kt")
+        public void testInline() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/inline.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineMember.kt")
+        public void testInlineMember() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/inlineMember.kt");
+        }
+
+        @Test
+        @TestMetadata("javaInterop.kt")
+        public void testJavaInterop() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/javaInterop.kt");
+        }
+
+        @Test
+        @TestMetadata("javaInteropMember.kt")
+        public void testJavaInteropMember() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/javaInteropMember.kt");
+        }
+
+        @Test
+        @TestMetadata("miscPatterns.kt")
+        public void testMiscPatterns() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/miscPatterns.kt");
+        }
+
+        @Test
+        @TestMetadata("miscPatternsMember.kt")
+        public void testMiscPatternsMember() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/miscPatternsMember.kt");
+        }
+
+        @Test
+        @TestMetadata("notAllowedInsideAnonymous.kt")
+        public void testNotAllowedInsideAnonymous() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/notAllowedInsideAnonymous.kt");
+        }
+
+        @Test
+        @TestMetadata("openSetterNotAllowed.kt")
+        public void testOpenSetterNotAllowed() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/openSetterNotAllowed.kt");
+        }
+
+        @Test
+        @TestMetadata("override.kt")
+        public void testOverride() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/override.kt");
+        }
+
+        @Test
+        @TestMetadata("samInterface.kt")
+        public void testSamInterface() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/samInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("setterReceiverNullability.kt")
+        public void testSetterReceiverNullability() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/setterReceiverNullability.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("withContextParameters.kt")
+        public void testWithContextParameters() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/withContextParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("withContextParametersMember.kt")
+        public void testWithContextParametersMember() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/withContextParametersMember.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts")
       @TestDataPath("$PROJECT_ROOT")
       public class Smartcasts {
@@ -50690,6 +51178,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("contractWithDeepGenerics.kt")
         public void testContractWithDeepGenerics() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/contractWithDeepGenerics.kt");
+        }
+
+        @Test
+        @TestMetadata("contractWithNonNullAssertion.kt")
+        public void testContractWithNonNullAssertion() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/contractWithNonNullAssertion.kt");
         }
 
         @Test

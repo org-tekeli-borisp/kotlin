@@ -395,6 +395,7 @@ class UuidTest {
         }
     }
 
+    @Ignore // temporary ignored, see KTI-2674
     @Test
     fun testV7UuidGenerationForNonMonotonicClock() {
         var clock: NonMonotonicClock
@@ -457,6 +458,26 @@ class UuidTest {
                 "Uuids should be monotonic, but they are not: ${previousUuid.toHexDashString()}, ${uuid.toHexDashString()}"
             )
             previousUuid = uuid
+        }
+    }
+
+    @Test
+    fun testV7GenerateUnordered() {
+        val uuid = Uuid.generateV7NonMonotonicAt(Instant.fromEpochMilliseconds(0L))
+
+        assertEquals(7, uuid.version, "Generated Uuid has a wrong version: ${uuid.toHexDashString()}")
+        assertTrue(uuid.isIetfVariant, "Generated Uuid has a wrong variant: ${uuid.toHexDashString()}")
+        uuid.toLongs { msb, _ ->
+            assertEquals(msb.shr(16), 0L, "Timestamp field has a wrong value")
+        }
+
+        val anotherUuid = Uuid.generateV7NonMonotonicAt(Instant.fromEpochMilliseconds(0L))
+        assertNotEquals(uuid, anotherUuid, "Two uuids generated for the same timestamp should not be equal")
+
+        val tsValue = 1757440583123L
+        val nonZeroTs = Uuid.generateV7NonMonotonicAt(Instant.fromEpochMilliseconds(tsValue))
+        nonZeroTs.toLongs { msb, _ ->
+            assertEquals(msb.shr(16), tsValue, "Timestamp field has a wrong value")
         }
     }
 

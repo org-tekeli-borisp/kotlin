@@ -1,7 +1,5 @@
-import java.io.File
-import java.io.IOException
-import java.util.HashSet
 import org.gradle.internal.os.OperatingSystem
+import java.io.IOException
 
 dependencies {
     "testImplementation"(project(":compiler:test-security-manager"))
@@ -40,6 +38,21 @@ tasks.withType<Test>().configureEach {
             project.extra.has("konan.data.dir").let { if (it) project.extra["konan.data.dir"] else null } as String?
                 ?: System.getenv("KONAN_DATA_DIR")
                 ?: (System.getProperty("user.home") + File.separator + ".konan")
+
+        @Suppress("UNCHECKED_CAST")
+        val d8Executable = if (project.extra.has("javascript.engine.path.V8")) {
+            project.extra["javascript.engine.path.V8"] as Provider<String>
+        } else null
+
+        @Suppress("UNCHECKED_CAST")
+        val nodeJsExecutable = if (project.extra.has("javascript.engine.path.NodeJs")) {
+            project.extra["javascript.engine.path.NodeJs"] as Provider<String>
+        } else null
+
+        @Suppress("UNCHECKED_CAST")
+        val binaryenExecutable = if (project.extra.has("binaryen.path")) {
+            project.extra["binaryen.path"] as Provider<String>
+        } else null
 
         doFirst {
             if (!permissionsTemplateFile.exists()) {
@@ -116,6 +129,7 @@ tasks.withType<Test>().configureEach {
                 } else if (file.extension == "jar") {
                     listOf(
                         """permission java.io.FilePermission "${file.absolutePath}", "read";""",
+                        """permission java.io.FilePermission "${file.absolutePath}/-", "read";""",
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
                     )
                 } else if (file.extension == "klib") {
@@ -184,6 +198,7 @@ tasks.withType<Test>().configureEach {
                                     """permission java.io.FilePermission "<<ALL FILES>>", "execute";""", // DependencyExtractor.kt to untar calls `tar` directly, and the system needs to find it
                                     """permission java.net.SocketPermission "download.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                     """permission java.net.SocketPermission "download-cdn.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
+                                    """permission java.net.SocketPermission "repo.labs.intellij.net:443", "connect,resolve";""", // DependencyDownloader.kt
                                 )
                                 if (nativeHome.isPresent) {
                                     konanPermissions.add("""permission java.io.FilePermission "${nativeHome.get()}/-" , "read,write,delete";""")
@@ -228,6 +243,21 @@ tasks.withType<Test>().configureEach {
                             "{{debugger_agent_jar}}",
                             debuggerAgentPath?.let { """permission java.io.FilePermission "$it/-", "read";""" } ?: "")
                         .replace("{{inputs}}", inputPermissions.sorted().joinToString("\n    "))
+                        .replace(
+                            "{{wasm}}",
+                            buildString {
+                                d8Executable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                                nodeJsExecutable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                                binaryenExecutable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                            }
+                        )
+
                 )
             } catch (e: IOException) {
                 logger.error("Failed to generate security policy file", e)
@@ -237,7 +267,6 @@ tasks.withType<Test>().configureEach {
         logger.info("Security policy for test inputs generated to ${policyFileProvider.get().asFile.absolutePath}")
         jvmArgs(
             "-Djava.security.policy=${policyFileProvider.get().asFile.absolutePath}",
-            "-Djava.security.debug=failure",
             "-Djava.security.manager=org.jetbrains.kotlin.security.KotlinSecurityManager",
         )
     }

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 
 val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonCompilerArguments) {
     compilerArgument {
@@ -533,21 +532,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
     }
 
-
-    compilerArgument {
-        name = "Xuse-k2"
-        description =
-            "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_7_0,
-            deprecatedVersion = KotlinReleaseVersion.v1_9_0,
-            removedVersion = KotlinReleaseVersion.v2_2_0,
-        )
-    }
-
-
     compilerArgument {
         name = "Xuse-fir-experimental-checkers"
         description = "Enable experimental frontend IR checkers that are not yet ready for production.".asReleaseDependent()
@@ -1005,6 +989,19 @@ The argument should be used only if the new compilation scheme is enabled with -
         )
     }
 
+    compilerArgument {
+        name = "Xlocal-type-aliases"
+        description = "Enable experimental language support for local type aliases.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.LocalTypeAliases)
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
 
     compilerArgument {
         name = "Xsuppress-warning"
@@ -1181,6 +1178,35 @@ Warning: this flag is not intended for production use. If you want to configure 
         delimiter = KotlinCompilerArgument.Delimiter.None
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0
+        )
+    }
+
+    compilerArgument {
+        name = "Xheader-mode"
+        description = """
+                Enable header compilation mode.
+                In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
+                compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
+                build systems where header libraries can be used to replace downstream dependencies for which we only need to
+                see the type names and method signatures required to compile a given translation unit. Inline functions are still kept
+                with bodies.
+                """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20
+        )
+    }
+
+    compilerArgument {
+        name = "Xdont-sort-source-files"
+        description = """
+            Disable automatic sorting of source files.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20
         )
     }
 }

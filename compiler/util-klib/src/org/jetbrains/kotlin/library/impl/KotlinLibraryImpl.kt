@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
@@ -52,200 +53,126 @@ class BaseKotlinLibraryImpl(
     }
 }
 
-class MetadataLibraryImpl(
-    val access: MetadataLibraryAccess<MetadataKotlinLibraryLayout>
-) : MetadataLibrary {
-
-    override val moduleHeaderData: ByteArray by lazy {
-        access.inPlace {
-            it.moduleHeaderFile.readBytes()
-        }
-    }
-
-    override fun packageMetadata(fqName: String, partName: String): ByteArray =
-        access.inPlace {
-            it.packageFragmentFile(fqName, partName).readBytes()
-        }
-
-    override fun packageMetadataParts(fqName: String): Set<String> =
-        access.inPlace { inPlaceaccess ->
-            val fileList =
-                inPlaceaccess.packageFragmentsDir(fqName)
-                    .listFiles
-                    .mapNotNull {
-                        it.name
-                            .substringBeforeLast(KLIB_METADATA_FILE_EXTENSION_WITH_DOT, missingDelimiterValue = "")
-                            .takeIf { it.isNotEmpty() }
-                    }
-
-            fileList.toSortedSet().also {
-                require(it.size == fileList.size) { "Duplicated names: ${fileList.groupingBy { it }.eachCount().filter { (_, count) -> count > 1 }}" }
-            }
-        }
-}
-
 class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibrary {
-    override val hasIr by lazy {
+    override val hasMainIr by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
-            it.irDir.exists
+            it.mainIr.dir.exists
         }
     }
+    override val mainIr = IrDirectory { mainIr }
 
-    override val hasFileEntriesTable: Boolean by lazy {
+    override val hasInlinableFunsIr by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
-            it.irFileEntries.exists
+            it.inlineableFunsIr.dir.exists
         }
     }
+    override val inlinableFunsIr = IrDirectory { inlineableFunsIr }
 
-    override fun fileCount(): Int = files.entryCount()
+    inner class IrDirectory(private val selectIrDir: IrKotlinLibraryLayout.() -> IrKotlinLibraryLayout.IrDirectory) : IrLibrary.IrDirectory {
+        override fun fileCount(): Int = files.entryCount()
 
-    override fun irDeclaration(index: Int, fileIndex: Int) = loadIrDeclaration(index, fileIndex)
+        override fun irDeclaration(index: Int, fileIndex: Int) = loadIrDeclaration(index, fileIndex)
 
-    override fun type(index: Int, fileIndex: Int) = types.tableItemBytes(fileIndex, index)
+        override fun type(index: Int, fileIndex: Int) = types.tableItemBytes(fileIndex, index)
 
-    override fun signature(index: Int, fileIndex: Int) = signatures.tableItemBytes(fileIndex, index)
+        override fun signature(index: Int, fileIndex: Int) = signatures.tableItemBytes(fileIndex, index)
 
-    override fun string(index: Int, fileIndex: Int) = strings.tableItemBytes(fileIndex, index)
+        override fun string(index: Int, fileIndex: Int) = strings.tableItemBytes(fileIndex, index)
 
-    override fun body(index: Int, fileIndex: Int) = bodies.tableItemBytes(fileIndex, index)
+        override fun body(index: Int, fileIndex: Int) = bodies.tableItemBytes(fileIndex, index)
 
-    override fun debugInfo(index: Int, fileIndex: Int) = debugInfos?.tableItemBytes(fileIndex, index)
+        override fun debugInfo(index: Int, fileIndex: Int) = debugInfos?.tableItemBytes(fileIndex, index)
 
-    override fun fileEntry(index: Int, fileIndex: Int) = fileEntries?.tableItemBytes(fileIndex, index)
+        override fun fileEntry(index: Int, fileIndex: Int) = fileEntries?.tableItemBytes(fileIndex, index)
 
-    override fun file(index: Int) = files.tableItemBytes(index)
+        override fun file(index: Int) = files.tableItemBytes(index)
 
-    private fun loadIrDeclaration(index: Int, fileIndex: Int) =
-        combinedDeclarations.tableItemBytes(fileIndex, DeclarationId(index))
+        private fun loadIrDeclaration(index: Int, fileIndex: Int) =
+            combinedDeclarations.tableItemBytes(fileIndex, DeclarationId(index))
 
-    private val combinedDeclarations: DeclarationIdMultiTableReader by lazy {
-        DeclarationIdMultiTableReader(access, IrKotlinLibraryLayout::irDeclarations)
-    }
-
-    private val types: IrMultiArrayReader by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irTypes)
-    }
-
-    private val signatures: IrMultiArrayReader by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irSignatures)
-    }
-
-    private val strings: IrMultiArrayReader by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irStrings)
-    }
-
-    private val bodies: IrMultiArrayReader by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irBodies)
-    }
-
-    private val debugInfos: IrMultiArrayReader? by lazy {
-        if (access.inPlace { it.irDebugInfo.exists })
-            IrMultiArrayReader(access, IrKotlinLibraryLayout::irDebugInfo)
-        else
-            null
-    }
-
-    private val fileEntries: IrMultiArrayReader? by lazy {
-        if (access.inPlace { it.irFileEntries.exists })
-            IrMultiArrayReader(access, IrKotlinLibraryLayout::irFileEntries)
-        else
-            null
-    }
-
-    private val files: IrArrayReader by lazy {
-        IrArrayReader(access, IrKotlinLibraryLayout::irFiles)
-    }
-
-    override fun types(fileIndex: Int): ByteArray {
-        return types.tableItemBytes(fileIndex)
-    }
-
-    override fun signatures(fileIndex: Int): ByteArray {
-        return signatures.tableItemBytes(fileIndex)
-    }
-
-    override fun strings(fileIndex: Int): ByteArray {
-        return strings.tableItemBytes(fileIndex)
-    }
-
-    override fun declarations(fileIndex: Int): ByteArray {
-        return combinedDeclarations.tableItemBytes(fileIndex)
-    }
-
-    override fun bodies(fileIndex: Int): ByteArray {
-        return bodies.tableItemBytes(fileIndex)
-    }
-
-    override fun fileEntries(fileIndex: Int): ByteArray? {
-        return fileEntries?.tableItemBytes(fileIndex)
-    }
-
-    override val hasIrOfInlineableFuns by lazy {
-        access.inPlace { it: IrKotlinLibraryLayout ->
-            it.irOfInlineableFunsDir.exists
+        private val combinedDeclarations: DeclarationIdMultiTableReader by lazy {
+            DeclarationIdMultiTableReader(access) { selectIrDir().irDeclarations}
         }
-    }
 
-    override fun irFileOfInlineableFuns() = filesOfInlineableFuns.tableItemBytes(0)
+        private val types: IrMultiArrayReader by lazy {
+            IrMultiArrayReader(access) { selectIrDir().irTypes }
+        }
 
-    override fun irDeclarationOfInlineableFuns(index: Int) = loadIrDeclarationOfInlineableFuns(index)
+        private val signatures: IrMultiArrayReader by lazy {
+            IrMultiArrayReader(access) { selectIrDir().irSignatures }
+        }
 
-    override fun typeOfInlineableFuns(index: Int) = typesOfInlineableFuns.tableItemBytes(0, index)
+        private val strings: IrMultiArrayReader by lazy {
+            IrMultiArrayReader(access) { selectIrDir().irStrings }
+        }
 
-    override fun signatureOfInlineableFuns(index: Int) = signaturesOfInlineableFuns.tableItemBytes(0, index)
+        private val bodies: IrMultiArrayReader by lazy {
+            IrMultiArrayReader(access) { selectIrDir().irBodies }
+        }
 
-    override fun stringOfInlineableFuns(index: Int) = stringsOfInlineableFuns.tableItemBytes(0, index)
+        private val debugInfos: IrMultiArrayReader? by lazy {
+            if (access.inPlace { it.selectIrDir().irDebugInfo.exists })
+                IrMultiArrayReader(access) { selectIrDir().irDebugInfo }
+            else
+                null
+        }
 
-    override fun bodyOfInlineableFuns(index: Int) = bodiesOfInlineableFuns.tableItemBytes(0, index)
+        private val fileEntries: IrMultiArrayReader? by lazy {
+            if (access.inPlace { it.selectIrDir().irFileEntries.exists })
+                IrMultiArrayReader(access) { selectIrDir().irFileEntries }
+            else
+                null
+        }
 
-    override fun debugInfoOfInlineableFuns(index: Int) = debugInfosOfInlineableFuns?.tableItemBytes(0, index)
+        private val files: IrArrayReader by lazy {
+            IrArrayReader(access) { selectIrDir().irFiles }
+        }
 
-    override fun fileEntryOfInlineableFuns(index: Int) = fileEntriesOfInlineableFuns.tableItemBytes(0, index)
+        override fun types(fileIndex: Int): ByteArray {
+            return types.tableItemBytes(fileIndex)
+        }
 
-    private fun loadIrDeclarationOfInlineableFuns(index: Int) =
-        combinedDeclarationsOfInlineableFuns.tableItemBytes(0, DeclarationId(index))
+        override fun signatures(fileIndex: Int): ByteArray {
+            return signatures.tableItemBytes(fileIndex)
+        }
 
-    private val filesOfInlineableFuns: IrArrayReader by lazy{
-        IrArrayReader(access, IrKotlinLibraryLayout::irFilesOfInlineableFuns)
-    }
+        override fun strings(fileIndex: Int): ByteArray {
+            return strings.tableItemBytes(fileIndex)
+        }
 
-    private val combinedDeclarationsOfInlineableFuns: DeclarationIdMultiTableReader by lazy {
-        DeclarationIdMultiTableReader(access, IrKotlinLibraryLayout::irDeclarationsOfInlineableFuns)
-    }
+        override fun declarations(fileIndex: Int): ByteArray {
+            return combinedDeclarations.tableItemBytes(fileIndex)
+        }
 
-    private val typesOfInlineableFuns: IrMultiArrayReader by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irTypesOfInlineableFuns)
-    }
+        override fun bodies(fileIndex: Int): ByteArray {
+            return bodies.tableItemBytes(fileIndex)
+        }
 
-    private val signaturesOfInlineableFuns: IrMultiArrayReader by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irSignaturesOfInlineableFuns)
-    }
-
-    private val stringsOfInlineableFuns: IrMultiArrayReader by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irStringsOfInlineableFuns)
-    }
-
-    private val bodiesOfInlineableFuns: IrMultiArrayReader by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irBodiesOfInlineableFuns)
-    }
-
-    private val debugInfosOfInlineableFuns: IrMultiArrayReader? by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irDebugInfoOfInlineableFuns)
-    }
-
-    private val fileEntriesOfInlineableFuns: IrMultiArrayReader by lazy {
-        IrMultiArrayReader(access, IrKotlinLibraryLayout::irFileEntriesOfInlineableFuns)
+        override fun fileEntries(fileIndex: Int): ByteArray? {
+            return fileEntries?.tableItemBytes(fileIndex)
+        }
     }
 }
 
 class KotlinLibraryImpl(
+    override val location: File,
     val base: BaseKotlinLibraryImpl,
-    val metadata: MetadataLibraryImpl,
     val ir: IrLibraryImpl
 ) : KotlinLibrary,
     BaseKotlinLibrary by base,
-    MetadataLibrary by metadata,
     IrLibrary by ir {
+
+    private val components: Map<KlibComponent.ID<*>, KlibComponent> = run {
+        val layoutReaderFactory = KlibLayoutReaderFactory(location, ir.access.klibZipAccessor)
+        mapOf(KlibMetadataComponent.ID to KlibMetadataComponentImpl(layoutReaderFactory))
+    }
+
+    override fun <KC : KlibComponent> getComponent(id: KlibComponent.ID<KC>): KC {
+        @Suppress("UNCHECKED_CAST")
+        val component = components[id] as KC?
+        return component ?: error("Unknown component $id")
+    }
+
     override fun toString(): String = buildString {
         append("name ")
         append(base.libraryName)
@@ -269,14 +196,12 @@ fun createKotlinLibrary(
     zipAccessor: ZipFileSystemAccessor? = null,
 ): KotlinLibrary {
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, zipAccessor)
-    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component, zipAccessor)
     val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component, zipAccessor)
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
-    val metadata = MetadataLibraryImpl(metadataAccess)
     val ir = IrLibraryImpl(irAccess)
 
-    return KotlinLibraryImpl(base, metadata, ir)
+    return KotlinLibraryImpl(libraryFile, base, ir)
 }
 
 fun createKotlinLibraryComponents(

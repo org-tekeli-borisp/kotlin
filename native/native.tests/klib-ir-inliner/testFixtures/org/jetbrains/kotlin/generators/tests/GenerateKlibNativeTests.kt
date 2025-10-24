@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrSignaturesTe
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataSignaturesTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataTest
-import org.jetbrains.kotlin.konan.test.evolution.AbstractNativeKlibEvolutionTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibComparisonTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibCompilationTest
 import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializa
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.AbstractNativeKlibSyntheticAccessorTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
+import org.jetbrains.kotlin.konan.test.dump.AbstractNativeLoadCompiledKotlinTest
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -134,13 +134,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        // KLIB evolution tests.
-        testGroup(testsRoot, "compiler/testData/klib/evolution") {
-            testClass<AbstractNativeKlibEvolutionTest> {
-                model(recursive = false)
-            }
-        }
-
         // Codegen/box tests for IR Inliner at 1st phase, invoked before K2 Klib Serializer
         testGroup(testsRoot, "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
@@ -201,6 +194,13 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/klib/dump-abi/content") {
             testClass<AbstractNativeLibraryAbiReaderTest> {
                 model()
+            }
+        }
+
+        testGroup(testsRoot, "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
+            testClass<AbstractNativeLoadCompiledKotlinTest> {
+                model("compiledKotlin", extension = "kt")
+                model("compiledKotlinWithStdlib", extension = "kt")
             }
         }
     }

@@ -182,9 +182,7 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningSinceGradle814(gradleVersion, WarningMode.None),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             buildGradle.modify {
@@ -382,6 +380,83 @@ class KotlinAndroidIT : KGPBaseTest() {
             )
             buildAndFail("help") {
                 assertHasDiagnostic(KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
+            }
+        }
+    }
+
+    @DisplayName("AGP 9.0 with disabled built-in Kotlin and enabled Variants API produces deprecation warnings for 'org.jetbrains.kotlin.android' plugin")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
+    fun testKotlinAndroidDeprecationDiagnostic(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                kotlin("android")
+                id("com.android.library")
+            }
+
+            gradleProperties.appendText(
+                //language=properties
+                """
+                |
+                |android.builtInKotlin=false
+                |android.newDsl=false
+                """.trimMargin()
+            )
+
+            buildScriptInjection {
+                with(androidLibrary) {
+                    compileSdk = 36
+                    namespace = "com.example"
+                }
+            }
+            build("help") {
+                assertNoDiagnostic(KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl)
+                assertHasDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
+            }
+        }
+    }
+
+    @DisplayName("No 'org.jetbrains.kotlin.android' plugin deprecation with AGP <9.0")
+    @GradleAndroidTest
+    @AndroidTestVersions(
+        minVersion = TestVersions.AGP.AGP_811,
+        maxVersion = TestVersions.AGP.AGP_811,
+    )
+    fun testKotlinAndroidNoDeprecationDiagnostic(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+        ) {
+            plugins {
+                kotlin("android")
+                id("com.android.library")
+            }
+
+            buildScriptInjection {
+                with(androidLibrary) {
+                    compileSdk = 36
+                    namespace = "com.example"
+                }
+            }
+            build("help") {
+                assertNoDiagnostic(KotlinToolingDiagnostics.IncompatibleWithTheNewAgpDsl)
+                assertNoDiagnostic(KotlinToolingDiagnostics.DeprecatedKotlinAndroidPlugin)
             }
         }
     }

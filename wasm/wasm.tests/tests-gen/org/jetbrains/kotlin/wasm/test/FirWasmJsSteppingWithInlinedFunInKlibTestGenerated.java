@@ -583,6 +583,12 @@ public class FirWasmJsSteppingWithInlinedFunInKlibTestGenerated extends Abstract
   }
 
   @Test
+  @TestMetadata("partiallyInlinedFun.kt")
+  public void testPartiallyInlinedFun() {
+    runTest("compiler/testData/debug/stepping/partiallyInlinedFun.kt");
+  }
+
+  @Test
   @TestMetadata("primitiveNullChecks.kt")
   public void testPrimitiveNullChecks() {
     runTest("compiler/testData/debug/stepping/primitiveNullChecks.kt");
@@ -682,6 +688,18 @@ public class FirWasmJsSteppingWithInlinedFunInKlibTestGenerated extends Abstract
   @TestMetadata("suspendClosingBrace.kt")
   public void testSuspendClosingBrace() {
     runTest("compiler/testData/debug/stepping/suspendClosingBrace.kt");
+  }
+
+  @Test
+  @TestMetadata("suspendClosingBrace2.kt")
+  public void testSuspendClosingBrace2() {
+    runTest("compiler/testData/debug/stepping/suspendClosingBrace2.kt");
+  }
+
+  @Test
+  @TestMetadata("suspendClosingBrace3.kt")
+  public void testSuspendClosingBrace3() {
+    runTest("compiler/testData/debug/stepping/suspendClosingBrace3.kt");
   }
 
   @Test

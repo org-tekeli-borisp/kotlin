@@ -120,6 +120,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             LanguageFeature.ForbidParenthesizedLhsInAssignments,
             PositioningStrategy.OUTERMOST_PARENTHESES_IN_ASSIGNMENT_LHS,
         )
+        val UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION by deprecationError<PsiElement>(
+            LanguageFeature.ForbidArrayLiteralsInNonAnnotationContexts,
+        )
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
@@ -129,6 +132,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val UNRESOLVED_REFERENCE_WRONG_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<Symbol>>("candidates")
+        }
+        val INACCESSIBLE_OUTER_CLASS_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<FirBasedSymbol<*>>("symbol")
         }
         val UNRESOLVED_IMPORT by error<PsiElement>(PositioningStrategy.IMPORT_LAST_NAME) {
             parameter<String>("reference")
@@ -201,6 +207,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val CALL_RESOLUTION by object : DiagnosticGroup("Call resolution") {
         val CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS by error<KtExpression>()
         val NO_CONSTRUCTOR by error<PsiElement>(PositioningStrategy.VALUE_ARGUMENTS_LIST)
+        val NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS by error<PsiElement>(PositioningStrategy.SUPERTYPES_LIST)
         val FUNCTION_CALL_EXPECTED by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("functionName")
             parameter<Boolean>("hasValueParameters")
@@ -230,6 +237,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<List<String?>>("altererNames")
         }
         val SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR by error<PsiElement>()
+        val UNSUPPORTED_COLLECTION_LITERAL_TYPE by error<PsiElement>()
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
@@ -380,6 +388,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirDeprecationInfo>("deprecationInfo")
         }
 
+        val EXTENDING_AN_ANNOTATION_CLASS by deprecationError<PsiElement>(
+            LanguageFeature.ProhibitExtendingAnnotationClasses,
+            PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT,
+        ) {
+            parameter<FirRegularClassSymbol>("annotationSymbol")
+        }
+
         val TYPEALIAS_EXPANSION_DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.DEPRECATION) {
             parameter<Symbol>("alias")
             parameter<Symbol>("reference")
@@ -479,6 +494,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED by error<KtAnnotationEntry>()
 
         val DSL_MARKER_PROPAGATES_TO_MANY by warning<KtAnnotationEntry>()
+
+        val DSL_MARKER_APPLIED_TO_WRONG_TARGET by warning<KtAnnotationEntry> {
+            parameter<FirRegularClassSymbol>("dslMarkerSymbol")
+            parameter<String>("actualTarget")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
@@ -719,8 +739,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedArrayType")
         }
         val ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION by deprecationError<KtExpression>(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)
-        val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION by warning<KtExpression>()
-        val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION by warning<KtExpression>()
+        val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION by warning<KtElement>(PositioningStrategy.SPREAD_OPERATOR)
+        val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION by warning<KtElement>(PositioningStrategy.SPREAD_OPERATOR)
 
         val ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING by warning<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ConeKotlinType>("type")
@@ -763,7 +783,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
         }
-        val ASSIGNMENT_TYPE_MISMATCH by error<KtExpression> {
+
+        val ASSIGNMENT_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.OPERATOR) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
@@ -1133,6 +1154,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CLASS_LITERAL_LHS_NOT_A_CLASS by error<KtExpression>()
         val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<KtExpression>()
         val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<PsiElement> {
+            parameter<ConeKotlinType>("lhsType")
+        }
+        val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS_WARNING by warning<PsiElement> {
             parameter<ConeKotlinType>("lhsType")
         }
         val UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS by error<KtElement>()
@@ -2027,6 +2051,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NOT_YET_SUPPORTED_IN_INLINE by error<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT) {
             parameter<String>("message")
         }
+        val NOT_YET_SUPPORTED_IN_INLINE_WARNING by warning<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
 
         val NOTHING_TO_INLINE by warning<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
 
@@ -2130,16 +2155,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirBasedSymbol<*>>("symbol")
             parameter<EffectiveVisibility>("typeVisibility")
             parameter<ConeKotlinType>("type")
-            parameter<EffectiveVisibility>("inlineVisibility")
-        }
-
-        val LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE by deprecationError<KtElement>(
-            LanguageFeature.ForbidExposingLessVisibleTypesInInline,
-            PositioningStrategy.REFERENCE_BY_QUALIFIED
-        ) {
-            parameter<FirBasedSymbol<*>>("symbol")
-            parameter<EffectiveVisibility>("visibility")
-            parameter<FirRegularClassSymbol>("containingClass")
             parameter<EffectiveVisibility>("inlineVisibility")
         }
 

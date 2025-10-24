@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
  *
  * An example of the basic usage is:
  *  ```
- *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
+ *   val toolchain = KotlinToolchains.loadImplementation(ClassLoader.getSystemClassLoader())
  *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
  *   operation.compilerArguments[CommonCompilerArguments.LANGUAGE_VERSION] = KotlinVersion.V2_0
  *   toolchain.createBuildSession().use { it.executeOperation(operation, toolchain.createDaemonExecutionPolicy()) }
@@ -110,6 +110,12 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
          */
         @JvmField
         public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> = Option("COMPILER_ARGUMENTS_LOG_LEVEL")
+
+        /**
+         * Enables the Compiler Reference Index generation during the compilation.
+         */
+        @JvmField
+        public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX")
     }
 
     public enum class CompilerArgumentsLogLevel {

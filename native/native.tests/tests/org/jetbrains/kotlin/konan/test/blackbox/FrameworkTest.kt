@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.isMacabi
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.createTestProvider
-import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
+import org.jetbrains.kotlin.test.TestDataAssertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
@@ -190,13 +191,6 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun testKT42397() {
-        val testName = "kt42397"
-        val testCase = generateObjCFramework(testName)
-        compileAndRunSwift(testName, testCase)
-    }
-
-    @Test
     fun testKT43517() {
         val testName = "kt43517"
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
@@ -228,6 +222,9 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     fun testStacktrace() {
         val testName = "stacktrace"
         Assumptions.assumeFalse(testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT)
+        // Stacktraces support for Mac Catalyst requires additional adjustments in `supportsCoreSymbolication`.
+        // We can do it later if needed.
+        Assumptions.assumeFalse(testRunSettings.configurables.targetTriple.isMacabi)
 
         val testCase = generateObjCFramework(testName, listOf("-g"))
         compileAndRunSwift(testName, testCase)

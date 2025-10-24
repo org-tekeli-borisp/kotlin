@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
@@ -216,7 +218,7 @@ class ExpressionCodegen(
         mv.visitCode()
         val startLabel = markNewLabel()
         val info = BlockInfo()
-        if (state.classBuilderMode.generateBodies) {
+        if (state.classBuilderMode.generateBodies && !state.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
             if (irFunction.isMultifileBridge()) {
                 // Multifile bridges need to have line number 1 to be filtered out by the intellij debugging filters.
                 mv.visitLineNumber(1, startLabel)
@@ -516,6 +518,12 @@ class ExpressionCodegen(
         require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }
         val callable = methodSignatureMapper.mapToCallableMethod(expression, irFunction)
         val callGenerator = getOrCreateCallGenerator(expression, data, callable.signature)
+
+        // Generate LINENUMBER instruction before any stack spilling - otherwise, the spilling will have previous instruction's LINENUMBER
+        // See KT-66413.
+        if (callee.isSuspend) {
+            expression.markLineNumber(true)
+        }
 
         val suspensionPointKind = expression.getSuspensionPointKind()
         if (suspensionPointKind != SuspensionPointKind.NEVER) {

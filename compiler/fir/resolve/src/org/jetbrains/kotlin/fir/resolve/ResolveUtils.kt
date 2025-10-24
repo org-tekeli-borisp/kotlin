@@ -229,7 +229,7 @@ fun FirExpression.isImplicitUnitForEmptyLambda(): Boolean =
  */
 fun FirFunction.constructFunctionType(kind: FunctionTypeKind? = null): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
-        is FirSimpleFunction -> receiverParameter
+        is FirNamedFunction -> receiverParameter
         is FirAnonymousFunction -> receiverParameter
         else -> null
     }?.typeRef
@@ -400,7 +400,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         this.resolvedToCompanionObject = symbol?.fullyExpandedClass()?.resolvedCompanionObjectSymbol != null
         this.resolvedSymbolOrigin = resolvedSymbolOrigin
     }.build().apply {
-        if (symbol?.classId?.isLocal == true) {
+        if (symbol?.isLocal == true) {
             resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
                 ?.also { replaceCanBeValue(true) }
                 ?: session.builtinTypes.unitType.coneType
@@ -419,11 +419,12 @@ fun FirResolvedQualifier.unsetResolvedToCompanionIf(condition: Boolean) {
 internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
     bodyResolveComponents: BodyResolveComponents,
     source: KtSourceElement?,
+    resolvedToCompanion: Boolean = false,
 ): FirResolvedQualifier {
     val resolvedQualifier = buildResolvedQualifier {
         packageFqName = classId.packageFqName
         relativeClassFqName = classId.relativeClassName
-        resolvedToCompanionObject = false
+        resolvedToCompanionObject = resolvedToCompanion
         symbol = this@toImplicitResolvedQualifierReceiver
         this.source = source
     }.apply {
@@ -658,7 +659,7 @@ fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotl
 fun ConeKotlinType.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
     val system = candidate.system
     val resultingSubstitutor = system.buildCurrentSubstitutor()
-    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(this)) as ConeKotlinType
+    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(this)).asCone()
 }
 
 /**

@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
@@ -37,6 +38,10 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
         project.layout.buildDirectory.dir("kotlin/uklibs_tmp")
     )
 
+    // FIXME: This check will most likely be removed in KT-77005, but for now we keep it for tests only
+    @get:Input
+    val checkForBamboosInUklib: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
+
     data class UklibWithDuplicateAttributes(
         val duplicates: Map<UklibAttributes, Set<FragmentIdentifier>>
     ) : IllegalStateException(
@@ -54,22 +59,15 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
     @TaskAction
     fun run() {
         /**
-         * Filter out metadata compilations that were skipped. They should be omitted from the umanifest
-         *
-         * FIXME: What happens when platform compilations are skipped? Write an IT?
+         * Filter out compilations that were skipped. They should be omitted from the umanifest
          */
         val compiledFragments = fragments.get().filter { fragment ->
-            val isMetadata = fragment.attributes.count() > 1
-            val isASkippedMetadataCompilation = isMetadata && !fragment.files.single().exists()
-            !isASkippedMetadataCompilation
+            fragment.singleExpectedFileFromModularUklib.exists()
         }
 
-        val bambooFragments = compiledFragments
-            .groupBy { it.attributes }
-            .filter { it.value.size > 1 }
-        if (bambooFragments.isNotEmpty()) throw UklibWithDuplicateAttributes(
-            duplicates = bambooFragments.mapValues { it.value.map { it.identifier }.sorted().toSet() }
-        )
+        if (checkForBamboosInUklib.get()) {
+            checkThereAreNoBambooFragments(compiledFragments)
+        }
 
         outputZip.getFile().parentFile.mkdirs()
         temporariesDirectory.getFile().mkdirs()
@@ -80,6 +78,15 @@ internal abstract class ArchiveUklibTask : DefaultTask() {
         ).serializeToZipArchive(
             outputZip = outputZip.getFile(),
             temporariesDirectory = temporariesDirectory.getFile(),
+        )
+    }
+
+    private fun checkThereAreNoBambooFragments(compiledFragments: List<UklibFragment>) {
+        val bambooFragments = compiledFragments
+            .groupBy { it.attributes }
+            .filter { it.value.size > 1 }
+        if (bambooFragments.isNotEmpty()) throw UklibWithDuplicateAttributes(
+            duplicates = bambooFragments.mapValues { it.value.map { it.identifier }.sorted().toSet() }
         )
     }
 }

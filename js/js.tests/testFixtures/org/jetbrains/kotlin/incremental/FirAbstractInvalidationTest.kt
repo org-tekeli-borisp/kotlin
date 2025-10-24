@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -36,17 +37,17 @@ import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
 
-abstract class AbstractJsFirInvalidationPerFileTest :
+abstract class AbstractJsInvalidationPerFileTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFir/perFile")
-abstract class AbstractJsFirInvalidationPerModuleTest :
+abstract class AbstractJsInvalidationPerModuleTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFir/perModule")
-abstract class AbstractJsFirES6InvalidationPerFileTest :
+abstract class AbstractJsES6InvalidationPerFileTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirES6/perFile")
-abstract class AbstractJsFirES6InvalidationPerModuleTest :
+abstract class AbstractJsES6InvalidationPerModuleTest :
     FirAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirES6/perModule")
-abstract class AbstractJsFirInvalidationPerFileWithPLTest :
+abstract class AbstractJsInvalidationPerFileWithPLTest :
     AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirWithPL/perFile")
-abstract class AbstractJsFirInvalidationPerModuleWithPLTest :
+abstract class AbstractJsInvalidationPerModuleWithPLTest :
     AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirWithPL/perModule")
 
 abstract class AbstractJsFirInvalidationWithPLTest(granularity: JsGenerationGranularity, workingDirPath: String) :
@@ -144,10 +145,14 @@ abstract class FirAbstractInvalidationTest(
             throw AssertionError("The following errors occurred compiling test:\n$messages")
         }
 
+        val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticsReporter,
+            configuration.languageVersionSettings
+        )
         val transformedResult = PhaseEngine(
             configuration.phaseConfig ?: PhaseConfig(),
             PhaserState(),
-            JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration, diagnosticsReporter),
+            JsPreSerializationLoweringContext(fir2IrActualizedResult.irBuiltIns, configuration, irDiagnosticReporter),
         ).runPreSerializationLoweringPhases(fir2IrActualizedResult, jsLoweringsOfTheFirstPhase(configuration.languageVersionSettings))
 
         serializeFirKlib(

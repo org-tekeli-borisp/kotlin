@@ -19,6 +19,11 @@ data class ResolvedComponentWithArtifacts(
     val artifacts: MutableList<Map<String, String>> = mutableListOf(),
 ) : java.io.Serializable
 
+fun ResolvedComponentWithArtifacts(
+    configuration: String,
+    artifacts: List<Map<String, String>>,
+) = ResolvedComponentWithArtifacts(configuration).apply { this.artifacts.addAll(artifacts) }
+
 typealias ComponentPath = String
 
 fun Configuration.resolveProjectDependencyComponentsWithArtifacts(
@@ -91,12 +96,20 @@ fun resolveProjectDependencyComponentsWithArtifacts(
 fun KotlinTarget.compilationResolution(compilationName: String = "main"): Map<ComponentPath, ResolvedComponentWithArtifacts> {
     return compilationConfiguration(compilationName).resolveProjectDependencyComponentsWithArtifacts()
 }
+fun KotlinTarget.runtimeResolution(compilationName: String = "main"): Map<ComponentPath, ResolvedComponentWithArtifacts> {
+    return runtimeConfiguration(compilationName).resolveProjectDependencyComponentsWithArtifacts()
+}
 
 fun KotlinTarget.compilationConfiguration(compilationName: String = "main"): Configuration {
     // workaround for KT-76284
     val compilation = compilations
         .getByName(compilationName)
     return compilation.internal.configurations.compileDependencyConfiguration
+}
+fun KotlinTarget.runtimeConfiguration(compilationName: String = "main"): Configuration {
+    val compilation = compilations
+        .getByName(compilationName)
+    return compilation.internal.configurations.runtimeDependencyConfiguration ?: error("Missing runtime configuration in $compilation")
 }
 
 private data class ResolvedVariant(

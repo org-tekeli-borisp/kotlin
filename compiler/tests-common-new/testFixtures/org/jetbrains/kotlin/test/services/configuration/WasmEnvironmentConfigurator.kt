@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_DISABLE_FQNAME_IN_KCLASS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -32,7 +34,7 @@ abstract class WasmEnvironmentConfigurator(
 ) : EnvironmentConfigurator(testServices) {
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(WasmEnvironmentConfigurationDirectives)
+        get() = listOf(WasmEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
 
     companion object : KlibBasedEnvironmentConfiguratorUtils {
         fun getRuntimePathsForModule(target: WasmTarget): List<String> {
@@ -122,14 +124,19 @@ class WasmSecondStageEnvironmentConfigurator(
         val sourceMapSourceEmbedding = registeredDirectives[SOURCE_MAP_EMBED_SOURCES].singleOrNull() ?: SourceMapSourceEmbedding.NEVER
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapSourceEmbedding)
 
-        configuration.put(
-            WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS,
-            DISABLE_WASM_EXCEPTION_HANDLING in registeredDirectives
-        )
-        configuration.put(
-            WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL,
-            USE_NEW_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives
-        )
+        configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, DISABLE_WASM_EXCEPTION_HANDLING in registeredDirectives)
+
+        val hasUseNewExceptionsDirective = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives
+        val hasUseOldExceptionsDirective = USE_OLD_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives
+        if (hasUseNewExceptionsDirective && hasUseOldExceptionsDirective) error("Can't use both old and new exception handling proposals")
+
+        val useNewExceptions = when {
+            hasUseNewExceptionsDirective -> true
+            hasUseOldExceptionsDirective -> false
+            else -> wasmTarget == WasmTarget.WASI
+        }
+
+        configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, useNewExceptions)
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, WASM_NO_JS_TAG in registeredDirectives)
         configuration.put(
             WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION,

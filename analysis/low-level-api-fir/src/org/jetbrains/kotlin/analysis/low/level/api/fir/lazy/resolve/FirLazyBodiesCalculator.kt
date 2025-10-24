@@ -178,10 +178,10 @@ private fun replaceLazyDelegate(target: FirVariable, copy: FirVariable) {
 private val FirCallableDeclaration.originalPsi: PsiElement? get() = unwrapFakeOverridesOrDelegated().psi
 
 private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
-    val simpleFunction = designation.target as FirSimpleFunction
+    val simpleFunction = designation.target as FirNamedFunction
     require(needCalculatingLazyBodyForFunction(simpleFunction))
 
-    val newSimpleFunction = revive<FirSimpleFunction>(designation, simpleFunction.originalPsi)
+    val newSimpleFunction = revive<FirNamedFunction>(designation, simpleFunction.originalPsi)
 
     replaceLazyBody(simpleFunction, newSimpleFunction)
     replaceLazyValueParameters(simpleFunction, newSimpleFunction)
@@ -682,16 +682,16 @@ private sealed class FirLazyBodiesCalculatorTransformer : FirTransformer<Persist
         return field
     }
 
-    override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
         data: PersistentList<FirDeclaration>,
-    ): FirSimpleFunction {
-        if (needCalculatingLazyBodyForFunction(simpleFunction)) {
-            val designation = FirDesignation(data, simpleFunction)
+    ): FirNamedFunction {
+        if (needCalculatingLazyBodyForFunction(namedFunction)) {
+            val designation = FirDesignation(data, namedFunction)
             calculateLazyBodiesForFunction(designation)
         }
 
-        return simpleFunction
+        return namedFunction
     }
 
     override fun transformConstructor(
@@ -839,16 +839,16 @@ private object FirTargetLazyContractsCalculatorTransformer : FirLazyContractsCal
 private sealed class FirLazyContractsCalculatorTransformer : FirTransformer<PersistentList<FirDeclaration>>() {
     override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirDeclaration>): E = element
 
-    override fun transformSimpleFunction(
-        simpleFunction: FirSimpleFunction,
+    override fun transformNamedFunction(
+        namedFunction: FirNamedFunction,
         data: PersistentList<FirDeclaration>,
-    ): FirSimpleFunction {
-        if (needCalculatingLazyContractsForFunction(simpleFunction)) {
-            val designation = FirDesignation(data, simpleFunction)
+    ): FirNamedFunction {
+        if (needCalculatingLazyContractsForFunction(namedFunction)) {
+            val designation = FirDesignation(data, namedFunction)
             calculateLazyContractsForFunction(designation)
         }
 
-        return simpleFunction
+        return namedFunction
     }
 
     override fun transformConstructor(

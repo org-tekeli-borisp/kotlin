@@ -21,6 +21,8 @@ import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
 import kotlinx.cli.required
+import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
@@ -263,6 +265,7 @@ private fun processCLib(
     val def = DefFile(defFile, tool.substitutions)
 
     checkCCallModeCompatibility(cinteropArguments, def)
+    checkKlibAbiCompatibilityLevel(cinteropArguments)
 
     val isLinkerOptsSetByUser = (cinteropArguments.linkerOpts.valueOrigin == ArgParser.ValueOrigin.SET_BY_USER) ||
             (cinteropArguments.linkerOptions.valueOrigin == ArgParser.ValueOrigin.SET_BY_USER) ||
@@ -456,8 +459,12 @@ private fun processCLib(
                 if (nopack) it.removeSuffixIfPresent(suffix) else it.suffixIfNot(suffix)
             }
 
+            val serializedMetadata = stubIrOutput.metadata.write(ChunkedKlibModuleFragmentWriteStrategy(topLevelClassifierDeclarationsPerFile = 128)).run {
+                SerializedMetadata(header, fragments, fragmentNames)
+            }
+
             createInteropLibrary(
-                    metadata = stubIrOutput.metadata,
+                    serializedMetadata = serializedMetadata,
                     nativeBitcodeFiles = compiledFiles + listOfNotNull(nativeOutputPath),
                     target = tool.target,
                     moduleName = moduleName,
@@ -466,7 +473,8 @@ private fun processCLib(
                     dependencies = stdlibDependency + imports.requiredLibraries.toList(),
                     nopack = nopack,
                     shortName = cinteropArguments.shortModuleName,
-                    staticLibraries = resolveLibraries(staticLibraries, libraryPaths)
+                    staticLibraries = resolveLibraries(staticLibraries, libraryPaths),
+                    klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel,
             )
             return null
         }
@@ -496,6 +504,28 @@ private fun checkCCallModeCompatibility(
 
     check(cinteropArguments.compileSource.isEmpty()) {
         "-$COMPILE_SOURCES is only supported with -$CCALL_MODE ${CCallMode.INDIRECT.name.lowercase()}"
+    }
+}
+
+// TODO (KT-81433): Reconsider how exactly the export in P.V. feature should work in further versions (ex: 2.4.0)
+//  if we decide to upgrade LLVM.
+private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments) {
+    val klibAbiCompatibilityLevel = cinteropArguments.klibAbiCompatibilityLevel
+    val cCallMode = cinteropArguments.cCallMode
+
+    when (klibAbiCompatibilityLevel) {
+        KlibAbiCompatibilityLevel.ABI_LEVEL_2_2 -> {
+            check(cCallMode == CCallMode.INDIRECT) {
+                "-$CCALL_MODE ${cCallMode.name.lowercase()} is not supported in combination with -$KLIB_ABI_COMPATIBILITY_LEVEL ${klibAbiCompatibilityLevel}\n" +
+                        "Please use -$KLIB_ABI_COMPATIBILITY_LEVEL ${KlibAbiCompatibilityLevel.LATEST_STABLE} or specify -$CCALL_MODE ${CCallMode.INDIRECT.name.lowercase()}"
+            }
+
+            warn("-$KLIB_ABI_COMPATIBILITY_LEVEL $klibAbiCompatibilityLevel will trigger generating KLIB compatible with KLIB ABI version $klibAbiCompatibilityLevel. This is an experimental feature.")
+        }
+
+        KlibAbiCompatibilityLevel.ABI_LEVEL_2_3 -> {
+            // No specific restrictions for now.
+        }
     }
 }
 

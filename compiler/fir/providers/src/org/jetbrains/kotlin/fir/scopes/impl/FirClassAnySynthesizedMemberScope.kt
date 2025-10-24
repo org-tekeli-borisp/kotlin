@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.isEquals
@@ -143,8 +143,8 @@ class FirClassAnySynthesizedMemberScope(
             else -> shouldNotBeCalled()
         }.symbol
 
-    private fun generateEqualsFunction(): FirSimpleFunction =
-        buildSimpleFunction {
+    private fun generateEqualsFunction(): FirNamedFunction =
+        buildNamedFunction {
             generateSyntheticFunction(OperatorNameConventions.EQUALS, isOperator = true)
             returnTypeRef = FirImplicitBooleanTypeRef(source)
             this.valueParameters.add(
@@ -154,7 +154,7 @@ class FirClassAnySynthesizedMemberScope(
                     moduleData = baseModuleData
                     this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
                     this.symbol = FirValueParameterSymbol()
-                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                    containingDeclarationSymbol = this@buildNamedFunction.symbol
                     isCrossinline = false
                     isNoinline = false
                     isVararg = false
@@ -162,19 +162,19 @@ class FirClassAnySynthesizedMemberScope(
             )
         }
 
-    private fun generateHashCodeFunction(): FirSimpleFunction =
-        buildSimpleFunction {
+    private fun generateHashCodeFunction(): FirNamedFunction =
+        buildNamedFunction {
             generateSyntheticFunction(OperatorNameConventions.HASH_CODE)
             returnTypeRef = FirImplicitIntTypeRef(source)
         }
 
-    private fun generateToStringFunction(): FirSimpleFunction =
-        buildSimpleFunction {
+    private fun generateToStringFunction(): FirNamedFunction =
+        buildNamedFunction {
             generateSyntheticFunction(OperatorNameConventions.TO_STRING)
             returnTypeRef = FirImplicitStringTypeRef(source)
         }
 
-    private fun FirSimpleFunctionBuilder.generateSyntheticFunction(
+    private fun FirNamedFunctionBuilder.generateSyntheticFunction(
         name: Name,
         isOperator: Boolean = false,
     ) {

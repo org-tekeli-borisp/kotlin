@@ -61,16 +61,8 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/diagnostics") {
-            testClass<AbstractDiagnosticsWasmTest> {
-                model("wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-
             testClass<AbstractDiagnosticsFirWasmTest> {
                 model("wasmTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
-            }
-
-            testClass<AbstractDiagnosticsWasmWasiTest> {
-                model("wasmWasiTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
             testClass<AbstractDiagnosticsFirWasmWasiTest> {
@@ -79,6 +71,14 @@ fun main(args: Array<String>) {
 
             testClass<AbstractDiagnosticsFirWasmKlibTest> {
                 model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+
+            testClass<AbstractDiagnosticsWasmJsWithIrInlinerTestBase> {
+                model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+
+            testClass<AbstractDiagnosticsWasmWasiWithIrInlinerTestBase> {
+                model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 
@@ -94,6 +94,10 @@ fun main(args: Array<String>) {
         }
 
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
+            testClass<AbstractFirWasmJsCodegenSingleModuleBoxTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
             testClass<AbstractFirWasmJsCodegenBoxTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
@@ -113,6 +117,10 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirWasmJsCodegenInteropTest> {
+                model("codegen/boxWasmJsInterop")
+            }
+
+            testClass<AbstractFirWasmJsCodegenSingleModuleInteropTest> {
                 model("codegen/boxWasmJsInterop")
             }
 
@@ -148,10 +156,28 @@ fun main(args: Array<String>) {
         }
 
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/klib/syntheticAccessors", testRunnerMethodName = "runTest0") {
-            testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest>(
+            testClass<AbstractFirWasmJsSyntheticAccessorsTest>(
                 suiteTestClassName = "WasmJsSynthAccBoxTestGenerated"
             ) {
                 model()
+            }
+            testClass<AbstractWasmJsKlibSyntheticAccessorTest>(
+                suiteTestClassName = "WasmJsSynthAccTestGenerated"
+            ) {
+                model()
+            }
+        }
+        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
+            testClass<AbstractWasmJsIrTextTest> {
+                model(
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
+            }
+        }
+        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
+            testClass<AbstractWasmJsLoadCompiledKotlinTest> {
+                model("compiledKotlin", extension = "kt")
+                model("compiledKotlinWithStdlib", extension = "kt")
             }
         }
     }

@@ -171,14 +171,14 @@ fun Project.configureKotlinCompilationOptions() {
 
                 if (!skipJvmDefaultForModule(project.path)) {
                     freeCompilerArgs.add(
-                        if (project.shouldUseOldJvmDefaultArgument(this@configureEach))
+                        if (project.shouldUseOldJvmDefaultArgument())
                             "-Xjvm-default=all"
                         else
                             "-jvm-default=no-compatibility"
                     )
                 } else {
                     freeCompilerArgs.add(
-                        if (project.shouldUseOldJvmDefaultArgument(this@configureEach))
+                        if (project.shouldUseOldJvmDefaultArgument())
                             "-Xjvm-default=disable"
                         else
                             "-jvm-default=disable"
@@ -189,14 +189,12 @@ fun Project.configureKotlinCompilationOptions() {
     }
 }
 
-private fun Project.shouldUseOldJvmDefaultArgument(task: KotlinJvmCompile): Boolean {
+private fun Project.shouldUseOldJvmDefaultArgument(): Boolean {
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     val isOldCompilerVersion =
         MavenComparableVersion(kotlinExtension.compilerVersion.get()) < MavenComparableVersion("2.2")
 
-    // In most projects which enable old compiler version, test tasks still use the bootstrap compiler.
-    return isOldCompilerVersion && task.name != "compileTestKotlin" && task.name != "compileFunctionalTestKotlin" &&
-            (task.name != "compileTestFixturesKotlin" || path == ":kotlin-gradle-plugin")
+    return isOldCompilerVersion
 }
 
 fun Project.configureArtifacts() {
@@ -336,10 +334,6 @@ fun skipJvmDefaultForModule(path: String): Boolean =
 // Gradle plugin modules are disabled because different Gradle versions bundle different Kotlin compilers,
     // and not all of them support the new JVM default scheme.
     "-gradle" in path || "-runtime" in path || path == ":kotlin-project-model" ||
-            // Visitor/transformer interfaces in ir.tree are very sensitive to the way interface methods are implemented.
-            // Enabling default method generation results in a performance loss of several % on full pipeline test on Kotlin.
-            // TODO: investigate the performance difference and enable new mode for ir.tree.
-            path == ":compiler:ir.tree" ||
             // Workaround a Proguard issue:
             //     java.lang.IllegalAccessError: tried to access method kotlin.reflect.jvm.internal.impl.types.checker.ClassicTypeSystemContext$substitutionSupertypePolicy$2.<init>(
             //       Lkotlin/reflect/jvm/internal/impl/types/checker/ClassicTypeSystemContext;Lkotlin/reflect/jvm/internal/impl/types/TypeSubstitutor;

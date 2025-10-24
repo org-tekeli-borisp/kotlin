@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.DefaultProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.initSwiftExportClasspathConfigurations
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
@@ -77,9 +77,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
         BuildFinishedListenerService.registerIfAbsent(project)
+        BuildSessionService.registerIfAbsent(project)
 
         val buildUidService = BuildUidService.registerIfAbsent(project.gradle)
-        BuildFusService.registerIfAbsent(project, pluginVersion, buildUidService)
+        val buildFinishBuildService = BuildFinishBuildService.registerIfAbsent(project, buildUidService, pluginVersion)
+        BuildFusService.registerIfAbsent(project, pluginVersion, buildUidService, buildFinishBuildService)
         PropertiesBuildService.registerIfAbsent(project)
 
         project.gradle.projectsEvaluated {
@@ -100,7 +102,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         BuildMetricsService.registerIfAbsent(project)
         KotlinNativeBundleBuildService.registerIfAbsent(project)
-        BuildFinishBuildService.registerIfAbsent(project, buildUidService, pluginVersion)
+
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {
@@ -108,9 +110,18 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             .configurations
             .maybeCreateResolvable(COMPILER_CLASSPATH_CONFIGURATION_NAME)
             .defaultDependencies {
-                it.add(
-                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${project.getKotlinPluginVersion()}")
-                )
+                if (project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi.get()) {
+                    it.add(
+                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
+                    )
+                    it.add(
+                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:$pluginVersion")
+                    )
+                } else {
+                    it.add(
+                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${project.getKotlinPluginVersion()}")
+                    )
+                }
             }
         project
             .configurations
@@ -180,6 +191,21 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             JavaExecTaskParametersCompatibility.Factory::class,
             DefaultJavaExecTaskParametersCompatibility.Factory()
         )
+
+        factories.putIfAbsent(
+            CopySpecAccessor.Factory::class,
+            DefaultCopySpecAccessor.Factory(),
+        )
+
+        factories.putIfAbsent(
+            BuildIdentifierAccessor.Factory::class,
+            DefaultBuildIdentifierAccessor.Factory(),
+        )
+
+        factories.putIfAbsent(
+            ProjectDependencyAccessor.Factory::class,
+            DefaultProjectDependencyAccessor.Factory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(
@@ -227,7 +253,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
             addGradlePluginMetadataAttributes(project)
         }
         project.maybeCreateCommonizerClasspathConfiguration()
-        project.initSwiftExportClasspathConfigurations()
         project.addPgpSignatureHelpers()
         project.addPomValidationHelpers()
         project.addSigningValidationHelpers()

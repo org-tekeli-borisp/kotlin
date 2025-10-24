@@ -116,7 +116,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(arrayLiteral)
+        impl(collectionLiteral)
 
         impl(callableReferenceAccess)
 
@@ -670,7 +670,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("valueParameterKind", "FirValueParameterKind.Regular", withGetter = true)
         }
 
-        impl(simpleFunction)
+        impl(namedFunction)
 
         impl(safeCallExpression) {
             additionalImports(checkedSafeCallSubject)
@@ -738,7 +738,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirVarargArgumentsExpressionImpl",
             "FirSafeCallExpressionImpl",
             "FirCheckedSafeCallSubjectImpl",
-            "FirArrayLiteralImpl",
+            "FirCollectionLiteralImpl",
             "FirIntegerLiteralOperatorCallImpl",
             "FirReceiverParameterImpl",
             "FirClassReferenceExpressionImpl",

@@ -47,6 +47,7 @@ private val speciallyBridgedTypes = listOf(StandardClassIds.List, StandardClassI
 public class SirVisibilityCheckerImpl(
     private val sirSession: SirSession,
     private val unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
+    private val enableCoroutinesSupport: Boolean,
 ) : SirVisibilityChecker {
     @OptIn(KaExperimentalApi::class)
     override fun KaDeclarationSymbol.sirAvailability(): SirAvailability = sirSession.withSessions {
@@ -83,9 +84,6 @@ public class SirVisibilityCheckerImpl(
         }
         if (ktSymbol is KaCallableSymbol && ktSymbol.contextParameters.isNotEmpty()) {
             return@withSessions SirAvailability.Unavailable("Callables with context parameters are not supported yet")
-        }
-        if (ktSymbol is KaFunctionSymbol && ktSymbol.valueParameters.any { it.isVararg }) {
-            return@withSessions SirAvailability.Unavailable("Callables with vararg parameters are not supported yet")
         }
         if (ktSymbol is KaNamedFunctionSymbol && ktSymbol.allParameters.map { it.returnType.fullyExpandedType }
                 .filter { type -> !type.isFunctionType && speciallyBridgedTypes.none { type.isClassType(it) } }
@@ -149,6 +147,10 @@ public class SirVisibilityCheckerImpl(
         }
         if (origin !in SUPPORTED_SYMBOL_ORIGINS) {
             unsupportedDeclarationReporter.report(this@isExported, "${origin.name.lowercase()} origin is not supported yet.")
+            return@withSessions false
+        }
+        if (isSuspend && !enableCoroutinesSupport) {
+            unsupportedDeclarationReporter.report(this@isExported, "suspend functions are not supported yet.")
             return@withSessions false
         }
         if (isInline) {

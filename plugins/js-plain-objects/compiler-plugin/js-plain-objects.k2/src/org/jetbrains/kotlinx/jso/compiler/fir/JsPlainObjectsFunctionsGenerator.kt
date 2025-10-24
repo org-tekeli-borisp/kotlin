@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -182,7 +182,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         callableId: CallableId,
         parent: FirClassSymbol<*>,
         jsPlainObjectInterface: FirRegularClassSymbol,
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface, isOperator = true) {
             runIf(resolvedTypeRef.coneType.isMarkedOrFlexiblyNullable) {
                 buildPropertyAccessExpression {
@@ -200,7 +200,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         callableId: CallableId,
         parent: FirClassSymbol<*>,
         jsPlainObjectInterface: FirRegularClassSymbol,
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         return createJsPlainObjectsFunction(callableId, parent, jsPlainObjectInterface, includeJsPlainObjectInterfaceAsParameter = true) {
             buildPropertyAccessExpression {
                 calleeReference = buildResolvedNamedReference {
@@ -220,7 +220,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         isOperator: Boolean = false,
         includeJsPlainObjectInterfaceAsParameter: Boolean = false,
         getParameterDefaultValueFromProperty: ClassProperty.() -> FirExpression?
-    ): FirSimpleFunction {
+    ): FirNamedFunction {
         var typeParameterSubstitutor: ConeSubstitutor? = null
         val jsPlainObjectProperties = session.jsPlainObjectPropertiesProvider.getJsPlainObjectsPropertiesForClass(jsPlainObjectInterface)
 
@@ -228,7 +228,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         val jsPlainObjectInterfaceDefaultType = jsPlainObjectInterface.defaultType()
         val typeParameterSubstitutionMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
 
-        return buildSimpleFunction {
+        return buildNamedFunction {
             val functionalSymbol = FirNamedFunctionSymbol(callableId)
 
             moduleData = jsPlainObjectInterface.moduleData
@@ -299,7 +299,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                     isNoinline = true
                     isVararg = false
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                    containingDeclarationSymbol = this@buildNamedFunction.symbol
                 }
             }
 
@@ -319,7 +319,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                     isNoinline = true
                     isVararg = false
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
-                    containingDeclarationSymbol = this@buildSimpleFunction.symbol
+                    containingDeclarationSymbol = this@buildNamedFunction.symbol
                     defaultValue = it.getParameterDefaultValueFromProperty()
 
                     jsName?.let { name ->

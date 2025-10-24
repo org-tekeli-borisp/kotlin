@@ -19,6 +19,8 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -49,9 +52,10 @@ import kotlin.metadata.ClassKind
 import kotlin.metadata.Modality
 import kotlin.metadata.internal.toKmClass
 import kotlin.metadata.jvm.KotlinClassMetadata
+import kotlin.metadata.jvm.localDelegatedProperties
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
-import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
+import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.DECLARED
+import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.INHERITED
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 import org.jetbrains.kotlin.descriptors.ClassKind as DescriptorClassKind
 import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
@@ -66,6 +70,14 @@ internal class KClassImpl<T : Any>(
                     (KotlinClassMetadata.readLenient(metadata) as? KotlinClassMetadata.Class)?.kmClass
                 }
             } else {
+                val descriptor = descriptor
+                if (descriptor is FunctionClassDescriptor) {
+                    // There are no special KClass instances for suspend function type classes yet (KT-79225), so all functions are
+                    // treated as normal functions (`kotlin.Function{n}`).
+                    if (descriptor.functionTypeKind !is FunctionTypeKind.Function)
+                        throw KotlinReflectionInternalError("Unsupported function type kind: ${descriptor.functionTypeKind} ($descriptor)")
+                    return@lazy createFunctionKmClass(descriptor.arity)
+                }
                 (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
                     descriptor.classProto.toKmClass(descriptor.c.nameResolver)
                 }
@@ -77,6 +89,7 @@ internal class KClassImpl<T : Any>(
             val moduleData = data.value.moduleData
             val module = moduleData.module
 
+            @OptIn(ClassIdBasedLocality::class)
             val descriptor =
                 if (classId.isLocal && jClass.isAnnotationPresent(Metadata::class.java)) {
                     // If it's a Kotlin local class or anonymous object, deserialize its metadata directly because it cannot be found via
@@ -97,6 +110,7 @@ internal class KClassImpl<T : Any>(
             if (jClass.isAnonymousClass) return@lazySoft null
 
             val classId = classId
+            @OptIn(ClassIdBasedLocality::class)
             when {
                 classId.isLocal -> calculateLocalClassName(jClass)
                 else -> classId.shortClassName.asString()
@@ -107,6 +121,7 @@ internal class KClassImpl<T : Any>(
             if (jClass.isAnonymousClass) return@lazySoft null
 
             val classId = classId
+            @OptIn(ClassIdBasedLocality::class)
             when {
                 classId.isLocal -> null
                 else -> classId.asSingleFqName().asString()
@@ -164,16 +179,24 @@ internal class KClassImpl<T : Any>(
         }
 
         val typeParameters: List<KTypeParameter> by ReflectProperties.lazySoft {
-            descriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(this@KClassImpl, descriptor) }
+            if (useK1Implementation) {
+                descriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(this@KClassImpl, descriptor) }
+            } else if (kmClass == null) {
+                jClass.typeParameters.toKTypeParameters()
+            } else {
+                typeParameterTable.ownTypeParameters
+            }
         }
 
         private val typeParameterTable: TypeParameterTable by ReflectProperties.lazySoft {
             if (kmClass == null)
                 TypeParameterTable.EMPTY
             else
-                TypeParameterTable(
-                    kmClass!!.typeParameters.withIndex().associate { (index, km) -> km.id to typeParameters[index] },
+                TypeParameterTable.create(
+                    kmClass!!.typeParameters,
                     (jClass.enclosingClass?.takeIf { kmClass!!.isInner }?.kotlin as? KClassImpl<*>)?.data?.value?.typeParameterTable,
+                    this@KClassImpl,
+                    jClass.safeClassLoader,
                 )
         }
 
@@ -218,10 +241,10 @@ internal class KClassImpl<T : Any>(
                 }
             } else {
                 jClass.genericSuperclass?.takeUnless { it == Any::class.java }?.let {
-                    result += it.toKType(nullability = TypeNullability.NOT_NULL)
+                    result += it.toKType(knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL)
                 }
                 jClass.genericInterfaces.mapTo(result) {
-                    it.toKType(nullability = TypeNullability.NOT_NULL)
+                    it.toKType(knownTypeParameters = emptyMap(), nullability = TypeNullability.NOT_NULL)
                 }
             }
 
@@ -326,6 +349,27 @@ internal class KClassImpl<T : Any>(
 
     override val members: Collection<KCallable<*>> get() = data.value.allMembers
 
+    private fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<DescriptorKCallable<*>> {
+        val visitor = object : CreateKCallableVisitor(this) {
+            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
+                throw IllegalStateException("No constructors should appear here: $descriptor")
+        }
+        return scope.getContributedDescriptors().mapNotNull { descriptor ->
+            if (descriptor is CallableMemberDescriptor &&
+                descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE &&
+                belonginess.accept(descriptor)
+            ) descriptor.accept(visitor, Unit) else null
+        }.toList()
+    }
+
+    private enum class MemberBelonginess {
+        DECLARED,
+        INHERITED;
+
+        fun accept(member: CallableMemberDescriptor): Boolean =
+            member.kind.isReal == (this == DECLARED)
+    }
+
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
             val descriptor = descriptor
@@ -343,16 +387,7 @@ internal class KClassImpl<T : Any>(
         memberScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION) +
                 staticScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
-    override fun getLocalProperty(index: Int): PropertyDescriptor? {
-        // TODO: also check that this is a synthetic class (Metadata.k == 3)
-        if (jClass.simpleName == JvmAbi.DEFAULT_IMPLS_CLASS_NAME) {
-            jClass.declaringClass?.let { interfaceClass ->
-                if (interfaceClass.isInterface) {
-                    return (interfaceClass.kotlin as KClassImpl<*>).getLocalProperty(index)
-                }
-            }
-        }
-
+    override fun getLocalPropertyDescriptor(index: Int): PropertyDescriptor? {
         return (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
             descriptor.classProto.getExtensionOrNull(JvmProtoBuf.classLocalVariable, index)?.let { proto ->
                 deserializeToDescriptor(
@@ -361,6 +396,9 @@ internal class KClassImpl<T : Any>(
             }
         }
     }
+
+    override fun getLocalPropertyMetadata(index: Int): KmProperty? =
+        kmClass?.localDelegatedProperties?.getOrNull(index)
 
     override val simpleName: String? get() = data.value.simpleName
 

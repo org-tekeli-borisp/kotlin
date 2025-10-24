@@ -20,16 +20,13 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class ICData(val icData: List<SerializedIrFile>)
 
-class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
-    override val hasIr get() = true
-    override val hasFileEntriesTable get() = true
-
+class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary.IrDirectory {
     private inline fun Array<DeclarationIdTableReader?>.itemBytes(fileIndex: Int, key: DeclarationId, factory: () -> DeclarationIdTableReader): ByteArray {
         val reader = this[fileIndex] ?: factory().also { this[fileIndex] = it }
 
@@ -106,17 +103,6 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
 
     override fun fileEntries(fileIndex: Int): ByteArray? = icData[fileIndex].fileEntries
-
-    // This class is not used by the K2 compiler, so the first stage inlining feature is not supported.
-    override val hasIrOfInlineableFuns: Boolean get() = false
-    override fun irFileOfInlineableFuns(): ByteArray = shouldNotBeCalled()
-    override fun irDeclarationOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
-    override fun typeOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
-    override fun signatureOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
-    override fun stringOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
-    override fun bodyOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
-    override fun debugInfoOfInlineableFuns(index: Int): ByteArray? = shouldNotBeCalled()
-    override fun fileEntryOfInlineableFuns(index: Int): ByteArray = shouldNotBeCalled()
 }
 
 class CurrentModuleWithICDeserializer(
@@ -124,7 +110,7 @@ class CurrentModuleWithICDeserializer(
     private val symbolTable: SymbolTable,
     private val irBuiltIns: IrBuiltIns,
     icData: List<SerializedIrFile>,
-    icReaderFactory: (IrLibrary) -> IrModuleDeserializer) :
+    icReaderFactory: (IrLibrary.IrDirectory) -> IrModuleDeserializer) :
     IrModuleDeserializer(delegate.moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
     private val dirtyDeclarations = hashMapOf<IdSignature, IrSymbol>()
@@ -182,7 +168,7 @@ class CurrentModuleWithICDeserializer(
 
     override fun toString(): String = "Incremental Cache Klib"
 
-    override val klib: IrLibrary
+    override val klib: KotlinLibrary
         get() = icDeserializer.klib
 
     override val moduleFragment: IrModuleFragment

@@ -264,6 +264,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIVISION_BY_ZERO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_MARKER_PROPAGATES_TO_MANY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_MARKER_APPLIED_TO_WRONG_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE
@@ -353,6 +354,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPE_PARA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT
@@ -400,6 +402,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_BOXING_I
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPOSSIBLE_IS_CHECK
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INACCESSIBLE_OUTER_CLASS_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
@@ -477,7 +480,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_WITHOUT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_TYPE_ACCESS_IN_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_ANNOTATION_CLASS_ERROR
@@ -766,11 +768,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_TYPE_PARAMETER_OF_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENDING_AN_ANNOTATION_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_YET_SUPPORTED_IN_INLINE_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_IGNORABLE_WITH_MUST_USE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT
@@ -785,6 +790,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_COLLECTION_LITERAL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_VAR_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_LATEINIT
@@ -805,6 +811,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
@@ -958,6 +965,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             WRAPPED_LHS_IN_ASSIGNMENT,
             "Wrapping the left-hand side of assignments in parentheses, labels or annotations is not allowed."
         )
+        map.put(
+            UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION,
+            "Array literals outside of annotations are unsupported."
+        )
 
         // Unresolved
         map.put(
@@ -970,6 +981,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,
             "Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:{0}",
             SYMBOLS_ON_NEXT_LINES,
+        )
+        map.put(
+            INACCESSIBLE_OUTER_CLASS_RECEIVER,
+            "Outer class ''{0}'' of non-inner class cannot be used as receiver.",
+            SYMBOL,
         )
         map.put(
             UNRESOLVED_IMPORT,
@@ -1275,6 +1291,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             EMPTY,
             EMPTY,
         )
+        map.put(EXTENDING_AN_ANNOTATION_CLASS, "Inheriting an annotation class is prohibited.", SYMBOL)
         map.put(TYPEALIAS_EXPANSION_DEPRECATION_ERROR, "''{0}'' uses ''{1}'', which is an error. {2}.", SYMBOL, SYMBOL, STRING)
         map.put(TYPEALIAS_EXPANSION_DEPRECATION, "''{0}'' uses ''{1}'', which is deprecated. {2}.", SYMBOL, SYMBOL, STRING)
         map.put(VERSION_REQUIREMENT_DEPRECATION_ERROR, "''{0}''{1} cannot be used in Kotlin {2}.{3}", SYMBOL, REQUIRE_KOTLIN_VERSION, STRING, OPTIONAL_SENTENCE)
@@ -1411,6 +1428,16 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             '@DslMarker' annotation propagates to more than one receiver or context parameter. This often means that none of them can be used.
             Move the '@DslMarker' annotation to the receiver or context parameter whose scope must be limited.
             """.trimIndent(),
+        )
+        map.put(
+            NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS,
+            """Expect class does not declare any constructors."""
+        )
+        map.put(
+            DSL_MARKER_APPLIED_TO_WRONG_TARGET,
+            "Applying DSL marker annotation ''{0}'' to target ''{1}'' has no effect. DSL marker annotations must only be applied to types.",
+            DECLARATION_NAME,
+            TO_STRING,
         )
 
         // OptIn
@@ -1637,6 +1664,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE,
             "Nested {0} accessed via instance reference.",
             RENDER_CLASS_OR_OBJECT_NAME_QUOTED,
+        )
+        map.put(
+            UNSUPPORTED_COLLECTION_LITERAL_TYPE,
+            "No 'of' operator is defined for the expected type."
         )
 
         // Context parameters resolution
@@ -2147,6 +2178,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Expression in class literal has nullable type ''{0}''. Use ''!!'' to make the type non-nullable.",
             RENDER_TYPE
         )
+        map.put(
+            EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS_WARNING,
+            "Expression in class literal has nullable type ''{0}''. Use ''!!'' to make the type non-nullable."
+                .toDeprecationWarningMessage(LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs),
+            RENDER_TYPE
+        )
         map.put(UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS, "Class literals with empty left hand side are unsupported.")
         map.put(MUTABLE_PROPERTY_WITH_CAPTURED_TYPE, "Captured type in mutable property reference. Usages of 'set' may lead to cast exceptions.")
 
@@ -2525,14 +2562,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING,
             RENDER_TYPE,
             TO_STRING
-        )
-        map.put(
-            LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE,
-            "The accessed declaration ''{0}'' is declared in ''{1}'' class ''{2}'', but is accessed from ''{3}'' inline declaration.",
-            SYMBOL,
-            TO_STRING,
-            DECLARATION_NAME,
-            TO_STRING,
         )
         map.put(
             CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE,
@@ -3415,6 +3444,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL
         )
         map.put(NOT_YET_SUPPORTED_IN_INLINE, "{0} are not yet supported in inline functions.", STRING)
+        map.put(
+            NOT_YET_SUPPORTED_IN_INLINE_WARNING,
+            "Inline functions may not inherit default values for parameters since the inherited default value cannot be inlined.".toDeprecationWarningMessage(
+                LanguageFeature.ForbidOverriddenDefaultParametersInInline
+            )
+        )
         map.put(
             NOTHING_TO_INLINE,
             "Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types."

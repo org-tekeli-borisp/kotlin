@@ -261,7 +261,8 @@ private class ContextCollectorVisitor(
 
     private val context = BodyResolveContext(
         returnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
-        dataFlowAnalyzerContext = DataFlowAnalyzerContext(bodyHolder.session)
+        dataFlowAnalyzerContext = DataFlowAnalyzerContext(bodyHolder.session),
+        isContextCollectorMode = true,
     )
 
     private val result = HashMap<ContextKey, Context>()
@@ -760,31 +761,31 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = withProcessor(simpleFunction) {
-        dumpContext(simpleFunction, ContextKind.SELF)
+    override fun visitNamedFunction(namedFunction: FirNamedFunction) = withProcessor(namedFunction) {
+        dumpContext(namedFunction, ContextKind.SELF)
 
-        processAnnotations(simpleFunction)
+        processAnnotations(namedFunction)
 
         onActive {
-            simpleFunction.performBodyAnalysis()
+            namedFunction.performBodyAnalysis()
 
-            val holder = getSessionHolder(simpleFunction)
+            val holder = getSessionHolder(namedFunction)
 
-            context.withSimpleFunction(simpleFunction, holder.session) {
-                processList(simpleFunction.typeParameters)
-                process(simpleFunction.receiverParameter)
+            context.withNamedFunction(namedFunction, holder.session) {
+                processList(namedFunction.typeParameters)
+                process(namedFunction.receiverParameter)
 
                 onActive {
-                    context.forFunctionBody(simpleFunction, holder) {
-                        dumpContext(simpleFunction, ContextKind.BODY)
+                    context.forFunctionBody(namedFunction, holder) {
+                        dumpContext(namedFunction, ContextKind.BODY)
 
-                        processList(simpleFunction.contextParameters)
-                        processList(simpleFunction.valueParameters)
-                        processBody(simpleFunction)
+                        processList(namedFunction.contextParameters)
+                        processList(namedFunction.valueParameters)
+                        processBody(namedFunction)
                     }
 
-                    process(simpleFunction.returnTypeRef)
-                    process(simpleFunction.contractDescription)
+                    process(namedFunction.returnTypeRef)
+                    process(namedFunction.contractDescription)
                 }
             }
         }
@@ -1017,7 +1018,6 @@ private class ContextCollectorVisitor(
      *
      * @see processAnnotations
      */
-    @ContextCollectorDsl
     private fun Processor.processRawAnnotations(declaration: FirDeclaration) {
         for (annotation in declaration.annotations) {
             process(annotation)
@@ -1029,7 +1029,6 @@ private class ContextCollectorVisitor(
      *
      * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
      */
-    @ContextCollectorDsl
     private fun Processor.processAnnotations(declaration: FirDeclaration) {
         @OptIn(PrivateForInline::class)
         context.withContainer(declaration) {
@@ -1046,7 +1045,6 @@ private class ContextCollectorVisitor(
     private inner class Processor(private val delegate: FirVisitorVoid) {
         private val elementsToSkip = HashSet<FirElement>()
 
-        @ContextCollectorDsl
         fun process(element: FirElement?) {
             if (isActive && element != null) {
                 element.accept(delegate)
@@ -1054,7 +1052,6 @@ private class ContextCollectorVisitor(
             }
         }
 
-        @ContextCollectorDsl
         fun <T : FirElement?> process(element: T?, customVisit: (T & Any) -> Unit) {
             if (element != null) {
                 customVisit(element)
@@ -1062,7 +1059,6 @@ private class ContextCollectorVisitor(
             }
         }
 
-        @ContextCollectorDsl
         fun processList(elements: Collection<FirElement>) {
             for (element in elements) {
                 if (!isActive) {
@@ -1073,7 +1069,6 @@ private class ContextCollectorVisitor(
             }
         }
 
-        @ContextCollectorDsl
         fun processChildren(element: FirElement, checkIsActive: Boolean = true) {
             if (checkIsActive && !isActive) {
                 return
@@ -1167,5 +1162,3 @@ private class ContextCollectorVisitor(
     }
 }
 
-@DslMarker
-private annotation class ContextCollectorDsl

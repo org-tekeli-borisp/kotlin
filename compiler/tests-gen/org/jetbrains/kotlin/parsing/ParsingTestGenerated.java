@@ -341,6 +341,21 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/EOLsOnRollback.kt");
     }
 
+    @TestMetadata("emptyArguments.kt")
+    public void testEmptyArguments() {
+      runTest("compiler/testData/psi/emptyArguments.kt");
+    }
+
+    @TestMetadata("emptyArgumentsInAnnotations.kt")
+    public void testEmptyArgumentsInAnnotations() {
+      runTest("compiler/testData/psi/emptyArgumentsInAnnotations.kt");
+    }
+
+    @TestMetadata("emptyArgumentsInArrayAccesses.kt")
+    public void testEmptyArgumentsInArrayAccesses() {
+      runTest("compiler/testData/psi/emptyArgumentsInArrayAccesses.kt");
+    }
+
     @TestMetadata("emptyEnum.kt")
     public void testEmptyEnum() {
       runTest("compiler/testData/psi/emptyEnum.kt");
@@ -1823,6 +1838,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/contextParameters/labelInFunctionTypeContext.kt");
       }
 
+      @TestMetadata("parsingWithLocalDeclarations.kt")
+      public void testParsingWithLocalDeclarations() {
+        runTest("compiler/testData/psi/contextParameters/parsingWithLocalDeclarations.kt");
+      }
+
+      @TestMetadata("parsingWithLocalDeclarationsIncorrect.kt")
+      public void testParsingWithLocalDeclarationsIncorrect() {
+        runTest("compiler/testData/psi/contextParameters/parsingWithLocalDeclarationsIncorrect.kt");
+      }
+
       @TestMetadata("properties.kt")
       public void testProperties() {
         runTest("compiler/testData/psi/contextParameters/properties.kt");
@@ -2657,6 +2682,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/kdoc/AtTags.kt");
       }
 
+      @TestMetadata("CodeBlocks.kt")
+      public void testCodeBlocks() {
+        runTest("compiler/testData/psi/kdoc/CodeBlocks.kt");
+      }
+
       @TestMetadata("DocCommentAtBeginningOfFile1.kt")
       public void testDocCommentAtBeginningOfFile1() {
         runTest("compiler/testData/psi/kdoc/DocCommentAtBeginningOfFile1.kt");
@@ -2702,6 +2732,26 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/kdoc/Incomplete.kt");
       }
 
+      @TestMetadata("IncompleteCodeBlock.kt")
+      public void testIncompleteCodeBlock() {
+        runTest("compiler/testData/psi/kdoc/IncompleteCodeBlock.kt");
+      }
+
+      @TestMetadata("IncompleteCodeBlockWithoutCode.kt")
+      public void testIncompleteCodeBlockWithoutCode() {
+        runTest("compiler/testData/psi/kdoc/IncompleteCodeBlockWithoutCode.kt");
+      }
+
+      @TestMetadata("IncompleteIndentedCodeBlock.kt")
+      public void testIncompleteIndentedCodeBlock() {
+        runTest("compiler/testData/psi/kdoc/IncompleteIndentedCodeBlock.kt");
+      }
+
+      @TestMetadata("IncompleteIndentedList.kt")
+      public void testIncompleteIndentedList() {
+        runTest("compiler/testData/psi/kdoc/IncompleteIndentedList.kt");
+      }
+
       @TestMetadata("Markdown.kt")
       public void testMarkdown() {
         runTest("compiler/testData/psi/kdoc/Markdown.kt");
@@ -2720,6 +2770,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       @TestMetadata("MarkdownQualifiedName.kt")
       public void testMarkdownQualifiedName() {
         runTest("compiler/testData/psi/kdoc/MarkdownQualifiedName.kt");
+      }
+
+      @TestMetadata("MultipleAsterisksOnTheSameLine.kt")
+      public void testMultipleAsterisksOnTheSameLine() {
+        runTest("compiler/testData/psi/kdoc/MultipleAsterisksOnTheSameLine.kt");
+      }
+
+      @TestMetadata("NestedLists.kt")
+      public void testNestedLists() {
+        runTest("compiler/testData/psi/kdoc/NestedLists.kt");
       }
 
       @TestMetadata("ParamTag.kt")
@@ -3474,6 +3534,39 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       @TestMetadata("WithWithoutInAndMultideclaration.kt")
       public void testWithWithoutInAndMultideclaration() {
         runTest("compiler/testData/psi/recovery/WithWithoutInAndMultideclaration.kt");
+      }
+
+      @TestMetadata("compiler/testData/psi/recovery/binaryExpression")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class BinaryExpression extends AbstractParsingTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInBinaryExpression() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/recovery/binaryExpression"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+        }
+
+        @TestMetadata("IsAndSubsequentExpressions.kt")
+        public void testIsAndSubsequentExpressions() {
+          runTest("compiler/testData/psi/recovery/binaryExpression/IsAndSubsequentExpressions.kt");
+        }
+
+        @TestMetadata("IsExpressionComplex.kt")
+        public void testIsExpressionComplex() {
+          runTest("compiler/testData/psi/recovery/binaryExpression/IsExpressionComplex.kt");
+        }
+
+        @TestMetadata("NoHigherPrecedenceAfterIs.kt")
+        public void testNoHigherPrecedenceAfterIs() {
+          runTest("compiler/testData/psi/recovery/binaryExpression/NoHigherPrecedenceAfterIs.kt");
+        }
+
+        @TestMetadata("SoftModifierAsInfixFunction.kt")
+        public void testSoftModifierAsInfixFunction() {
+          runTest("compiler/testData/psi/recovery/binaryExpression/SoftModifierAsInfixFunction.kt");
+        }
       }
 
       @TestMetadata("compiler/testData/psi/recovery/objects")

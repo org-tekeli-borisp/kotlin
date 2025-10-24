@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.abi.*
+import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.hasAbi
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -44,7 +45,7 @@ internal sealed class KlibToolCommand(
     abstract fun execute()
 
     protected fun checkLibraryHasIr(library: KotlinLibrary): Boolean {
-        if (!library.hasIr) {
+        if (!library.hasMainIr) {
             output.logError("Library ${library.libraryFile} is an IR-less library")
             return false
         }
@@ -85,7 +86,9 @@ internal sealed class KlibToolCommand(
 internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
         val library = resolveKlib(args.libraryPath)
-        val metadataHeader = parseModuleHeader(library.moduleHeaderData)
+        val metadata = library.metadata
+
+        val metadataHeader = parseModuleHeader(metadata.moduleHeaderData)
 
         val nonEmptyPackageFQNs = buildSet {
             addAll(metadataHeader.packageFragmentNameList)
@@ -93,8 +96,8 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
 
             // Sometimes `emptyPackageList` is empty, so it's necessary to explicitly filter out empty packages:
             val stillRemainingEmptyPackageFQNs = filterTo(hashSetOf()) { packageName ->
-                library.packageMetadataParts(packageName).all { partName ->
-                    parsePackageFragment(library.packageMetadata(packageName, partName)).isEmpty()
+                metadata.getPackageFragmentNames(packageName).all { partName ->
+                    parsePackageFragment(metadata.getPackageFragment(packageName, partName)).isEmpty()
                 }
             }
 
@@ -110,10 +113,9 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         nonEmptyPackageFQNs.forEach { packageFQN ->
             output.appendLine("  $packageFQN")
         }
-        output.appendLine("Has IR: ${library.hasIr}")
+        output.appendLine("Has IR: ${library.hasMainIr}")
         val irInfo = KlibIrInfoLoader(library).loadIrInfo()
         irInfo?.preparedInlineFunctionCopyNumber?.let { output.appendLine("  Inlinable function copies: $it") }
-        output.appendLine("Has FileEntries table: ${library.hasFileEntriesTable}")
         output.appendLine("Has LLVM bitcode: ${library.hasBitcode}")
         output.appendLine("Has ABI: ${library.hasAbi}")
         output.appendLine("Manifest properties:")
@@ -207,7 +209,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
 
         if (!checkLibraryHasIr(library)) return
 
-        if (!library.hasIrOfInlineableFuns) {
+        if (!library.hasInlinableFunsIr) {
             output.appendLine("// No inlinable functions in ${library.libraryFile}")
             return
         }

@@ -3285,6 +3285,12 @@ public class FirWasmJsCodegenBoxInlineTestGenerated extends AbstractFirWasmJsCod
     }
 
     @Test
+    @TestMetadata("notInlinedFunFromKlib.kt")
+    public void testNotInlinedFunFromKlib() {
+      runTest("compiler/testData/codegen/boxInline/multiModule/notInlinedFunFromKlib.kt");
+    }
+
+    @Test
     @TestMetadata("tryCatchWithRecursiveInline.kt")
     public void testTryCatchWithRecursiveInline() {
       runTest("compiler/testData/codegen/boxInline/multiModule/tryCatchWithRecursiveInline.kt");
@@ -6246,6 +6252,40 @@ public class FirWasmJsCodegenBoxInlineTestGenerated extends AbstractFirWasmJsCod
     @TestMetadata("tryCatchFinally.kt")
     public void testTryCatchFinally() {
       runTest("compiler/testData/codegen/boxInline/wasm-new-exception-handling/tryCatchFinally.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/boxInline/wasm-old-exception-handling")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Wasm_old_exception_handling {
+    @Test
+    public void testAllFilesPresentInWasm_old_exception_handling() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/wasm-old-exception-handling"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("kt5863.kt")
+    public void testKt5863() {
+      runTest("compiler/testData/codegen/boxInline/wasm-old-exception-handling/kt5863.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatch.kt")
+    public void testTryCatch() {
+      runTest("compiler/testData/codegen/boxInline/wasm-old-exception-handling/tryCatch.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatch2.kt")
+    public void testTryCatch2() {
+      runTest("compiler/testData/codegen/boxInline/wasm-old-exception-handling/tryCatch2.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchFinally.kt")
+    public void testTryCatchFinally() {
+      runTest("compiler/testData/codegen/boxInline/wasm-old-exception-handling/tryCatchFinally.kt");
     }
   }
 }

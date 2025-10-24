@@ -281,15 +281,24 @@ class Fir2IrVisitor(
                 val destructComposites = mutableMapOf<FirVariableSymbol<*>, IrComposite>()
                 for (statement in script.declarations) {
                     if (statement !is FirAnonymousInitializer) {
-                        val irStatement = when {
-                            statement is FirProperty && statement.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> {
+                        val irStatement = when (statement) {
+                            is FirProperty if statement.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> {
                                 val convertedInitializer = when {
                                     statement.isUnnamedLocalVariable -> statement.initializer?.accept(this@Fir2IrVisitor, null)
                                     else -> null
                                 }
+
+                                if (convertedInitializer is IrStatement && statement.destructuringDeclarationContainerVariable != null) {
+                                    // In name-based destructuring, underscores don't produce variables,
+                                    // but the call to the initializer must be preserved.
+                                    val correspondingComposite = destructComposites[statement.destructuringDeclarationContainerVariable!!]!!
+                                    correspondingComposite.statements.add(convertedInitializer)
+                                    continue
+                                }
+
                                 convertedInitializer as? IrStatement ?: continue
                             }
-                            statement is FirProperty && statement.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
+                            is FirProperty if statement.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
                                 // Generating the result property only for expressions with a meaningful result type
                                 // otherwise skip the property and convert the expression into the statement
                                 if (statement.returnTypeRef.let { (it.isUnit || it.isNothing || it.isNullableNothing) }) {
@@ -300,7 +309,7 @@ class Fir2IrVisitor(
                                     }
                                 }
                             }
-                            statement is FirVariable && statement.isDestructuringDeclarationContainerVariable == true -> {
+                            is FirVariable if statement.isDestructuringDeclarationContainerVariable == true -> {
                                 statement.convertWithOffsets { startOffset, endOffset ->
                                     IrCompositeImpl(
                                         startOffset, endOffset,
@@ -315,7 +324,7 @@ class Fir2IrVisitor(
                                     }
                                 }
                             }
-                            statement is FirProperty && statement.destructuringDeclarationContainerVariable != null -> {
+                            is FirProperty if statement.destructuringDeclarationContainerVariable != null -> {
                                 (statement.accept(this@Fir2IrVisitor, null) as IrProperty).also {
                                     val irComponentInitializer = IrSetFieldImpl(
                                         it.startOffset, it.endOffset,
@@ -331,7 +340,7 @@ class Fir2IrVisitor(
                                     it.backingField!!.initializer = null
                                 }
                             }
-                            statement is FirClass -> {
+                            is FirClass -> {
                                 statement.accept(this@Fir2IrVisitor, null) as IrClass
                             }
                             else -> {
@@ -479,21 +488,21 @@ class Fir2IrVisitor(
         return irAnonymousInitializer
     }
 
-    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement = whileAnalysing(session, simpleFunction) {
-        val irFunction = if (simpleFunction.visibility == Visibilities.Local) {
+    override fun visitNamedFunction(namedFunction: FirNamedFunction, data: Any?): IrElement = whileAnalysing(session, namedFunction) {
+        val irFunction = if (namedFunction.visibility == Visibilities.Local) {
             declarationStorage.createAndCacheIrFunction(
-                simpleFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION, isLocal = true
+                namedFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION, isLocal = true
             )
         } else {
             @OptIn(UnsafeDuringIrConstructionAPI::class)
-            declarationStorage.getCachedIrFunctionSymbol(simpleFunction)!!.owner
+            declarationStorage.getCachedIrFunctionSymbol(namedFunction)!!.owner
         }
         return conversionScope.withFunction(irFunction) {
             memberGenerator.convertFunctionContent(
-                irFunction, simpleFunction, containingClass = conversionScope.containerFirClass()
+                irFunction, namedFunction, containingClass = conversionScope.containerFirClass()
             )
         }.also {
-            cleaner.cleanSimpleFunction(simpleFunction)
+            cleaner.cleanNamedFunction(namedFunction)
         }
     }
 
@@ -1055,7 +1064,7 @@ class Fir2IrVisitor(
             else -> {
                 when (val unwrappedExpression = expression.unwrapArgument()) {
                     is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
-                    is FirArrayLiteral -> convertToArrayLiteral(unwrappedExpression, expectedType)
+                    is FirCollectionLiteral -> convertToArrayLiteral(unwrappedExpression, expectedType)
                     else -> expression.accept(this, null) as IrExpression
                 }
             }
@@ -1818,7 +1827,7 @@ class Fir2IrVisitor(
     }
 
     private fun convertToArrayLiteral(
-        arrayLiteral: FirArrayLiteral,
+        arrayLiteral: FirCollectionLiteral,
         // This argument is used for a corner case with deserialized empty array literals
         // These array literals normally have a type of Array<Any>,
         // so FIR2IR should instead use a type of corresponding property

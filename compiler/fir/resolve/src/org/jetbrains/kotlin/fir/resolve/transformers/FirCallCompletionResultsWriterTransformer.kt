@@ -995,13 +995,20 @@ class FirCallCompletionResultsWriterTransformer(
             else -> prepareActualTypeArgumentSubstitutor(candidate).chain(finalSubstitutor)
         }
 
-        return declaration.typeParameters.map {
-            val typeParameter = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
-            val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
-            finallySubstituteOrSelf(substitution, finalSubstitutorWithActualTypeArguments).let { substitutedType ->
+        fun prepareType(substitution: ConeKotlinType, substitutor: ConeSubstitutor): ConeKotlinType =
+            finallySubstituteOrSelf(substitution, substitutor).let { substitutedType ->
                 typeApproximator.approximateToSuperType(
                     substitutedType, TypeApproximatorConfiguration.TypeArgumentApproximationAfterCompletionInK2,
                 ) ?: substitutedType
+            }
+
+        return declaration.typeParameters.map {
+            val typeParameter = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+            val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
+            val newType = prepareType(substitution, finalSubstitutorWithActualTypeArguments)
+
+            newType.withOldTypeBefore(LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions) {
+                prepareType(substitution, finalSubstitutor)
             }
         }
     }

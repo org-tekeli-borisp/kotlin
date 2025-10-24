@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FILE: A.kt
 package a
 
@@ -13,7 +13,7 @@ import a.Alias
 class Box<B>
 typealias Alias<K> = Box<K>
 
-val a = <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alias<Any>()<!>
+val a = Alias<Any>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, nullableType, propertyDeclaration, typeAliasDeclaration,
 typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

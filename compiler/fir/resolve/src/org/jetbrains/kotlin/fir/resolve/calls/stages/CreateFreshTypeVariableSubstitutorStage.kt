@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.yieldDiagnostic
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.yieldIfNeed
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
@@ -22,12 +25,12 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParamete
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -199,9 +202,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         declaration: FirTypeParameterRefsOwner,
         csBuilder: ConstraintSystemOperation,
     ): Pair<ConeSubstitutor, List<ConeTypeVariable>> {
-
         val typeParameters = declaration.typeParameters
-
         val freshTypeVariables = typeParameters.map { ConeTypeParameterBasedTypeVariable(it.symbol) }
 
         val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, context.session)
@@ -218,56 +219,35 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             csBuilder.registerVariable(freshVariable)
         }
 
-        fun ConeTypeParameterBasedTypeVariable.addSubtypeConstraint(
-        upperBound: ConeKotlinType//,
-            //position: DeclaredUpperBoundConstraintPosition
-        ) {
-            if (upperBound.lowerBoundIfFlexible().classLikeLookupTagIfAny?.classId == StandardClassIds.Any &&
-                upperBound.upperBoundIfFlexible().isMarkedNullable
-            ) {
-                return
-            }
+        val typeAliasConstructorInfo = (declaration as? FirConstructor)?.typeAliasConstructorInfo
+        val isTypealiasConstructor = typeAliasConstructorInfo != null
 
-            csBuilder.addSubtypeConstraint(
-                defaultType,
-                toFreshVariables.substituteOrSelf(upperBound),
-                ConeDeclaredUpperBoundConstraintPosition()
-            )
+        val (typeArgumentsForConstraining, typeParametersForConstraining) = when {
+            isTypealiasConstructor -> {
+                val fullyExpandedType = declaration.unwrapSubstitutionOverrides().returnTypeRef.coneType.fullyExpandedType()
+                val arguments = fullyExpandedType.let(toFreshVariables::substituteOrSelf).typeArguments.toList()
+                val parameters = fullyExpandedType.toClassLikeSymbol()?.fir?.typeParameters ?: emptyList()
+                arguments to parameters
+            }
+            else -> {
+                freshTypeVariables.map { it.defaultType.toTypeProjection(ProjectionKind.INVARIANT) } to declaration.typeParameters
+            }
         }
 
-        for (index in typeParameters.indices) {
-            val typeParameter = typeParameters[index]
-            val freshVariable = freshTypeVariables[index]
+        for ((index, parameter) in typeParametersForConstraining.withIndex()) {
+            val argumentType = typeArgumentsForConstraining.getOrNull(index)?.type?.let(toFreshVariables::substituteOrSelf) ?: continue
 
-            val parameterSymbolFromExpandedClass = typeParameter.symbol.fir.getTypeParameterFromExpandedClass(index)
+            for (bound in parameter.symbol.resolvedBounds) {
+                val substitutedBound = toFreshVariables.substituteOrSelf(bound.coneType)
+                val isRedundant = substitutedBound.lowerBoundIfFlexible().classLikeLookupTagIfAny?.classId == StandardClassIds.Any
+                        && substitutedBound.upperBoundIfFlexible().isMarkedNullable
 
-            for (upperBound in parameterSymbolFromExpandedClass.symbol.resolvedBounds) {
-                freshVariable.addSubtypeConstraint(upperBound.coneType/*, position*/)
+                if (!isRedundant) {
+                    csBuilder.addSubtypeConstraint(argumentType, substitutedBound, ConeDeclaredUpperBoundConstraintPosition())
+                }
             }
         }
 
         return toFreshVariables to freshTypeVariables
-    }
-
-    context(context: ResolutionContext)
-    private fun FirTypeParameter.getTypeParameterFromExpandedClass(index: Int): FirTypeParameter {
-        val containingDeclaration = containingDeclarationSymbol.fir
-        if (containingDeclaration is FirRegularClass) {
-            return containingDeclaration.typeParameters.elementAtOrNull(index)?.symbol?.fir ?: this
-        } else if (containingDeclaration is FirTypeAlias) {
-            val typeParameterConeType = toConeType()
-            val expandedConeType = containingDeclaration.expandedTypeRef.coneType
-            val typeArgumentIndex = expandedConeType.typeArguments.indexOfFirst { it.type == typeParameterConeType }
-            val expandedTypeFir = expandedConeType.toSymbol()?.fir
-            if (expandedTypeFir is FirTypeParameterRefsOwner) {
-                val typeParameterFir = expandedTypeFir.typeParameters.elementAtOrNull(typeArgumentIndex)?.symbol?.fir ?: return this
-                if (expandedTypeFir is FirTypeAlias) {
-                    return typeParameterFir.getTypeParameterFromExpandedClass(typeArgumentIndex)
-                }
-                return typeParameterFir
-            }
-        }
-
-        return this
     }
 }

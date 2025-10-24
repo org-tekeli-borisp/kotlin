@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -37,24 +36,8 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             is FirResolvedNamedReference -> calleeReference.toResolvedCallableSymbol()
             else -> null
         }
-
-        val typeArguments: List<ConeTypeProjection>
-        val typeParameters: List<FirTypeParameterSymbol>
-
-        if (calleeSymbol is FirConstructorSymbol && calleeSymbol.typeAliasConstructorInfo?.originalConstructor != null) {
-            val constructedType = expression.resolvedType.fullyExpandedType()
-            // Updating arguments with source information after expanding the type seems extremely brittle as it relies on identity equality
-            // of the expression type arguments and the expanded type arguments. This cannot be applied before expanding the type because it
-            // seems like the type is already expended.
-            typeArguments = constructedType.typeArguments.map {
-                it.withSourceRecursive(expression)
-            }
-
-            typeParameters = constructedType.toRegularClassSymbol()?.typeParameterSymbols ?: return
-        } else {
-            typeArguments = expression.typeArguments.toTypeArgumentsWithSourceInfo()
-            typeParameters = calleeSymbol?.typeParameterSymbols ?: return
-        }
+        val typeArguments: List<ConeTypeProjection> = expression.typeArguments.toTypeArgumentsWithSourceInfo()
+        val typeParameters: List<FirTypeParameterSymbol> = calleeSymbol?.typeParameterSymbols ?: return
 
         // Neither common calls nor type alias constructor calls may contain projections
         // That should be checked somewhere else
@@ -70,12 +53,27 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             context.session,
         )
 
-        checkUpperBoundViolated(
-            typeParameters,
-            typeArguments,
-            substitutor,
-            fallbackSource = expression.source,
-        )
+        val typeAliasConstructorInfo = (calleeSymbol as? FirConstructorSymbol)?.typeAliasConstructorInfo
+
+        if (typeAliasConstructorInfo != null) {
+            val typealiasType: ConeClassLikeType = typeAliasConstructorInfo.typeAliasSymbol.defaultType()
+            checkUpperBoundViolated(
+                typeRef = null,
+                // Return types of constructors obtained from typealiases (e.g., `TA()`) remain expanded even when
+                // `aliasedTypeExpansionGloballyEnabled == false`, hence the workaround instead of `abbreviatedTypeOrSelf`.`
+                // See: `TypeAliasConstructorsSubstitutingScope.createTypealiasConstructor` and `typeAliasConstructorCrazyProjections.fir.kt`.
+                notExpandedType = substitutor.substituteOrSelf(typealiasType) as ConeClassLikeType,
+                fallbackSource = expression.source,
+            )
+        } else {
+            checkUpperBoundViolated(
+                typeParameters,
+                typeArguments,
+                substitutor,
+                fallbackSource = expression.source,
+                isTypealiasExpansion = false,
+            )
+        }
     }
 
     private fun ConeTypeProjection.withSourceRecursive(expression: FirQualifiedAccessExpression): ConeTypeProjection {

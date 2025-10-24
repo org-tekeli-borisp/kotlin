@@ -38,7 +38,7 @@ fun checkUpperBoundViolated(
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-private fun checkUpperBoundViolated(
+internal fun checkUpperBoundViolated(
     typeRef: FirTypeRef?,
     notExpandedType: ConeClassLikeType,
     isIgnoreTypeParameters: Boolean = false,
@@ -77,6 +77,7 @@ private fun checkUpperBoundViolated(
         isIgnoreTypeParameters,
         fallbackSource,
         isInsideTypeOperatorOrParameterBounds,
+        isTypealiasExpansion = type != notExpandedType,
     )
 }
 
@@ -108,6 +109,7 @@ fun checkUpperBoundViolated(
     isIgnoreTypeParameters: Boolean = false,
     fallbackSource: KtSourceElement?,
     isInsideTypeOperatorOrParameterBounds: Boolean = false,
+    isTypealiasExpansion: Boolean,
 ) {
     val count = minOf(typeParameters.size, typeArguments.size)
     val typeSystemContext = context.session.typeContext
@@ -141,7 +143,7 @@ fun checkUpperBoundViolated(
                         stubTypesEqualToAnything = true
                     )
                 ) {
-                    if (isReportExpansionError && argumentTypeRef == null) {
+                    if (isReportExpansionError && (argumentTypeRef == null || isTypealiasExpansion)) {
                         reporter.reportOn(
                             argumentSource ?: fallbackSource, typealiasDiagnostic, upperBound, argumentType
                         )

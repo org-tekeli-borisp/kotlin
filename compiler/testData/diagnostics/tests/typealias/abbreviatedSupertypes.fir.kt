@@ -23,8 +23,8 @@ fun foo1(x: One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>) {}
 fun foo2(x: Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>) {}
 
 fun main() {
-    One<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>Any<!>>()
-    Both<<!UPPER_BOUND_VIOLATED!>Any<!>, <!UPPER_BOUND_VIOLATED!>Any<!>>()
+    One<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION, UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Any<!>>()
+    Both<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Any<!>, <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Any<!>>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, objectDeclaration,

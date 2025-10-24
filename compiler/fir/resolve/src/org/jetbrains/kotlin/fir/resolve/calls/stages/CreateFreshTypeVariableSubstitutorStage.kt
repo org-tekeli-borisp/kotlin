@@ -138,7 +138,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
      * @return type which is chosen for EQUALS constraint
      */
     context(context: ResolutionContext)
-    private fun getTypePreservingFlexibilityWrtTypeVariable(
+    fun getTypePreservingFlexibilityWrtTypeVariable(
         type: ConeKotlinType,
         typeParameter: FirTypeParameterRef,
     ): ConeKotlinType {

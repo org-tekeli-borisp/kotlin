@@ -1,7 +1,11 @@
-/falseNegativeUpperBoundViolated.fir.kt:(400,409): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(320,325): error: Type argument is not within its bounds: must be subtype of 'Element<BetaKey>'.
 
-/falseNegativeUpperBoundViolated.fir.kt:(432,441): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(352,357): error: Type argument is not within its bounds: must be subtype of 'Element<String>'.
 
-/falseNegativeUpperBoundViolated.fir.kt:(464,466): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(359,365): error: Type argument is not within its bounds: must be subtype of 'Key'.
 
-/falseNegativeUpperBoundViolated.fir.kt:(489,491): error: Unknown error: Inapplicable(INAPPLICABLE): /Container.Container.
+/falseNegativeUpperBoundViolated.fir.kt:(377,382): error: Type argument is not within its bounds: must be subtype of 'Element<BetaKey>'.
+
+/falseNegativeUpperBoundViolated.fir.kt:(402,407): error: Type argument is not within its bounds: must be subtype of 'Element<String>'.
+
+/falseNegativeUpperBoundViolated.fir.kt:(409,415): error: Type argument is not within its bounds: must be subtype of 'Key'.

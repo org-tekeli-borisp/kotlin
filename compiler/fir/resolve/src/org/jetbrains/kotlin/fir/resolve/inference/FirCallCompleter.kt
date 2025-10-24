@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.stages.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable
 import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemC
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -123,8 +125,20 @@ class FirCallCompleter(
                 val readOnlyConstraintStorage = candidate.system.asReadOnlyStorage()
                 checkStorageConstraintsAfterFullCompletion(readOnlyConstraintStorage)
 
+                val argumentsMapping = candidate.freshVariables.zip(candidate.callInfo.typeArguments)
+                    .mapNotNull { (variable, argument) ->
+                        val parameter = variable.typeConstructor as? TypeConstructorMarker ?: return@mapNotNull null
+                        val type = (argument as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@mapNotNull null
+
+                        val transformedType = with(components.transformer.resolutionContext) {
+                            val parameterFir = (variable as ConeTypeParameterBasedTypeVariable).typeParameterSymbol.fir
+                            getTypePreservingFlexibilityWrtTypeVariable(type, parameterFir).fullyExpandedType()
+                        }
+
+                        parameter to transformedType
+                    }.toMap()
                 val finalSubstitutor = readOnlyConstraintStorage
-                    .buildAbstractResultingSubstitutor(session.typeContext).asCone()
+                    .buildAbstractResultingSubstitutor(session.typeContext, argumentsMapping = argumentsMapping).asCone()
                 call.transformSingle(
                     createCompletionResultsWriter(finalSubstitutor),
                     null

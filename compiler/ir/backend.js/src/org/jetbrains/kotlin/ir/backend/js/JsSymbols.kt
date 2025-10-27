@@ -79,7 +79,7 @@ class JsSymbols(
     val coroutineEmptyContinuation: IrPropertySymbol = CallableIds.EmptyContinuation.propertySymbol()
 
     override val returnIfSuspended = CallableIds.returnIfSuspended.functionSymbol()
-    val returnIfSuspendedNonGeneratorVersion = CallableIds.returnIfSuspendedNonGeneratorVersion.functionSymbol()
+    val suspendCoroutineUninterceptedOrReturnJS = CallableIds.suspendCoroutineUninterceptedOrReturnJS.functionSymbol()
 
     override val functionAdapter = ClassIds.FunctionAdapter.classSymbol()
 
@@ -443,7 +443,6 @@ class JsSymbols(
     val jsNameAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsName.classSymbol()
     val jsStaticAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsStatic.classSymbol()
     val jsExportAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsExport.classSymbol()
-    val jsGeneratorAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsGenerator.classSymbol()
 
     val jsExportIgnoreAnnotationSymbol = JsStandardClassIds.Annotations.JsExportIgnore.classSymbol()
 
@@ -542,7 +541,7 @@ private object CallableIds {
     // JS functions
     val getContinuation = "getContinuation".jsCallableId
     val returnIfSuspended = "returnIfSuspended".jsCallableId
-    val returnIfSuspendedNonGeneratorVersion = "returnIfSuspendedNonGeneratorVersion".jsCallableId
+    val suspendCoroutineUninterceptedOrReturnJS = "suspendCoroutineUninterceptedOrReturnJS".jsCallableId
 
     val jsIsEs6 = "jsIsEs6".jsCallableId
     val VOID = "VOID".jsCallableId

@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrInlinedFunctionBlockOffsetsChecker
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 private val validateIrBeforeLowering = makeIrModulePhase(
@@ -67,9 +69,15 @@ private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
 )
 
 private val validateIrAfterLowering = makeIrModulePhase(
-    ::IrValidationAfterLoweringPhase,
+    ::JsIrValidationAfterLoweringPhase,
     name = "ValidateIrAfterLowering",
 )
+
+// TODO (KT-82044): Replace this class by IrValidationAfterLoweringPhase. Then drop it.
+private class JsIrValidationAfterLoweringPhase(context: LoweringContext) : IrValidationAfterLoweringPhase<LoweringContext>(context) {
+    override val defaultValidationConfig: IrValidatorConfig
+        get() = super.defaultValidationConfig.withoutCheckers(IrInlinedFunctionBlockOffsetsChecker)
+}
 
 private val collectClassDefaultConstructorsPhase = makeIrModulePhase(
     ::CollectClassDefaultConstructorsLowering,

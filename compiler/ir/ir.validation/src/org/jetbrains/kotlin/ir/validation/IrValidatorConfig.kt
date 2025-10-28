@@ -26,6 +26,7 @@ fun IrValidatorConfig.withBasicChecks() = withCheckers(
     IrSetValueAssignabilityChecker,
     IrTypeOperatorTypeOperandChecker,
     IrPrivateDeclarationOverrideChecker,
+    IrInlinedFunctionBlockOffsetsChecker,
 )
 
 fun IrValidatorConfig.withTypeChecks() = withCheckers(

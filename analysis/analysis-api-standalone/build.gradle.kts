@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -34,6 +36,17 @@ kotlin {
 
     compilerOptions {
         optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
+    }
+
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled.set(true)
+
+        variants.create("unstable").filters {
+            exclude.annotatedWith.addAll(
+                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+            )
+        }
     }
 }
 

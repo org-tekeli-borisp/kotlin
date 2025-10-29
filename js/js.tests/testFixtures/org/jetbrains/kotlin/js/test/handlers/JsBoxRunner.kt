@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.js.test.handlers
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
+import org.jetbrains.kotlin.test.services.getFixture
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(testServices) {
+    private val testChecker = V8JsTestChecker(
+        testServices.getFixture("repl.js").absolutePath
+    )
+
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             runJsCode()
@@ -48,7 +54,7 @@ class JsBoxRunner(testServices: TestServices) : AbstractJsArtifactsCollector(tes
         testPackage: String?,
         withModuleSystem: Boolean
     ) {
-        V8JsTestChecker
+        testChecker
             .check(
                 jsFiles,
                 testModuleName,

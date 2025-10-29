@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.DFS.topologicalOrder
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 
-const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
+const val MODULE_EMULATION_FILE = "moduleEmulation.js"
 
 fun TestModule.getNameFor(filePath: String, testServices: TestServices): String {
     return JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, name) + "-js-" + filePath
@@ -86,7 +86,7 @@ fun getAdditionalFiles(
     val withModuleSystem = testWithModuleSystem(testServices)
 
     val additionalFiles = mutableListOf<File>()
-    if (withModuleSystem) additionalFiles += File(MODULE_EMULATION_FILE)
+    if (withModuleSystem) additionalFiles += testServices.getFixture(MODULE_EMULATION_FILE)
 
     originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
         .takeIf { it.exists() }

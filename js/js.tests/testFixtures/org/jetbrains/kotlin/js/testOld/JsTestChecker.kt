@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger
 internal const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
 private const val ESM_EXTENSION = ".mjs"
 
-fun createScriptEngine(): ScriptEngine = ScriptEngineV8()
+fun createScriptEngine(): ScriptEngine = ScriptEngineV8("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js")
 
 private fun String.escapePath(): String {
     return replace("\\", "/")
@@ -53,7 +53,7 @@ fun ScriptEngine.runTestFunction(
     return eval(script)
 }
 
-object V8JsTestChecker {
+class V8JsTestChecker(private val replFile: String) {
     fun check(
         files: List<String>,
         testModuleName: String?,
@@ -136,7 +136,7 @@ object V8JsTestChecker {
     private var engineUsageCnt = AtomicInteger(0)
 
     private val engineTL = object : ThreadLocal<ScriptEngineV8>() {
-        override fun initialValue() = ScriptEngineV8()
+        override fun initialValue() = ScriptEngineV8(replFile)
         override fun remove() {
             get().release()
             super.remove()
@@ -150,7 +150,9 @@ object V8JsTestChecker {
         }
     }
 
-    private const val SCRIPT_ENGINE_REUSAGE_LIMIT = 100
+    companion object {
+        private const val SCRIPT_ENGINE_REUSAGE_LIMIT = 100
+    }
 }
 
 const val GET_KOTLIN_OUTPUT = "main.get_output().buffer_1"

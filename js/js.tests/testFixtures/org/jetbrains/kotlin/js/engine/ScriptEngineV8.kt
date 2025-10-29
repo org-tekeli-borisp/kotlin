@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.js.engine
 
-class ScriptEngineV8(doTrace: Boolean = true) : ProcessBasedScriptEngine(System.getProperty("javascript.engine.path.V8"), doTrace)
+class ScriptEngineV8(replFile: String, doTrace: Boolean = true) :
+    ProcessBasedScriptEngine(System.getProperty("javascript.engine.path.V8"), replFile, doTrace)
 
 fun main() {
 //    System.setProperty("javascript.engine.path.V8", "<path-to-d8>")
-    val vm = ScriptEngineV8(doTrace = false)
+    val vm = ScriptEngineV8("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js", doTrace = false)
     println("Welcome!")
     while (true) {
         print("> ")

@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.getFixture
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -48,6 +51,10 @@ abstract class JsAbstractInvalidationTest(
 
         protected const val SOURCE_MAPPING_URL_PREFIX = "//# sourceMappingURL="
     }
+
+    private val testChecker = V8JsTestChecker(
+        testServices.getFixture("repl.js").absolutePath
+    )
 
     override val modelTarget: ModelTarget = ModelTarget.JS
 
@@ -188,7 +195,7 @@ abstract class JsAbstractInvalidationTest(
 
         private fun verifyJsCode(stepId: Int, mainModuleName: String, jsFiles: List<String>) {
             try {
-                V8JsTestChecker.checkWithTestFunctionArgs(
+                testChecker.checkWithTestFunctionArgs(
                     files = jsFiles,
                     testModuleName = "./$mainModuleName${projectInfo.moduleKind.jsExtension}",
                     testPackageName = null,

@@ -16,7 +16,8 @@ private val counter = AtomicInteger(0)
 
 abstract class ProcessBasedScriptEngine(
     private val executablePath: String,
-    private val doTrace: Boolean
+    private val replFile: String,
+    private val doTrace: Boolean,
 ) : ScriptEngine {
 
     private var process: Process? = null
@@ -95,11 +96,8 @@ abstract class ProcessBasedScriptEngine(
 
         if (doTrace)
             println("Started repl.js #${counter.getAndIncrement()} in thread ${Thread.currentThread().id}")
-        val builder = ProcessBuilder(
-            executablePath,
-            "js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js",
-        )
-        return builder.start().also {
+
+        return ProcessBuilder(executablePath, replFile).start().also {
             process = it
         }
     }

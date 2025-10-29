@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.getFixture
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
@@ -252,10 +255,14 @@ internal class JsCompilerInvocationTestArtifactBuilder(
 
 internal object JsCompilerInvocationTestBinaryRunner :
     KlibCompilerInvocationTestUtils.BinaryRunner<JsCompilerInvocationTestBinaryArtifact> {
+    private val testServices = TestServices()
+    private val testChecker = V8JsTestChecker(
+        testServices.getFixture("repl.js").absolutePath
+    )
 
     override fun runBinary(binaryArtifact: JsCompilerInvocationTestBinaryArtifact) {
         val filePaths = binaryArtifact.jsFiles.map { it.canonicalPath }
-        V8JsTestChecker.check(
+        testChecker.check(
             filePaths, binaryArtifact.mainModuleName, null,
             binaryArtifact.boxFunctionFqName, "OK", withModuleSystem = false,
         )

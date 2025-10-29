@@ -26,12 +26,8 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
     }
 
     protected fun URL.toTestFile(relativePath: String? = null): TestFile {
-        val name = this.file.substringAfterLast("/")
-        val dir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("filesFromResources")
-        val originalContent = this.readText()
-        val realFile = dir.resolve(name).also {
-            it.writeText(originalContent)
-        }
+        val (realFile, originalContent) = testServices.fixtureManager.readResourceFileByUrl(this)
+        val name = realFile.name
         return TestFile(
             relativePath = relativePath?.let(Paths::get)?.resolve(name)?.toString() ?: name,
             originalContent = originalContent,

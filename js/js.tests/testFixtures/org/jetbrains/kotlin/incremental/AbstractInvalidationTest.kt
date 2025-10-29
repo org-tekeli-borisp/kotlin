@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.getFixture
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -70,6 +72,7 @@ abstract class AbstractInvalidationTest(
         return directory.resolve(PROJECT_INFO_FILE)
     }
 
+    protected val testServices = TestServices()
     private val zipAccessor = ZipFileSystemCacheableAccessor(2)
 
     protected abstract val rootDisposable: TestDisposable
@@ -310,7 +313,7 @@ abstract class AbstractInvalidationTest(
         }
 
         protected fun prepareExternalJsFiles(): MutableList<String> {
-            return testDir.filesInDir.mapNotNullTo(mutableListOf(MODULE_EMULATION_FILE)) { file ->
+            return testDir.filesInDir.mapNotNullTo(mutableListOf(testServices.getFixture(MODULE_EMULATION_FILE).absolutePath)) { file ->
                 file.takeIf { it.name.isAllowedJsFile() }?.readText()?.let { jsCode ->
                     val externalModule = jsDir.resolve(file.name)
                     externalModule.writeAsJsModule(jsCode, file.nameWithoutExtension)

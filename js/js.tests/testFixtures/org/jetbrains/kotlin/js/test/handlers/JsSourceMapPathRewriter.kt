@@ -73,14 +73,7 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
                 ?.parentFile                   // libraries/stdlib/{js-ir-minimal-for-test|js-ir}/
                 ?: continue
 
-            val searchPaths = listOf(sourceRoot, sourceRoot.resolve("build"))
-
-            for (searchPath in searchPaths) {
-                val resolved = searchPath.resolve(sourceMapPath)
-                if (resolved.exists()) {
-                    return resolved.absolutePath
-                }
-            }
+            return sourceRoot.absolutePath
         }
         return null
     }

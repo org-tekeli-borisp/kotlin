@@ -278,7 +278,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/klib/syntheticAccessors")
     testData(project(":compiler").isolated, "testData/klib/__utils__")
 
-    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
     testData(project(":js:js.translator").isolated, "testData/incremental")
     testData(project(":js:js.translator").isolated, "testData/box")
     testData(project(":js:js.translator").isolated, "testData/lineNumbers")
@@ -330,4 +329,8 @@ tasks.processTestFixturesResources.configure {
         into("debugTestHelpers")
         include("jsTestHelpers/")
     }
+
+    from(project(":js:js.translator").layout.projectDirectory.dir("testData/_commonFiles"))
+    from(project.layout.projectDirectory.file("testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
+    from(project(":js:js.translator").layout.projectDirectory.file("testData/moduleEmulation.js"))
 }

@@ -11,13 +11,19 @@ import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.getFixture
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
 class JsWrongModuleHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
+    private val testChecker = V8JsTestChecker(
+        testServices.getFixture("repl.js").absolutePath
+    )
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {}
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
@@ -27,7 +33,7 @@ class JsWrongModuleHandler(testServices: TestServices) : JsBinaryArtifactHandler
         val mainJsFile = File(parentDir, "${originalFileName}_v5.js").path
         val libJsFile = File(parentDir, "$originalFileName-kotlin_lib_v5.js").path
         try {
-            V8JsTestChecker.run(listOf(kotlinJsFile, mainJsFile, libJsFile))
+            testChecker.run(listOf(kotlinJsFile, mainJsFile, libJsFile))
         } catch (e: RuntimeException) {
             testServices.assertions.assertTrue(e is ScriptExecutionException)
             val message = e.message!!

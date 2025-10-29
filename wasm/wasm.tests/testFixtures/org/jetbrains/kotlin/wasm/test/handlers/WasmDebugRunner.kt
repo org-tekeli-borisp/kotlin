@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultDirectives
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -22,23 +21,27 @@ import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
-class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollector(testServices) {
+class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
-            saveAndRunWasmCode()
+            val artifacts = modulesToArtifact.values.single()
+            val outputDirBase = testServices.getWasmTestOutputDirectory()
+
+            writeToFilesAndRunTest(
+                outputDir = File(outputDirBase, "dev"),
+                res = artifacts.compilerResult
+            )
+            writeToFilesAndRunTest(
+                outputDir = File(outputDirBase, "dce"),
+                res = artifacts.compilerResultWithDCE
+            )
         }
     }
+}
 
-    private fun saveAndRunWasmCode() {
-        val artifacts = modulesToArtifact.values.single()
-        val outputDirBase = testServices.getWasmTestOutputDirectory()
-        val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val mainModule = WasmEnvironmentConfigurator.getMainModule(testServices)
-        val collectedJsArtifacts = collectJsArtifacts(originalFile)
-        val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
-
-        // language=js
-        val testFileContent = """
+abstract class WasmDebugRunnerBase(testServices: TestServices) : AbstractWasmArtifactsCollector(testServices) {
+    // language=js
+    private val testFileContent = """
             let messageId = 0;
             const locations = [];
             function addLocation(frame) {
@@ -93,22 +96,25 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
             print(JSON.stringify(locations))
         """.trimIndent()
 
-        fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult) {
-            val compiledFileBase = "index"
-            val sourceMap = res.parsedSourceMaps
+    fun writeToFilesAndRunTest(outputDir: File, res: WasmCompilerResult) {
+        val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val collectedJsArtifacts = collectJsArtifacts(originalFile)
+        val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
-            val dir = File(outputDirBase, mode)
-            dir.mkdirs()
+        val compiledFileBase = "index"
+        val sourceMap = res.parsedSourceMaps
 
-            writeCompilationResult(res, dir, compiledFileBase)
-            File(dir, "test.mjs").writeText(testFileContent)
+        outputDir.mkdirs()
 
-            val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
+        writeCompilationResult(res, outputDir, compiledFileBase)
+        File(outputDir, "test.mjs").writeText(testFileContent)
 
-            if (debugMode >= DebugMode.DEBUG) {
-                File(dir, "index.html").writeText(
-                    // language=html
-                    """
+        val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(outputDir)
+
+        if (debugMode >= DebugMode.DEBUG) {
+            File(outputDir, "index.html").writeText(
+                // language=html
+                """
                         <!DOCTYPE html>
                         <html lang="en">
                         <body>
@@ -136,83 +142,79 @@ class WasmDebugRunner(testServices: TestServices) : AbstractWasmArtifactsCollect
                         </body>
                         </html>
                     """.trimIndent()
-                )
-                // To have access to the content of original files from a browser's DevTools
-                testServices.moduleStructure.modules
-                    .flatMap { it.files }
-                    .forEach { File(dir, it.name).writeText(it.originalContent) }
-            }
-
-            val exception = try {
-                val result = WasmVM.V8.run(
-                    entryFile = "./${collectedJsArtifacts.entryPath}",
-                    jsFiles = jsFilePaths,
-                    workingDirectory = dir,
-                    toolArgs = listOf("--enable-inspector", "--allow-natives-syntax")
-                )
-                val debuggerSteps = FrameParser(result).parse().mapNotNull { frame ->
-                    val functionLocation = sourceMap
-                        .findSegmentForTheGeneratedLocation(
-                            frame.currentFunctionStartLocation.line,
-                            frame.currentFunctionStartLocation.column
-                        )
-                        ?.takeIf { it.sourceLineNumber >= 0 }
-
-                    if (functionLocation?.isIgnored == true) return@mapNotNull null
-
-                    val pausedLocation = sourceMap
-                        .findSegmentForTheGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
-                        ?: return@mapNotNull null
-
-                    ProcessedStep(
-                        pausedLocation.sourceFileName ?: "$compiledFileBase.wasm",
-                        frame.functionName,
-                        Location(
-                            pausedLocation.sourceLineNumber.takeIf { it >= 0 } ?: frame.pausedLocation.line,
-                            pausedLocation.sourceColumnNumber.takeIf { it >= 0 } ?: frame.pausedLocation.column
-                        )
-                    )
-                }
-
-                val groupedByLinesSteppingTestLoggedData = buildList<SteppingTestLoggedData> {
-                    var lastStep = ProcessedStep("DUMMY", "DUMMY", Location(-1, -1))
-                    var columns = mutableListOf<Int>()
-
-                    for (step in debuggerSteps.plus(lastStep)) {
-                        if (lastStep == step) {
-                            continue
-                        }
-
-                        if (!lastStep.isOnTheSameLineAs(step) && columns.isNotEmpty()) {
-                            val (fileName, functionName, location) = lastStep
-                            val lineNumber = location.line + 1
-                            val aggregatedColumns = " (${columns.joinToString(", ")})"
-                            val formatedSteppingExpectation = formatAsSteppingTestExpectation(fileName, lineNumber, functionName, false)
-                            push(SteppingTestLoggedData(lineNumber, false, formatedSteppingExpectation + aggregatedColumns))
-                            columns = mutableListOf()
-                        }
-
-                        columns.push(step.location.column)
-                        lastStep = step
-                    }
-                }
-
-                checkSteppingTestResult(
-                    frontendKind = testServices.defaultsProvider.frontendKind,
-                    testServices.defaultsProvider.targetBackend ?: TargetBackend.WASM,
-                    originalFile,
-                    groupedByLinesSteppingTestLoggedData,
-                    testServices.defaultDirectives
-                )
-
-                null
-            } catch (e: Throwable) { e }
-
-            processExceptions(listOfNotNull(exception))
+            )
+            // To have access to the content of original files from a browser's DevTools
+            testServices.moduleStructure.modules
+                .flatMap { it.files }
+                .forEach { File(outputDir, it.name).writeText(it.originalContent) }
         }
 
-        writeToFilesAndRunTest("dev", artifacts.compilerResult)
-        writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
+        val exception = try {
+            val result = WasmVM.V8.run(
+                entryFile = "./${collectedJsArtifacts.entryPath}",
+                jsFiles = jsFilePaths,
+                workingDirectory = outputDir,
+                toolArgs = listOf("--enable-inspector", "--allow-natives-syntax")
+            )
+            val debuggerSteps = FrameParser(result).parse().mapNotNull { frame ->
+                val functionLocation = sourceMap
+                    .findSegmentForTheGeneratedLocation(
+                        frame.currentFunctionStartLocation.line,
+                        frame.currentFunctionStartLocation.column
+                    )
+                    ?.takeIf { it.sourceLineNumber >= 0 }
+
+                if (functionLocation?.isIgnored == true) return@mapNotNull null
+
+                val pausedLocation = sourceMap
+                    .findSegmentForTheGeneratedLocation(frame.pausedLocation.line, frame.pausedLocation.column)
+                    ?: return@mapNotNull null
+
+                ProcessedStep(
+                    pausedLocation.sourceFileName ?: "$compiledFileBase.wasm",
+                    frame.functionName,
+                    Location(
+                        pausedLocation.sourceLineNumber.takeIf { it >= 0 } ?: frame.pausedLocation.line,
+                        pausedLocation.sourceColumnNumber.takeIf { it >= 0 } ?: frame.pausedLocation.column
+                    )
+                )
+            }
+
+            val groupedByLinesSteppingTestLoggedData = buildList<SteppingTestLoggedData> {
+                var lastStep = ProcessedStep("DUMMY", "DUMMY", Location(-1, -1))
+                var columns = mutableListOf<Int>()
+
+                for (step in debuggerSteps.plus(lastStep)) {
+                    if (lastStep == step) {
+                        continue
+                    }
+
+                    if (!lastStep.isOnTheSameLineAs(step) && columns.isNotEmpty()) {
+                        val (fileName, functionName, location) = lastStep
+                        val lineNumber = location.line + 1
+                        val aggregatedColumns = " (${columns.joinToString(", ")})"
+                        val formatedSteppingExpectation = formatAsSteppingTestExpectation(fileName, lineNumber, functionName, false)
+                        push(SteppingTestLoggedData(lineNumber, false, formatedSteppingExpectation + aggregatedColumns))
+                        columns = mutableListOf()
+                    }
+
+                    columns.push(step.location.column)
+                    lastStep = step
+                }
+            }
+
+            checkSteppingTestResult(
+                frontendKind = testServices.defaultsProvider.frontendKind,
+                testServices.defaultsProvider.targetBackend ?: TargetBackend.WASM,
+                originalFile,
+                groupedByLinesSteppingTestLoggedData,
+                testServices.defaultDirectives
+            )
+
+            null
+        } catch (e: Throwable) { e }
+
+        processExceptions(listOfNotNull(exception))
     }
 
     private fun SourceMap.findSegmentForTheGeneratedLocation(lineNumber: Int, columnNumber: Int): SourceMapSegment? {

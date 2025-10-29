@@ -82,6 +82,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val generateWat = debugMode >= DebugMode.DEBUG || configuration.getBoolean(WasmConfigurationKeys.WASM_GENERATE_WAT)
 
         val generateDts = WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS in testServices.moduleStructure.allDirectives
+        val generateSourceMaps = WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in testServices.moduleStructure.allDirectives
         val useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG || configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
 
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
@@ -112,6 +113,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             singleModulePreloadJs = singleModulePreloadJs,
             useDebuggerCustomFormatters = useDebuggerCustomFormatters,
             typeScriptFragment = typeScriptFragment,
+            generateSourceMaps = generateSourceMaps,
         )
 
         return BinaryArtifacts.Wasm(

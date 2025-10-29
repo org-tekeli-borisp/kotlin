@@ -23,7 +23,12 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendSingleModuleFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerWithPrecompiled
+import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunnerBase
+import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
+import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 import org.junit.jupiter.api.BeforeAll
+import java.io.File
 
 
 abstract class AbstractWasmJsCodegenSingleModuleTest(
@@ -103,4 +108,39 @@ open class AbstractFirWasmTypeScriptExportSingleModuleTest : AbstractWasmJsCodeg
             +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS
         }
     }
+}
+
+class WasmDebugSingleModuleRunner(testServices: TestServices) : WasmDebugRunnerBase(testServices) {
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (!someAssertionWasFailed) {
+            val artifacts = modulesToArtifact.values.single()
+            val outputDirBase = testServices.getWasmTestOutputDirectory()
+            writeToFilesAndRunTest(
+                outputDir = outputDirBase,
+                res = artifacts.compilerResult
+            )
+        }
+    }
+}
+
+open class AbstractFirWasmJsSteppingSingleFileTest(
+    testGroupOutputDirPrefix: String = "debug/stepping/firBoxSingleModule"
+) : AbstractWasmJsCodegenSingleModuleTest(
+    "compiler/testData/debug/stepping/",
+    testGroupOutputDirPrefix
+) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmDebugSingleModuleRunner
+
+//    override fun configure(builder: TestConfigurationBuilder) {
+//        super.configure(builder)
+//        with(builder) {
+//            useAdditionalSourceProviders(::WasmJsSteppingTestAdditionalSourceProvider)
+//            defaultDirectives {
+//                +WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP
+//                +WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
+//                +WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
+//            }
+//        }
+//    }
 }

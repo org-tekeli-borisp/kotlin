@@ -1,7 +1,6 @@
+import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
-import com.github.gradle.node.npm.task.NpmTask
-import java.nio.file.Files
 import java.util.*
 
 plugins {
@@ -191,7 +190,8 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
-    testFixturesApi(intellijCore())
+    testFixturesImplementation(testFixtures(project(":compiler:fir:analysis-tests")))
+    testFixturesImplementation(intellijCore())
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -295,74 +295,28 @@ val unzipJsShell by task<Copy> {
     into(jsShellUnpackedDirectory)
 }
 
-val wasmEdgeDirectory = toolsDirectory.map { it.dir("WasmEdge").asFile }
-val wasmEdgeDirectoryName = wasmEdgeVersion.map { version -> "WasmEdge-$version-$wasmEdgeInnerSuffix" }
-val wasmEdgeUnpackedDirectory = wasmEdgeDirectory.map { it.resolve(wasmEdgeDirectoryName.get()) }
-val unzipWasmEdge by task<Copy> {
-    dependsOn(wasmEdge)
+val unzipWasmEdge by task<UnzipWasmEdge> {
+    from.setFrom(wasmEdge)
 
-    val wasmEdgeDirectory = wasmEdgeDirectory
     val currentOsTypeForConfigurationCache = currentOsType.name
-    val wasmEdgeUnpackedDirectory = wasmEdgeUnpackedDirectory
 
-    from {
-        if (wasmEdge.singleFile.extension == "zip") {
-            zipTree(wasmEdge.singleFile)
-        } else {
-            tarTree(wasmEdge.singleFile)
-        }
-    }
-    into(wasmEdgeDirectory)
-    inputs.property("currentOsTypeForConfigurationCache", currentOsTypeForConfigurationCache)
+    into.fileProvider(toolsDirectory.map { it.dir("WasmEdge").asFile })
 
-    doLast {
-        if (currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX)) return@doLast
+    directoryName.set(wasmEdgeVersion.map { version -> "WasmEdge-$version-$wasmEdgeInnerSuffix" })
 
-        val unpackedWasmEdgeDirectory = wasmEdgeUnpackedDirectory.get().toPath()
-
-        val libDirectory = unpackedWasmEdgeDirectory
-            .resolve(if (currentOsTypeForConfigurationCache == OsName.MAC) "lib" else "lib64")
-
-        val targets = if (currentOsTypeForConfigurationCache == OsName.MAC)
-            listOf("libwasmedge.0.1.0.dylib", "libwasmedge.0.1.0.tbd")
-        else listOf("libwasmedge.so.0.1.0")
-
-        targets.forEach {
-            val target = libDirectory.resolve(it)
-            val firstLink = libDirectory.resolve(it.replace("0.1.0", "0")).also(Files::deleteIfExists)
-            val secondLink = libDirectory.resolve(it.replace(".0.1.0", "")).also(Files::deleteIfExists)
-
-            Files.createSymbolicLink(firstLink, target)
-            Files.createSymbolicLink(secondLink, target)
-        }
-    }
+    getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
+    getIsMac.set(currentOsTypeForConfigurationCache == OsName.MAC)
 }
 
 
 val jscDirectory = toolsDirectory.map { it.dir("JavaScriptCore").asFile }
-val jscUnpackedDirectory = jscDirectory.map { it.resolve("jsc-$jscOsDependentClassifier-$jscOsDependentRevision") }
-val unzipJsc by task<Copy> {
-    dependsOn(jsc)
-    from { zipTree(jsc.singleFile) }
+val unzipJsc by task<UnzipJsc> {
+    from.setFrom(jsc)
 
-    val jscUnpackedDirectory = jscUnpackedDirectory
-    into(jscUnpackedDirectory)
+    into.fileProvider(jscDirectory.map { it.resolve("jsc-$jscOsDependentClassifier-$jscOsDependentRevision") })
 
     val isLinux = currentOsType.name == OsName.LINUX
-    inputs.property("isLinux", isLinux)
-
-    doLast {
-        if (isLinux) {
-            val libDirectory = File(jscUnpackedDirectory.get(), "lib")
-            for (file in libDirectory.listFiles()) {
-                if (file.isFile && file.length() < 100) { // seems unpacked file link
-                    val linkTo = file.readText()
-                    file.delete()
-                    Files.createSymbolicLink(file.toPath(), File(linkTo).toPath())
-                }
-            }
-        }
-    }
+    getIsLinux.set(isLinux)
 }
 
 val createJscRunner by task<CreateJscRunner> {
@@ -372,13 +326,13 @@ val createJscRunner by task<CreateJscRunner> {
     val runnerFilePath = jscDirectory.map { it.resolve(runnerFileName) }
     outputFile.fileProvider(runnerFilePath)
 
-    inputDirectory.fileProvider(unzipJsc.map { it.outputs.files.singleFile })
+    inputDirectory.set(unzipJsc.flatMap { it.into })
 }
 
 fun Test.setupSpiderMonkey() {
     val jsShellExecutablePath = unzipJsShell
-        .map { it.outputs.files.singleFile }
-        .map { it.resolve("js").absolutePath }
+        .map { it.destinationDir }
+        .map { it.resolve("js") }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(jsShellExecutablePath)
@@ -388,9 +342,12 @@ fun Test.setupSpiderMonkey() {
 
 fun Test.setupWasmEdge() {
     val wasmEdgeExecutablePath = unzipWasmEdge
-        .map { it.outputs.files.singleFile }
-        .map { it.resolve(wasmEdgeDirectoryName.get()) }
-        .map { it.resolve("bin/wasmedge").absolutePath }
+        .flatMap { task ->
+            task.into.zip(task.directoryName) { into, dirName ->
+                into.dir(dirName)
+            }
+        }
+        .map { it.file("bin/wasmedge") }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(wasmEdgeExecutablePath)
@@ -400,8 +357,7 @@ fun Test.setupWasmEdge() {
 
 fun Test.setupJsc() {
     val jscRunnerExecutablePath = createJscRunner
-        .map { it.outputFile.asFile.get() }
-        .map { it.absolutePath }
+        .flatMap { it.outputFile }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(jscRunnerExecutablePath)
@@ -419,6 +375,7 @@ projectTests {
             taskName = taskName,
             jUnitMode = JUnitMode.JUnit5,
             skipInLocalBuild = skipInLocalBuild,
+            maxHeapSizeMb = 6144
         ) {
             with(d8KotlinBuild) {
                 setupV8()
@@ -434,10 +391,9 @@ projectTests {
             setupJsc()
             useJUnitPlatform()
             setupGradlePropertiesForwarding()
-            val buildDirectory = layout.buildDirectory.map { "${it.asFile}/" }
-            jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-                classpath.from(buildDirectory)
+            jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
                 property.set("kotlin.wasm.test.root.out.dir")
+                buildDirectory.set(layout.buildDirectory)
             }
             body()
         }

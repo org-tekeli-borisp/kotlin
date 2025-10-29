@@ -124,7 +124,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             is FirThisReference -> {
                 val labelName = callee.labelName
                 val allMatchingImplicitReceivers = implicitValueStorage[labelName]
-                val implicitReceiver = allMatchingImplicitReceivers.singleWithoutDuplicatingContextReceiversOrNull() ?: run {
+                val implicitReceiver = allMatchingImplicitReceivers.singleOrNull() ?: run {
                     val diagnostic = allMatchingImplicitReceivers.ambiguityDiagnosticFor(labelName)
                     qualifiedAccessExpression.resultType = ConeErrorType(diagnostic)
                     callee.replaceDiagnostic(diagnostic)
@@ -657,6 +657,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 constructorSymbol.fir,
                 originScope = null,
                 callSiteIsOperatorCall = false,
+                lookInContextParameters = false,
             )
             val argumentsToParameters = mapping.toArgumentToParameterMapping().unwrapAtoms()
 

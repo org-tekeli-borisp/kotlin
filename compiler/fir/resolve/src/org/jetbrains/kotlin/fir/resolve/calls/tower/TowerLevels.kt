@@ -9,18 +9,17 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.stages.isSuperCall
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toImplicitResolvedQualifierReceiver
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirActualizingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
@@ -326,28 +325,6 @@ class DispatchReceiverMemberScopeTowerLevel(
     }
 }
 
-class ContextReceiverGroupMemberScopeTowerLevel(
-    bodyResolveComponents: BodyResolveComponents,
-    contextReceiverGroup: ContextReceiverGroup,
-    givenExtensionReceiverOptions: List<FirExpression> = emptyList(),
-) : TowerLevel() {
-    private val dispatchReceiverMemberScopeTowerLevels = contextReceiverGroup.map {
-        DispatchReceiverMemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions, false)
-    }
-
-    override fun processFunctionsByName(info: CallInfo, processor: TowerLevelProcessor): ProcessResult {
-        return dispatchReceiverMemberScopeTowerLevels.minOf { it.processFunctionsByName(info, processor) }
-    }
-
-    override fun processPropertiesByName(info: CallInfo, processor: TowerLevelProcessor): ProcessResult {
-        return dispatchReceiverMemberScopeTowerLevels.minOf { it.processPropertiesByName(info, processor) }
-    }
-
-    override fun processObjectsByName(info: CallInfo, processor: TowerLevelProcessor): ProcessResult {
-        return dispatchReceiverMemberScopeTowerLevels.minOf { it.processObjectsByName(info, processor) }
-    }
-}
-
 /**
  * We can access here members of currently accessible scope which is not influenced by explicit receiver.
  * We can either have no explicit receiver at all, or it can be an extension receiver.
@@ -366,7 +343,7 @@ internal class ScopeBasedTowerLevel(
     override val session: FirSession get() = bodyResolveComponents.session
 
     private val scope = if (LanguageFeature.MultiPlatformProjects.isEnabled()) {
-        FirActualizingScope(givenScope)
+        FirActualizingScope(givenScope, session)
     } else {
         givenScope
     }

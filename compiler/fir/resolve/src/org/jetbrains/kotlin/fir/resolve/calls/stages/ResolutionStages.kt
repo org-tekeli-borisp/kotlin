@@ -252,30 +252,36 @@ object CheckContextArguments : ResolutionStage() {
      */
     context(sink: CheckerSink, context: ResolutionContext)
     private fun Candidate.mapContextArgumentsOrNull(contextSymbols: List<FirValueParameterSymbol>): List<ConeResolutionAtom>? {
+        // With context parameters enabled, implicits are grouped by containing symbol,
+        // meaning that extension receivers and context parameters from the same declaration are in one group.
+        // See KT-74081.
         val implicitsGroupedByScope: List<List<FirExpression>> =
-            if (LanguageFeature.ContextParameters.isEnabled()) {
-                // With context parameters enabled, implicits are grouped by containing symbol,
-                // meaning that extension receivers and context parameters from the same declaration are in one group.
-                // See KT-74081.
-                context.bodyResolveContext.towerDataContext.implicitValueStorage.implicitValues
-                    .groupBy(
-                        keySelector = { it.boundSymbol.containingDeclarationIfParameter() },
-                        valueTransform = { it.computeExpression() })
-                    .values.map { it.filterNot(FirExpression::isInaccessibleFromStaticNestedClass) }
-                    .reversed()
-            } else {
-                // Old logic from context receivers where extension receivers are in a separate group from context receivers.
-                // TODO(KT-72994) Remove when context receivers are removed
-                context.bodyResolveContext.towerDataContext.towerDataElements.asReversed().mapNotNull { towerDataElement ->
-                    towerDataElement.implicitReceiver?.receiverExpression?.takeUnless(FirExpression::isInaccessibleFromStaticNestedClass)?.let(::listOf)
-                        ?: towerDataElement.implicitContextGroup?.map { it.computeExpression() }
-                }
-            }
+            context.bodyResolveContext.towerDataContext.implicitValueStorage.implicitValues
+                .groupBy(
+                    keySelector = { it.boundSymbol.containingDeclarationIfParameter() },
+                    valueTransform = { it.computeExpression() })
+                .values.map { it.filterNot(FirExpression::isInaccessibleFromStaticNestedClass) }
+                .reversed()
 
         val resultingContextArguments = mutableListOf<ConeResolutionAtom>()
         var errorReported = false
 
+        val contextArgumentsByParameterSymbol = buildMap {
+            for ((key, value) in argumentMapping) {
+                if (value.valueParameterKind != FirValueParameterKind.Regular) {
+                    put(value.symbol, key)
+                }
+            }
+        }
+
         for (symbol in contextSymbols) {
+            // handle context argument given using named arguments
+            val argument = contextArgumentsByParameterSymbol[symbol]
+            if (argument != null) {
+                resultingContextArguments.add(argument)
+                continue
+            }
+
             val expectedType = substitutor.substituteOrSelf(symbol.resolvedReturnType)
             val potentialContextArguments = findClosestMatchingContextArguments(expectedType, implicitsGroupedByScope)
             when (potentialContextArguments.size) {
@@ -696,7 +702,8 @@ internal object MapArguments : ResolutionStage() {
             arguments,
             function,
             candidate.originScope,
-            callSiteIsOperatorCall = (candidate.callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator
+            callSiteIsOperatorCall = (candidate.callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator,
+            lookInContextParameters = LanguageFeature.ExplicitContextArguments.isEnabled(),
         )
         candidate.initializeArgumentMapping(
             arguments.unwrapNamedArgumentsForDynamicCall(function),

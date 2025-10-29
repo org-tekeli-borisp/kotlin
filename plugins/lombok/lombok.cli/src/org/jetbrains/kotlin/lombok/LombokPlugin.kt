@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.lombok
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.reportIfNeeded
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.lombok.LombokConfigurationKeys.CONFIG_FILE
 import org.jetbrains.kotlin.lombok.LombokPluginNames.CONFIG_OPTION_NAME
 import org.jetbrains.kotlin.lombok.LombokPluginNames.PLUGIN_ID
 import org.jetbrains.kotlin.lombok.k2.FirLombokRegistrar
+import org.jetbrains.kotlin.lombok.k2.LombokDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension
 import java.io.File
 
@@ -32,12 +32,10 @@ class LombokComponentRegistrar : CompilerPluginRegistrar() {
     }
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        configuration.messageCollector
-            .report(
-                CompilerMessageSeverity.WARNING,
-                "Lombok Kotlin compiler plugin is an experimental feature." +
-                        " See: https://kotlinlang.org/docs/components-stability.html."
-            )
+        configuration.reportIfNeeded(
+            LombokDiagnostics.LOMBOK_PLUGIN_IS_EXPERIMENTAL,
+            "Lombok Kotlin compiler plugin is an experimental feature. See: https://kotlinlang.org/docs/components-stability.html.",
+        )
         registerComponents(this, configuration)
     }
 

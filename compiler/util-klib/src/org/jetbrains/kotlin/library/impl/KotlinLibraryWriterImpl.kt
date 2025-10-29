@@ -18,7 +18,7 @@ open class KotlinLibraryLayoutForWriter(
     override val libFile: File,
     val unzippedDir: File,
     override val component: String = KLIB_DEFAULT_COMPONENT_NAME
-) : KotlinLibraryLayout, MetadataKotlinLibraryLayout, IrKotlinLibraryLayout {
+) : KotlinLibraryLayout, IrKotlinLibraryLayout {
     override val componentDir: File
         get() = File(unzippedDir, component)
     override val pre_1_4_manifest: File
@@ -148,32 +148,6 @@ fun buildKotlinLibrary(
 
     library.commit()
     return library.layout
-}
-
-class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: KotlinLibraryVersioning, platform: BuiltInsPlatform, nativeTargets: List<String>) {
-    private val outputDir = File(output)
-    private val library = createLibrary(moduleName, versions, platform, nativeTargets, outputDir)
-
-    private fun createLibrary(
-        moduleName: String,
-        versions: KotlinLibraryVersioning,
-        platform: BuiltInsPlatform,
-        nativeTargets: List<String>,
-        directory: File
-    ): KotlinLibraryWriterImpl {
-        val layout = KotlinLibraryLayoutForWriter(directory, directory)
-        val irWriter = IrWriterImpl(layout)
-        return KotlinLibraryWriterImpl(moduleName, versions, platform, nativeTargets, nopack = true, layout = layout, ir = irWriter)
-    }
-
-    fun invalidate() {
-        outputDir.deleteRecursively()
-        library.layout.mainIr.dir.mkdirs()
-    }
-
-    fun writeIr(serializedIrModule: SerializedIrModule) {
-        library.addIr(serializedIrModule)
-    }
 }
 
 enum class BuiltInsPlatform {

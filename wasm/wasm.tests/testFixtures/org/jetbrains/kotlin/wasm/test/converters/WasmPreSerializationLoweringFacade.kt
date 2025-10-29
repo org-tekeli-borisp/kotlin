@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.wasm.test.converters
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
-import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
+import org.jetbrains.kotlin.backend.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -36,7 +35,7 @@ class WasmPreSerializationLoweringFacade(
     testServices: TestServices,
 ) : IrPreSerializationLoweringFacade<IrBackendInput>(testServices, BackendKinds.IrBackend, BackendKinds.IrBackend) {
     override fun shouldTransform(module: TestModule): Boolean {
-        return module.languageVersionSettings.supportsFeature(LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization)
+        return module.languageVersionSettings.languageVersion.usesK2
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {

@@ -27,6 +27,7 @@ projectTests {
 
 dependencies {
     api(project(":libraries:tools:abi-validation:abi-tools-api"))
+    api(kotlinStdlib())
 
     implementation(project(":kotlin-metadata-jvm"))
     implementation(project(":kotlin-klib-abi-reader"))
@@ -37,8 +38,8 @@ dependencies {
     implementation(libs.diff.utils)
 
     testImplementation(kotlinTest("junit"))
-    testImplementation(libs.intellij.asm)
     testImplementation(libs.junit4)
+    testImplementation(kotlinStdlib())
     // using `KonanTarget` class
     testImplementation(project(":native:kotlin-native-utils"))
 }
@@ -46,6 +47,10 @@ dependencies {
 runtimeJarWithRelocation {
     from(mainSourceSet.output)
     relocate("org.jetbrains.org.objectweb.asm", "org.jetbrains.kotlin.abi.tools.org.objectweb.asm")
+}
+
+tasks.compileTestKotlin {
+    compilerOptions.freeCompilerArgs.add("-jvm-default=enable")
 }
 
 // we create ABI dump only for `mainSourceSet.output` because in `libs.intellij.asm` is not a part of ABI, and we will exclude it in any way

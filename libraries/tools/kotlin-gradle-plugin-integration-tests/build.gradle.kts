@@ -55,7 +55,6 @@ dependencies {
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-allopen"))
     testImplementation(project(":kotlin-noarg"))
-    testImplementation(project(":kotlin-lombok"))
     testImplementation(project(":kotlin-power-assert"))
     testImplementation(project(":kotlin-sam-with-receiver"))
     testImplementation(project(":kotlin-assignment"))
@@ -111,23 +110,21 @@ dependencies {
     testImplementation(project(":kotlin-parcelize-compiler"))
     testImplementation(libs.kotlinx.serialization.json)
     testImplementation(libs.ktor.client.cio)
-    testImplementation(libs.ktor.client.mock)
     testImplementation(libs.ktor.server.core)
     testImplementation(libs.ktor.server.cio)
-    testImplementation(libs.ktor.server.test.host)
 
     testImplementation(gradleApi())
     testImplementation(gradleKotlinDsl())
     testImplementation(gradleTestKit())
     testImplementation(commonDependency("com.google.code.gson:gson"))
-    testApi(platform(libs.junit.bom))
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.oshi.core)
 
-    testApi(project(":compiler:tests-mutes:mutes-junit5"))
+    testImplementation(project(":compiler:tests-mutes:mutes-junit5"))
 
     testCompileOnly(libs.intellij.asm)
 

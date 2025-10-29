@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  * In the future, this interface is supposed to replace [KotlinLibrary].
  *
  * The [Klib] consists of multiple components, each responsible for a certain aspect of the library.
- * There are the following "built-in" components that are always present:
- * - [KlibMetadataComponent], which provides access to the metadata stored inside the library.
+ * There are the following "mandatory" components that are always present:
+ * - [KlibMetadataComponent], which provides read access to the metadata stored inside the library.
  * - TODO(KT-81411): add more
  *
  * The component can be obtained by calling [getComponent]. For some components there exist
@@ -32,27 +32,53 @@ interface Klib {
     val location: KlibFile
 
     /**
-     * Get a specific [KlibComponent] by its [id]. Throw an error if the component is not found.
+     * Get a specific [KlibMandatoryComponent] by its [kind]. Throw an error if the component is not found.
      */
-    fun <KC : KlibComponent> getComponent(id: KlibComponent.ID<KC>): KC
+    fun <KC : KlibMandatoryComponent> getComponent(kind: KlibMandatoryComponent.Kind<KC>): KC
+
+    /**
+     * Get a specific [KlibOptionalComponent] by its [kind]. Return `null` if the component is not found.
+     */
+    fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC, *>): KC?
 }
 
 /**
- * A representation of a certain slice of the Klib library.
+ * A representation of a certain slice of the Klib library that can be read.
  */
-interface KlibComponent {
+sealed interface KlibComponent {
     /**
-     * ID of a [KlibComponent]. Used to access the component using [Klib.getComponent].
+     * Kind (ID) of a [KlibComponent]. Used to access the component using [Klib.getComponent].
      */
-    interface ID<KC : KlibComponent>
-
-    /**
-     * The layout of a [KlibComponent]: Implementations of this abstract class provide access to the component's files by
-     * the paths computed from the given [root].
-     *
-     * Important: The [root] is not necessarily the same as [Klib.location]. For example, a Klib could be a ZIP archive file.
-     * In this case [root] points to the root of the virtual file system inside the archive, whereas [Klib.location] points
-     * to the archive file itself. So, it is highly important to compute paths exactly based on [root].
-     */
-    abstract class Layout(val root: KlibFile)
+    sealed interface Kind<KC : KlibComponent>
 }
+
+/**
+ * A [KlibComponent] that is mandatory: This component is always present in the library.
+ */
+interface KlibMandatoryComponent : KlibComponent {
+    interface Kind<KMC : KlibMandatoryComponent> : KlibComponent.Kind<KMC>
+}
+
+/**
+ * A [KlibComponent] that is optional: This component is not available in the library if there is
+ * no data that it can read according to [KlibOptionalComponent.Kind.shouldComponentBeRegistered].
+ */
+interface KlibOptionalComponent : KlibComponent {
+    interface Kind<KOC : KlibOptionalComponent, KCL : KlibComponentLayout> : KlibComponent.Kind<KOC> {
+        /**
+         * Whether there is any data to be read by the component.
+         * And whether the optional component should be registered in the library.
+         */
+        fun shouldComponentBeRegistered(layoutReader: KlibLayoutReader<KCL>): Boolean
+    }
+}
+
+/**
+ * The layout of a [KlibComponent]: Implementations of this abstract class provide access to the component's files by
+ * the paths computed from the given [root].
+ *
+ * Important: The [root] is not necessarily the same as [Klib.location]. For example, a Klib could be a ZIP archive file.
+ * In this case [root] points to the root of the virtual file system inside the archive, whereas [Klib.location] points
+ * to the archive file itself. So, it is highly important to compute paths exactly based on [root].
+ */
+abstract class KlibComponentLayout(val root: KlibFile)

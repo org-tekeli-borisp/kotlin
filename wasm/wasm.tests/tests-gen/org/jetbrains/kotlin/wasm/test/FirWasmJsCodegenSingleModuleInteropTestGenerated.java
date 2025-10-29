@@ -44,6 +44,30 @@ public class FirWasmJsCodegenSingleModuleInteropTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("contextParametersJSCodeJSFun.kt")
+  public void testContextParametersJSCodeJSFun() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSCodeJSFun.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSCodeSimple.kt")
+  public void testContextParametersJSCodeSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSCodeSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSExport.kt")
+  public void testContextParametersJSExport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSExport.kt");
+  }
+
+  @Test
+  @TestMetadata("contextParametersJSModule.kt")
+  public void testContextParametersJSModule() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/contextParametersJSModule.kt");
+  }
+
+  @Test
   @TestMetadata("defaultValues.kt")
   public void testDefaultValues() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
@@ -173,6 +197,12 @@ public class FirWasmJsCodegenSingleModuleInteropTestGenerated extends AbstractFi
   @TestMetadata("exceptionFromMainNoJsTagJsTypeError.kt")
   public void testExceptionFromMainNoJsTagJsTypeError() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/exceptionFromMainNoJsTagJsTypeError.kt");
+  }
+
+  @Test
+  @TestMetadata("externalCast.kt")
+  public void testExternalCast() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/externalCast.kt");
   }
 
   @Test
@@ -452,6 +482,42 @@ public class FirWasmJsCodegenSingleModuleInteropTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("nestedTypeAliasJSCodeArray.kt")
+  public void testNestedTypeAliasJSCodeArray() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasJSCodeArray.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasJSCodeSimple.kt")
+  public void testNestedTypeAliasJSCodeSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasJSCodeSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasJSExportSimple.kt")
+  public void testNestedTypeAliasJSExportSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasJSExportSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasSimple.kt")
+  public void testNestedTypeAliasSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasSimpleWasmImport.kt")
+  public void testNestedTypeAliasSimpleWasmImport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasSimpleWasmImport.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasWasmExport.kt")
+  public void testNestedTypeAliasWasmExport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/nestedTypeAliasWasmExport.kt");
+  }
+
+  @Test
   @TestMetadata("noExceptions.kt")
   public void testNoExceptions() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/noExceptions.kt");
@@ -473,6 +539,18 @@ public class FirWasmJsCodegenSingleModuleInteropTestGenerated extends AbstractFi
   @TestMetadata("reflectionOnExternals.kt")
   public void testReflectionOnExternals() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/reflectionOnExternals.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelTypeAliasJSExportSimple.kt")
+  public void testTopLevelTypeAliasJSExportSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/topLevelTypeAliasJSExportSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelTypeAliasSimple.kt")
+  public void testTopLevelTypeAliasSimple() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/topLevelTypeAliasSimple.kt");
   }
 
   @Test

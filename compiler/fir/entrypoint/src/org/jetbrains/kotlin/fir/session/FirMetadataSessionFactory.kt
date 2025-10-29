@@ -31,8 +31,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+
 @OptIn(SessionConfiguration::class)
-abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?, Nothing?>() {
+abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Nothing?>() {
     // ==================================== Shared library session ====================================
 
     /**
@@ -176,9 +177,9 @@ abstract class AbstractFirMetadataSessionFactory : FirAbstractSessionFactory<Not
         }
     }
 
-    override fun FirSessionConfigurator.registerPlatformCheckers(c: Nothing?) {}
+    override fun FirSessionConfigurator.registerPlatformCheckers() {}
 
-    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Nothing?) {}
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {}
 
     override fun FirSession.registerSourceSessionComponents(c: Nothing?) {
         register(FirDefaultImportsProviderHolder.of(CommonDefaultImportsProvider))

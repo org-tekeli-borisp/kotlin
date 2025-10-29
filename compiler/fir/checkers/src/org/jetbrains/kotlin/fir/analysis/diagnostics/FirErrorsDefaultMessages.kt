@@ -372,6 +372,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_EXPECTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_TYPE_OF_TOO_LARGE_ARITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES
@@ -769,6 +770,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_TYPE_PARAMETER_OF_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENDING_AN_ANNOTATION_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION
@@ -1728,9 +1730,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             """
             Contextual classes and constructors are deprecated and will not be supported when context parameters are enabled. Consider migrating to regular parameters.
             
-            See the context parameters proposal for more details: https://kotl.in/context-parameters
-            
-            """.trimIndent().toDeprecationWarningMessage(LanguageFeature.ContextParameters),
+            See the context parameters proposal for more details: https://kotl.in/context-parameters""".trimIndent()
         )
 
         // Mismatching types
@@ -3285,6 +3285,18 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Identity equality for arguments of types ''{0}'' and ''{1}'' can be unstable because of implicit boxing.",
             RENDER_TYPE,
             RENDER_TYPE
+        )
+        map.put(
+            FUNCTION_TYPE_OF_TOO_LARGE_ARITY,
+            "The arity of ''{0}'' is too large. It can be at most {1}.",
+            CLASS_ID,
+            TO_STRING,
+        )
+        map.put(
+            K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY,
+            "The arity of ''{0}'' is too large, which can lead to runtime crashes. The safest maximum value is {1}. See KT-81936 for more details.",
+            CLASS_ID,
+            TO_STRING,
         )
         map.put(
             INC_DEC_SHOULD_NOT_RETURN_UNIT,

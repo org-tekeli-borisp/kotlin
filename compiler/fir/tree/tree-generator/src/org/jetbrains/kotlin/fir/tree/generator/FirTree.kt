@@ -103,6 +103,22 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val function: Element by sealedElement(Declaration) {
+        kDoc = """
+            Represents a common base for Kotlin function-like declarations in FIR (all kinds of functions, property accessors, and constructors).
+            
+            This element is inherited by [FirNamedFunction], [FirAnonymousFunction], [FirPropertyAccessor], and [FirConstructor].
+            
+            Notable properties common to functions:
+            - [symbol] — the symbol which serves as a pointer to this function-like declaration.
+            - [valueParameters] — the list of value parameters.
+            - [dispatchReceiverType] — dispatch receiver type for member functions, or null for top-level or static functions.
+            Dispatch receiver type is a type of `this` based on the member function's owner class and used to determine accessible scopes.
+            - [contextParameters] — context parameters of the function, if any.
+            - [receiverParameter] — the extension receiver parameter if present, otherwise null.
+            - [returnTypeRef] — the declared return type of the function-like declaration.
+            - [body] — the function body, if present, otherwise null.
+            - [annotations] — annotations present on the declaration, if any.
+                """.trimIndent()
         parent(callableDeclaration)
         parent(targetElement)
         parent(controlFlowGraphOwner)
@@ -273,7 +289,7 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val contextArgumentListOwner: Element by element(Expression) {
-        +listField("contextArguments", expression, useMutableOrEmpty = true, withReplace = true)
+        +listField("contextArguments", expression, useMutableOrEmpty = true, withReplace = true, withTransform = true)
     }
 
     val qualifiedAccessExpression: Element by element(Expression) {
@@ -392,6 +408,20 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val classLikeDeclaration: Element by sealedElement(Declaration) {
+        kDoc = """
+            Represents a common base for all class-like declarations in FIR.
+            This includes named and anonymous classes (see [FirClass] and its inheritors
+            [FirRegularClass] and [FirAnonymousObject]) as well as type aliases (see [FirTypeAlias]).
+
+            Notable properties:
+            - [symbol] — the symbol which serves as a pointer to this class-like declaration.
+            - [typeParameters] — type parameter references declared for this class-like declaration, if any.
+            - [scopeProvider] — a provider used to get different kind of scopes, like a use-site scope, a static scope, or a nested classifier scope
+            (see [FirScopeProvider], [org.jetbrains.kotlin.fir.scopes.FirScope]) for names resolution. There are two main providers used (Kotlin and Java ones).
+            - [isLocal] — the class-like is non-local (isLocal = false) iff all its ancestors (containing declarations) are
+            either files (see [FirFile]) or classes. With any function-like among ancestors, the class-like is local (isLocal = true).
+            In particular, it means that any class-like declared inside a local class is also local. 
+                """.trimIndent()
         parent(memberDeclaration)
         parent(statement)
         parent(typeParameterRefsOwner)
@@ -405,6 +435,20 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val klass: Element by sealedElement(Declaration, name = "Class") {
+        kDoc = """
+            Represents a Kotlin class declaration in FIR, serving as a common supertype for concrete class kinds
+            such as [FirRegularClass] and [FirAnonymousObject]. It abstracts over whether the class is named or anonymous.
+            This includes similar declarations as an interface, an object (companion, named, or anonymous), 
+            an enum or annotation class, but excludes a type alias.
+
+            Notable properties:
+            - [classKind] — what kind of class it is (interface, object, enum class, enum entry, annotation class, or a plain class).
+            - [symbol] — the symbol which serves as a pointer to this class-like declaration.
+            - [typeParameters] — the type parameters of the class and references to type parameters of its outer classes, if any 
+            - [superTypeRefs] — explicitly declared supertypes, or [kotlin.Any] by default.
+            - [declarations] — member declarations inside the class.
+            - [annotations] — annotations present on the class, if any.
+                """.trimIndent()
         parent(classLikeDeclaration)
         parent(statement)
         parent(controlFlowGraphOwner)
@@ -419,6 +463,23 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val regularClass: Element by element(Declaration) {
+        kDoc = """
+            Represents a regular (in sense of being named) Kotlin class declaration.
+            This includes similar declarations as an interface, an object, an enum or annotation class,
+            but excludes an anonymous object or a type alias.
+
+            Notable properties:
+            - [name] — the simple name of the class.
+            - [classKind] — what kind of class it is (interface, object, enum class, enum entry, annotation class, or a plain class). 
+            - [symbol] — the symbol which serves as a pointer to the class. 
+            - [typeParameters] — the type parameters of the class and references to type parameters of its outer classes, if any 
+            - [superTypeRefs] — explicitly declared supertypes, or [kotlin.Any] by default.
+            - [companionObjectSymbol] — Symbol of the companion object if present, otherwise null.
+            - [declarations] — member declarations inside the class.
+            - [annotations] — annotations present on the class, if any.
+            - [hasLazyNestedClassifiers] — Whether nested classifiers are computed lazily
+            (targeted for implementations that are lazy by nature, currently used for Java class implementations). 
+                """.trimIndent()
         parent(klass)
 
         +FieldSets.name
@@ -430,6 +491,18 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val anonymousObject: Element by element(Declaration) {
+        kDoc = """
+            Represents an anonymous object declaration created by an `object` expression.
+            Unlike [FirRegularClass], it has no name and is always declared as a part of an expression at the usage site.
+
+            Notable properties:
+            - [classKind] — always [ClassKind.OBJECT]. 
+            - [symbol] — the symbol which serves as a pointer to this anonymous object.
+            - [superTypeRefs] — explicitly declared supertypes of the object literal, or [kotlin.Any] by default.
+            - [isLocal] — always true for anonymous object. 
+            - [declarations] — member declarations inside the anonymous object.
+            - [annotations] — annotations present on the object literal, if any.
+                """.trimIndent()
         parent(klass)
 
         +declaredSymbol(anonymousObjectSymbolType)
@@ -442,6 +515,17 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val typeAlias: Element by element(Declaration) {
+        kDoc = """
+            Represents a Kotlin type alias declaration in FIR.
+            A type alias provides an alternative name for an existing type without introducing a new classifier.
+
+            Notable properties:
+            - [name] — the simple name of the type alias.
+            - [symbol] — the symbol which serves as a pointer to this type alias.
+            - [typeParameters] — type parameters referenced by the alias, if any.
+            - [expandedTypeRef] — the underlying type this alias expands to.
+            - [annotations] — annotations present on the type alias, if any.
+                """.trimIndent()
         parent(classLikeDeclaration)
 
         +FieldSets.name
@@ -451,6 +535,31 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val anonymousFunction: Element by element(Declaration) {
+        kDoc = """
+            Represents an anonymous function or lambda expression in FIR.
+            Unlike [FirNamedFunction], this declaration has no name. Lambdas are represented
+            as anonymous functions with [isLambda] set to `true`.
+
+            Notable properties:
+            - [typeRef] — the functional type of this anonymous function.
+            - [symbol] — the symbol which serves as a pointer to this anonymous function.
+            - [label] — an optional label attached to the anonymous function (e.g., `label@ { ... }`).
+            - [invocationKind] — how many times the function is expected to be invoked (see [org.jetbrains.kotlin.contracts.description.EventOccurrencesRange]).
+            - [inlineStatus] — information about inlining status of this function (inline, noinline, or crossinline).
+            - [isLambda] — whether this anonymous function originates from a lambda expression or not.
+            - [typeParameters] — type parameters declared for the anonymous function, if any.
+            (always empty for a green code, but technically they can exist).
+            - [hasExplicitParameterList] — whether the parameter list is explicitly specified (affects implicit `it`).
+            - [valueParameters] — the list of the function's value parameters
+            (for a lambda, the list can be empty at creation and filled later during resolution).
+            - [contextParameters] — context parameters of the function, if any.
+            - [receiverParameter] — the extension receiver parameter if present, otherwise null.
+            - [returnTypeRef] — the declared return type of the function
+            (if type is assumed to be inferred, [FirImplicitTypeRef] is used here).
+            - [body] — the function body, if present, otherwise null.
+            - [contractDescription] — contract description for the function, if present (see [FirContractDescription] and its inheritors).
+            - [annotations] — annotations present on the function, if any.
+                """.trimIndent()
         parent(function)
         parent(typeParametersOwner)
         parent(contractDescriptionOwner)
@@ -503,6 +612,26 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val namedFunction: Element by element(Declaration) {
+        kDoc = """
+            Represents a named Kotlin function declaration.
+            This covers top-level functions, member functions, and local named functions,
+            but excludes lambdas, anonymous functions, and secondary constructors.
+
+            Notable properties:
+            - [name] — the simple name of the function.
+            - [symbol] — the symbol which serves as a pointer to this function.
+            - [typeParameters] — type parameters declared for the function, if any.
+            - [valueParameters] — the list of the function's value parameters.
+            - [dispatchReceiverType] — dispatch receiver type for member functions, or null for top-level or static functions.
+            Dispatch receiver type is a type of `this` based on the member function's owner class and used to determine accessible scopes.
+            - [contextParameters] — context parameters of the function, if any.
+            - [receiverParameter] — the extension receiver parameter if the function is an extension, otherwise null.
+            - [returnTypeRef] — the declared return type of the function.
+            (if type is assumed to be inferred, [FirImplicitTypeRef] is used here).
+            - [body] — the function body, if present, otherwise null.
+            - [contractDescription] — contract description for the function, if present (see [FirContractDescription] and its inheritors).
+            - [annotations] — annotations present on the function, if any.
+                """.trimIndent()
         parent(function)
         parent(contractDescriptionOwner)
         parent(typeParametersOwner)
@@ -531,6 +660,25 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val propertyAccessor: Element by element(Declaration) {
+        kDoc = """
+            Represents a property accessor declaration — either a getter or a setter — in FIR.
+            Exactly one of [isGetter] or [isSetter] is true for a given accessor.
+
+            Notable properties:
+            - [symbol] — the symbol which serves as a pointer to this accessor.
+            - [propertySymbol] — the symbol of the property this accessor belongs to.
+            - [isGetter] — whether this accessor is a getter.
+            - [isSetter] — whether this accessor is a setter.
+            - [typeParameters] — type parameters declared for the accessor (normally empty, but so-called synthetic property accessors can have them).
+            - [valueParameters] — value parameters of the accessor (for a setter, normally contains a single parameter representing the value being set; empty for a getter).
+            - [dispatchReceiverType] — always null for property accessors. 
+            - [receiverParameter] — the extension receiver parameter if the containing property is an extension, otherwise null.
+            - [returnTypeRef] — the return type of the accessor (normally it's the property type for a getter, and [kotlin.Unit] for a setter).
+            - [contextParameters] — context parameters of the accessor, if any.
+            - [body] — the body of the accessor, if present, otherwise null.
+            - [contractDescription] — contract description for the accessor, if present (see [FirContractDescription] and its inheritors).
+            - [annotations] — annotations present on the accessor, if any.
+                """.trimIndent()
         parent(function)
         parent(contractDescriptionOwner)
         parent(typeParametersOwner)
@@ -589,6 +737,26 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val constructor: Element by element(Declaration) {
+        kDoc = """
+            Represents a Kotlin class constructor declaration in FIR.
+            This covers both primary and secondary constructors.
+
+            Notable properties:
+            - [symbol] — the symbol which serves as a pointer to this constructor.
+            - [isPrimary] — whether this constructor is the primary constructor of the class.
+            - [typeParameters] — the type parameters of the constructor itself (Java only) and references to type parameters of the owner class and its outer classes, if any.
+            - [valueParameters] — the list of value parameters of the constructor.
+            - [dispatchReceiverType] — dispatch receiver type for inner class constructors, or null for nested class constructors.
+            For inner class constructors the dispatch receiver type is bound to the outer class `this`, not to the owner class `this`.
+            - [contextParameters] — context parameters of the constructor, if any.
+            - [receiverParameter] — the extension receiver parameter (normally should be null as constructors cannot be extensions).
+            - [returnTypeRef] — the constructed type of the enclosing class.
+            - [delegatedConstructor] — the delegated constructor call (`this(...)` or `super(...)`) for secondary constructors, if present.
+            For primary constructors the equivalent of `super(...)` call is built based on a given superclass.
+            - [body] — the body of a secondary constructor, if present; always null for primary constructors.
+            - [contractDescription] — contract description for the constructor, if present (see [FirContractDescription] and its inheritors).
+            - [annotations] — annotations present on the constructor, if any.
+                """.trimIndent()
         parent(function)
         parent(typeParameterRefsOwner)
         parent(contractDescriptionOwner)

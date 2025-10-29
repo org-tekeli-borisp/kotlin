@@ -1,4 +1,5 @@
-// LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextParameters
+// IGNORE_BACKEND_K1: ANY
 // SKIP_NODE_JS
 
 open class A {

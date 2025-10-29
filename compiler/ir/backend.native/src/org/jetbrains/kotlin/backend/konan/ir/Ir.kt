@@ -242,9 +242,12 @@ private object CallableIds {
     private val String.collectionsId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
     val contentToString = "contentToString".collectionsId
     val contentHashCode = "contentHashCode".collectionsId
-    val contentEquals = "contentEquals".collectionsId
     val copyInto = "copyInto".collectionsId
     val copyOf = "copyOf".collectionsId
+
+    // Internal interop functions
+    private val String.internalInteropCallableId get() = CallableId(RuntimeNames.kotlinxCInteropInternalPackageName, Name.identifier(this))
+    val interopCallMarker = "interopCallMarker".internalInteropCallableId
 }
 
 private fun CompilerConfiguration.getMainCallableId() : CallableId? {
@@ -368,7 +371,7 @@ class KonanSymbols(
     val typedIntrinsic = ClassIds.typedIntrinsic.classSymbol()
     val cToKotlinBridge = ClassIds.cToKotlinBridge.classSymbol()
     val kotlinToCBridge = ClassIds.kotlinToCBridge.classSymbol()
-    val interopCallMarker = symbolFinder.topLevelFunction(RuntimeNames.kotlinxCInteropInternalPackageName, "interopCallMarker")
+    val interopCallMarker = CallableIds.interopCallMarker.functionSymbol()
 
     val objCMethodImp = ClassIds.objCMethodImp.classSymbol()
 
@@ -546,11 +549,6 @@ class KonanSymbols(
     val arrayContentHashCode by arrayToExtensionSymbolMap(CallableIds.contentHashCode) {
         it.extensionReceiverType?.isMarkedNullable() == true
     }
-    val arrayContentEquals by arrayToExtensionSymbolMap(CallableIds.contentEquals) {
-        it.extensionReceiverType?.isMarkedNullable() == true
-    }
-
-    override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol> by lazy { arrayContentEquals.mapKeys { it.key.defaultType } }
 
     val copyInto by arrayToExtensionSymbolMap(CallableIds.copyInto)
     val copyOf by arrayToExtensionSymbolMap(CallableIds.copyOf) { it.hasShape(extensionReceiver = true) }

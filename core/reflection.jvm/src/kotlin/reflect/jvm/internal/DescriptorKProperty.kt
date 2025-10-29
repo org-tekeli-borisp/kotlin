@@ -45,7 +45,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     )
 
     override val boundReceiver: Any?
-        get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
+        get() = rawBoundReceiver.coerceToExpectedReceiverType(this, descriptor)
 
     private val _javaField = lazy(PUBLICATION) {
         when (val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)) {
@@ -141,8 +141,9 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val name: String get() = "<get-${property.name}>"
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
-            // TODO: default getter created this way won't have any source information
-            property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY)
+            property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY).apply {
+                initialize(property.descriptor.type)
+            }
         }
 
         override val caller: Caller<*> by lazy(PUBLICATION) {
@@ -162,7 +163,6 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val name: String get() = "<set-${property.name}>"
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
-            // TODO: default setter created this way won't have any source information
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)
         }
 
@@ -241,7 +241,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
                         property.descriptor.visibility == DescriptorVisibilities.INTERNAL
                     ) {
                         val unboxMethod =
-                            property.descriptor.containingDeclaration.toInlineClass()?.getInlineClassUnboxMethod(property.descriptor)
+                            property.descriptor.containingDeclaration.toInlineClass()?.getInlineClassUnboxMethod(property)
                                 ?: throw KotlinReflectionInternalError("Underlying property of inline class $property should have a field")
                         if (isBound) InternalUnderlyingValOfInlineClass.Bound(unboxMethod, boundReceiver)
                         else InternalUnderlyingValOfInlineClass.Unbound(unboxMethod)
@@ -286,7 +286,7 @@ private fun DescriptorKProperty.Accessor<*, *>.computeCallerForAccessor(isGetter
             return if (isBound) CallerImpl.Method.BoundInstance(accessor, boundReceiver)
             else CallerImpl.Method.Instance(accessor)
         }
-    }.createValueClassAwareCallerIfNeeded(descriptor)
+    }.createValueClassAwareCallerIfNeeded(this, isDefault = false)
 }
 
 private fun PropertyDescriptor.isJvmFieldPropertyInCompanionObject(): Boolean {

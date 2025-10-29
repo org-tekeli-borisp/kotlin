@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.konan.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
+import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
@@ -25,7 +26,10 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.konan.util.substitute
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.components.KlibIrComponent
+import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
+import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.impl.*
 import java.nio.file.Paths
 
@@ -68,23 +72,33 @@ open class BitcodeLibraryImpl(
 
 class KonanLibraryImpl(
     override val location: File,
+    zipFileSystemAccessor: ZipFileSystemAccessor,
     targeted: TargetedLibraryImpl,
-    ir: IrLibraryImpl,
     bitcode: BitcodeLibraryImpl
 ) : KonanLibrary,
     BaseKotlinLibrary by targeted,
-    IrLibrary by ir,
     BitcodeLibrary by bitcode {
 
-    private val components: Map<KlibComponent.ID<*>, KlibComponent> = run {
-        val layoutReaderFactory = KlibLayoutReaderFactory(location, ir.access.klibZipAccessor)
-        mapOf(KlibMetadataComponent.ID to KlibMetadataComponentImpl(layoutReaderFactory))
+    private val components: Map<KlibComponent.Kind<*>, KlibComponent> = KlibComponentsBuilder(
+        layoutReaderFactory = KlibLayoutReaderFactory(
+            klibFile = location,
+            zipFileSystemAccessor = zipFileSystemAccessor
+        )
+    )
+        .withMandatory(KlibMetadataComponent.Kind, ::KlibMetadataComponentLayout, ::KlibMetadataComponentImpl)
+        .withOptional(KlibIrComponent.Kind.Main, KlibIrComponentLayout::createForMainIr, ::KlibIrComponentImpl)
+        .withOptional(KlibIrComponent.Kind.InlinableFunctions, KlibIrComponentLayout::createForInlinableFunctionsIr, ::KlibIrComponentImpl)
+        .build()
+
+    override fun <KC : KlibMandatoryComponent> getComponent(kind: KlibMandatoryComponent.Kind<KC>): KC {
+        @Suppress("UNCHECKED_CAST")
+        val component = components[kind] as KC?
+        return component ?: error("Unregistered component $kind")
     }
 
-    override fun <KC : KlibComponent> getComponent(id: KlibComponent.ID<KC>): KC {
+    override fun <KC : KlibOptionalComponent> getComponent(kind: KlibOptionalComponent.Kind<KC, *>): KC? {
         @Suppress("UNCHECKED_CAST")
-        val component = components[id] as KC?
-        return component ?: error("Unknown component $id")
+        return components[kind] as KC?
     }
 
     override val linkerOpts: List<String>
@@ -99,19 +113,19 @@ fun createKonanLibrary(
     isDefault: Boolean = false,
     zipFileSystemAccessor: ZipFileSystemAccessor? = null,
 ): KonanLibrary {
+    val nonNullZipFileSystemAccessor = zipFileSystemAccessor ?: ZipFileSystemInPlaceAccessor
+
     // KT-58979: The following access classes need normalized klib path to correctly provide symbols from resolved klibs
     val libraryFile = Paths.get(libraryFilePossiblyDenormalized.absolutePath).normalize().File()
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, zipFileSystemAccessor)
-    val targetedAccess = TargetedLibraryAccess<TargetedKotlinLibraryLayout>(libraryFile, component, target, zipFileSystemAccessor)
-    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component, zipFileSystemAccessor)
-    val bitcodeAccess = BitcodeLibraryAccess<BitcodeKotlinLibraryLayout>(libraryFile, component, target, zipFileSystemAccessor)
+    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, nonNullZipFileSystemAccessor)
+    val targetedAccess = TargetedLibraryAccess<TargetedKotlinLibraryLayout>(libraryFile, component, target, nonNullZipFileSystemAccessor)
+    val bitcodeAccess = BitcodeLibraryAccess<BitcodeKotlinLibraryLayout>(libraryFile, component, target, nonNullZipFileSystemAccessor)
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val targeted = TargetedLibraryImpl(targetedAccess, base)
-    val ir = IrLibraryImpl(irAccess)
     val bitcode = BitcodeLibraryImpl(bitcodeAccess, targeted)
 
-    return KonanLibraryImpl(libraryFile, targeted, ir, bitcode)
+    return KonanLibraryImpl(libraryFile, nonNullZipFileSystemAccessor, targeted, bitcode)
 }
 
 fun createKonanLibraryComponents(

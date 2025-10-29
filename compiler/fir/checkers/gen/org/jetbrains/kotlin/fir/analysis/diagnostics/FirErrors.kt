@@ -517,8 +517,8 @@ object FirErrors : KtDiagnosticsContainer() {
     val UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, KtElement::class, getRendererFactory())
     val AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER: KtDiagnosticFactory0 = KtDiagnosticFactory0("AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, KtElement::class, getRendererFactory())
     val SUBTYPING_BETWEEN_CONTEXT_RECEIVERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("SUBTYPING_BETWEEN_CONTEXT_RECEIVERS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val CONTEXT_RECEIVERS_DEPRECATED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("CONTEXT_RECEIVERS_DEPRECATED", WARNING, SourceElementPositioningStrategies.CONTEXT_KEYWORD, KtElement::class, getRendererFactory())
-    val CONTEXT_CLASS_OR_CONSTRUCTOR: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONTEXT_CLASS_OR_CONSTRUCTOR", WARNING, SourceElementPositioningStrategies.CONTEXT_KEYWORD, KtElement::class, getRendererFactory())
+    val CONTEXT_RECEIVERS_DEPRECATED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("CONTEXT_RECEIVERS_DEPRECATED", ERROR, SourceElementPositioningStrategies.CONTEXT_KEYWORD, KtElement::class, getRendererFactory())
+    val CONTEXT_CLASS_OR_CONSTRUCTOR: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONTEXT_CLASS_OR_CONSTRUCTOR", ERROR, SourceElementPositioningStrategies.CONTEXT_KEYWORD, KtElement::class, getRendererFactory())
 
     // Types & type parameters
     val RECURSION_IN_IMPLICIT_TYPES: KtDiagnosticFactory0 = KtDiagnosticFactory0("RECURSION_IN_IMPLICIT_TYPES", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
@@ -1029,6 +1029,8 @@ object FirErrors : KtDiagnosticsContainer() {
     val PACKAGE_CANNOT_BE_IMPORTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("PACKAGE_CANNOT_BE_IMPORTED", ERROR, SourceElementPositioningStrategies.IMPORT_LAST_NAME, KtImportDirective::class, getRendererFactory())
     val CANNOT_BE_IMPORTED: KtDiagnosticFactory1<Name> = KtDiagnosticFactory1("CANNOT_BE_IMPORTED", ERROR, SourceElementPositioningStrategies.IMPORT_LAST_NAME, KtImportDirective::class, getRendererFactory())
     val CONFLICTING_IMPORT: KtDiagnosticFactory1<Name> = KtDiagnosticFactory1("CONFLICTING_IMPORT", ERROR, SourceElementPositioningStrategies.IMPORT_ALIAS, KtImportDirective::class, getRendererFactory())
+    val FUNCTION_TYPE_OF_TOO_LARGE_ARITY: KtDiagnosticFactory2<ClassId, Int> = KtDiagnosticFactory2("FUNCTION_TYPE_OF_TOO_LARGE_ARITY", ERROR, SourceElementPositioningStrategies.IMPORT_LAST_NAME, KtElement::class, getRendererFactory())
+    val K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY: KtDiagnosticFactory2<ClassId, Int> = KtDiagnosticFactory2("K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY", WARNING, SourceElementPositioningStrategies.IMPORT_LAST_NAME, KtElement::class, getRendererFactory())
     val OPERATOR_RENAMED_ON_IMPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPERATOR_RENAMED_ON_IMPORT", ERROR, SourceElementPositioningStrategies.IMPORT_LAST_NAME, KtImportDirective::class, getRendererFactory())
     val TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT: KtDiagnosticFactoryForDeprecation2<Name, Name> = KtDiagnosticFactoryForDeprecation2("TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT", ProhibitTypealiasAsCallableQualifierInImport, SourceElementPositioningStrategies.IMPORT_LAST_BUT_ONE_NAME, KtImportDirective::class, getRendererFactory())
 

@@ -27005,6 +27005,12 @@ public class FirWasmWasiCodegenBoxWithInlinedFunInKlibTestGenerated extends Abst
       }
 
       @Test
+      @TestMetadata("defaultArgsMultipleModulesWithIntraModuleInliner.kt")
+      public void testDefaultArgsMultipleModulesWithIntraModuleInliner() {
+        runTest("compiler/testData/codegen/box/inline/defaultArgsMultipleModulesWithIntraModuleInliner.kt");
+      }
+
+      @Test
       @TestMetadata("genericFunctionReference.kt")
       public void testGenericFunctionReference() {
         runTest("compiler/testData/codegen/box/inline/genericFunctionReference.kt");

@@ -127,7 +127,6 @@ class FirCallCompleter(
 
                 val argumentsMapping = candidate.freshVariables.zip(candidate.callInfo.typeArguments)
                     .mapNotNull { (variable, argument) ->
-                        val parameter = variable.typeConstructor as? TypeConstructorMarker ?: return@mapNotNull null
                         val type = (argument as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@mapNotNull null
 
                         val transformedType = with(components.transformer.resolutionContext) {
@@ -135,8 +134,8 @@ class FirCallCompleter(
                             getTypePreservingFlexibilityWrtTypeVariable(type, parameterFir).fullyExpandedType()
                         }
 
-                        parameter to transformedType
-                    }.toMap()
+                        variable.typeConstructor to transformedType
+                    }.toMap<TypeConstructorMarker, ConeKotlinType>()
                 val finalSubstitutor = readOnlyConstraintStorage
                     .buildAbstractResultingSubstitutor(session.typeContext, argumentsMapping = argumentsMapping).asCone()
                 call.transformSingle(

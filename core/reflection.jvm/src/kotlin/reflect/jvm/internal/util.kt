@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -53,12 +54,15 @@ import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.jvm.internal.RepeatableContainer
+import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.jvmName
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -369,3 +373,66 @@ internal fun KType.isNullableType(): Boolean {
     val classifier = classifier
     return classifier is KTypeParameter && classifier.upperBounds.any { it.isNullableType() }
 }
+
+internal class FunctionJvmDescriptor(val parameters: List<String>, val returnType: String)
+
+internal fun parseJvmDescriptor(desc: String): FunctionJvmDescriptor {
+    val parameterTypes = arrayListOf<String>()
+
+    var begin = 1
+    while (desc[begin] != ')') {
+        var end = begin
+        while (desc[end] == '[') end++
+        @Suppress("SpellCheckingInspection")
+        when (desc[end]) {
+            in "VZCBSIFJD" -> end++
+            'L' -> end = desc.indexOf(';', begin) + 1
+            else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
+        }
+
+        parameterTypes.add(desc.substring(begin, end))
+        begin = end
+    }
+
+    val returnType = desc.substring(begin + 1)
+
+    return FunctionJvmDescriptor(parameterTypes, returnType)
+}
+
+internal fun KClass<*>.toJvmDescriptor(): String = ClassMapperLite.mapClass(jvmName)
+
+internal val KParameter.isAlwaysBoxedByCompiler: Boolean
+    get() {
+        return this is ReflectKParameter && declaresDefaultValue && type.isInlineClassType &&
+                generateSequence(type) { it.unsubstitutedUnderlyingType() }.drop(1).any { it.isNullableType() }
+    }
+
+fun KType.unsubstitutedUnderlyingType(): KType? =
+    (classifier as? KClassImpl<*>)?.inlineClassUnderlyingType
+
+internal class FunctionJvmDescriptorLoaded(val parameters: List<Class<*>>, val returnType: Class<*>?)
+
+internal fun ClassLoader.parseAndLoadDescriptor(desc: String, loadReturnType: Boolean): FunctionJvmDescriptorLoaded {
+    val descriptor = parseJvmDescriptor(desc)
+
+    return FunctionJvmDescriptorLoaded(
+        descriptor.parameters.map { parseAndLoadType(it) },
+        if (loadReturnType) parseAndLoadType(descriptor.returnType) else null
+    )
+}
+
+private fun ClassLoader.parseAndLoadType(desc: String, begin: Int = 0, end: Int = desc.length): Class<*> =
+    when (desc[begin]) {
+        'L' -> loadClass(desc.substring(begin + 1, end - 1).replace('/', '.'))
+        '[' -> parseAndLoadType(desc, begin + 1, end).createArrayType()
+        'V' -> Void.TYPE
+        'Z' -> Boolean::class.java
+        'C' -> Char::class.java
+        'B' -> Byte::class.java
+        'S' -> Short::class.java
+        'I' -> Int::class.java
+        'F' -> Float::class.java
+        'J' -> Long::class.java
+        'D' -> Double::class.java
+        else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
+    }

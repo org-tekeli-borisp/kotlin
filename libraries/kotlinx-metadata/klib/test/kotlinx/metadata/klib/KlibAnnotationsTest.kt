@@ -5,6 +5,7 @@
 
 package kotlinx.metadata.klib
 
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.test.Test
@@ -66,9 +67,10 @@ class KlibAnnotationsTest {
     }
 
     private fun readWriteModule(module: KmModuleFragment): KmModuleFragment {
-        val metadata = KlibModuleMetadata("klib", listOf(module), emptyList()).write()
+        val metadata = KlibModuleMetadata("klib", listOf(module), emptyList(), MetadataVersion.INSTANCE).write()
         return KlibModuleMetadata.read(object : KlibModuleMetadata.MetadataLibraryProvider {
             override val moduleHeaderData: ByteArray get() = metadata.header
+            override val metadataVersion = metadata.metadataVersion
             override fun packageMetadataParts(fqName: String): Set<String> = metadata.fragmentNames.toSet()
             override fun packageMetadata(fqName: String, partName: String): ByteArray = metadata.fragments.single().single()
         }).fragments.single()

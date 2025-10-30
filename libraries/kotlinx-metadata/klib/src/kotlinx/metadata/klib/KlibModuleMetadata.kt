@@ -14,6 +14,8 @@ import kotlin.metadata.internal.*
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 
@@ -53,8 +55,9 @@ interface KlibModuleFragmentWriteStrategy {
 class KlibModuleMetadata(
     val name: String,
     val fragments: List<KmModuleFragment>,
-    val annotations: List<KmAnnotation>
-) {
+    val annotations: List<KmAnnotation>,
+    val metadataVersion: MetadataVersion,
+    ) {
 
     /**
      * Serialized representation of module metadata.
@@ -62,7 +65,8 @@ class KlibModuleMetadata(
     class SerializedKlibMetadata(
         val header: ByteArray,
         val fragments: List<List<ByteArray>>,
-        val fragmentNames: List<String>
+        val fragmentNames: List<String>,
+        val metadataVersion: String,
     )
 
     /**
@@ -70,6 +74,7 @@ class KlibModuleMetadata(
      */
     interface MetadataLibraryProvider {
         val moduleHeaderData: ByteArray
+        val metadataVersion: String
         fun packageMetadataParts(fqName: String): Set<String>
         fun packageMetadata(fqName: String, partName: String): ByteArray
     }
@@ -94,7 +99,10 @@ class KlibModuleMetadata(
                     packageFragment.toKmModuleFragment(nameResolver, listOf(fileIndex))
                 }.let(readStrategy::processModuleParts)
             }
-            return KlibModuleMetadata(moduleHeader.moduleName, moduleFragments, moduleHeader.annotation)
+
+            val versionIntArray = BinaryVersion.parseVersionArray(library.metadataVersion)
+            val metadataVersion = versionIntArray?.let { MetadataVersion(*it) } ?: MetadataVersion.INVALID_VERSION
+            return KlibModuleMetadata(moduleHeader.moduleName, moduleFragments, moduleHeader.annotation, metadataVersion)
         }
     }
 
@@ -130,7 +138,9 @@ class KlibModuleMetadata(
         return SerializedKlibMetadata(
             header.writeHeader(c).build().toByteArray(),
             groupedProtos.map { it.value.map(ProtoBuf.PackageFragment::toByteArray) },
-            header.packageFragmentName
+            header.packageFragmentName,
+            metadataVersion.toString(),
+
         )
     }
 }

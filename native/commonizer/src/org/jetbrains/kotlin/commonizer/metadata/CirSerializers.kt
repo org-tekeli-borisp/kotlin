@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
 import org.jetbrains.kotlin.commonizer.utils.SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_NAMES
 import org.jetbrains.kotlin.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 import org.jetbrains.kotlin.types.Variance
 import kotlin.metadata.*
@@ -23,7 +24,8 @@ internal fun CirModule.serializeModule(
 ): KlibModuleMetadata = KlibModuleMetadata(
     name = name.toStrippedString(),
     fragments = fragments.toList(),
-    annotations = emptyList()
+    annotations = emptyList(),
+    metadataVersion = MetadataVersion.INSTANCE,
 )
 
 internal fun CirPackage.serializePackage(

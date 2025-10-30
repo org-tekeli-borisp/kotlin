@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.kotlinp.Printer
 import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.klib.*
 import org.jetbrains.kotlin.kotlinp.klib.TypeArgumentId.VarianceId
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.name.ClassId
@@ -87,7 +88,8 @@ internal class KotlinpBasedMetadataDumper(
                 }
             }
         }.sortedBy { it.fqName.orEmpty() },
-        annotations = originalModuleMetadata.annotations
+        annotations = originalModuleMetadata.annotations,
+        metadataVersion = originalModuleMetadata.metadataVersion,
     )
 
     private fun loadModuleMetadata(library: KotlinLibrary) = KlibModuleMetadata.read(
@@ -95,6 +97,7 @@ internal class KotlinpBasedMetadataDumper(
             private val metadata = library.metadata
 
             override val moduleHeaderData get() = metadata.moduleHeaderData
+            override val metadataVersion = library.manifestProperties.getProperty(KLIB_PROPERTY_METADATA_VERSION)
             override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
             override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
         }

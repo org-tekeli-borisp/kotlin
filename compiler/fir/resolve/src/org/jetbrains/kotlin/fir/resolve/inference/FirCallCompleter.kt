@@ -125,19 +125,8 @@ class FirCallCompleter(
                 val readOnlyConstraintStorage = candidate.system.asReadOnlyStorage()
                 checkStorageConstraintsAfterFullCompletion(readOnlyConstraintStorage)
 
-                val argumentsMapping = candidate.freshVariables.zip(candidate.callInfo.typeArguments)
-                    .mapNotNull { (variable, argument) ->
-                        val type = (argument as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@mapNotNull null
-
-                        val transformedType = with(components.transformer.resolutionContext) {
-                            val parameterFir = (variable as ConeTypeParameterBasedTypeVariable).typeParameterSymbol.fir
-                            getTypePreservingFlexibilityWrtTypeVariable(type, parameterFir).fullyExpandedType()
-                        }
-
-                        variable.typeConstructor to transformedType
-                    }.toMap<TypeConstructorMarker, ConeKotlinType>()
                 val finalSubstitutor = readOnlyConstraintStorage
-                    .buildAbstractResultingSubstitutor(session.typeContext, argumentsMapping = argumentsMapping).asCone()
+                    .buildAbstractResultingSubstitutor(session.typeContext).asCone()
                 call.transformSingle(
                     createCompletionResultsWriter(finalSubstitutor),
                     null

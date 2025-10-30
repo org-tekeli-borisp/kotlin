@@ -71,6 +71,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                     getTypePreservingFlexibilityWrtTypeVariable(
                         typeArgument.typeRef.coneType,
                         typeParameter,
+                        context,
                     ).fullyExpandedType(),
                     ConeExplicitTypeParameterConstraintPosition(typeArgument)
                 )
@@ -90,6 +91,16 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 sink.reportDiagnostic(InferenceError(error))
             }
             sink.yieldIfNeed()
+        }
+    }
+
+    fun getTypePreservingFlexibilityWrtTypeVariable(
+        type: ConeKotlinType,
+        typeParameter: FirTypeParameterRef,
+        context: ResolutionContext,
+    ): ConeKotlinType {
+        return with(context.typeContext) {
+            getTypePreservingFlexibilityWrtTypeVariable(type, typeParameter)
         }
     }
 
@@ -140,12 +151,12 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
      *
      * @return type which is chosen for EQUALS constraint
      */
-    context(context: ResolutionContext)
+    context(typeContext: ConeTypeContext)
     fun getTypePreservingFlexibilityWrtTypeVariable(
         type: ConeKotlinType,
         typeParameter: FirTypeParameterRef,
     ): ConeKotlinType {
-        val session = context.session
+        val session = typeContext.session
         return if (typeParameter.shouldBeFlexible()) {
             when (type) {
                 is ConeRigidType -> type.withNullability(nullable = false, session.typeContext).toTrivialFlexibleType(session.typeContext)
@@ -183,15 +194,15 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         }
     }
 
-    context(context: ResolutionContext)
+    context(typeContext: ConeTypeContext)
     private fun FirTypeParameterRef.shouldBeFlexible(): Boolean {
-        val languageVersionSettings = context.session.languageVersionSettings
+        val languageVersionSettings = typeContext.session.languageVersionSettings
         if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {
             return false
         }
         return symbol.resolvedBounds.any {
             val type = it.coneType
-            type is ConeFlexibleType || with(context.typeContext) {
+            type is ConeFlexibleType || with(typeContext) {
                 (type.typeConstructor() as? ConeTypeParameterLookupTag)?.symbol?.fir?.shouldBeFlexible() ?: false
             }
         }

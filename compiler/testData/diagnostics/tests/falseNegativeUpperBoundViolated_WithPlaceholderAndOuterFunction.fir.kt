@@ -20,8 +20,8 @@ fun main() {
     TA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, BetaKey, _>()
     TA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>String<!>, _>()
 
-    <!INAPPLICABLE_CANDIDATE!>someFunc<!>(TA<Alpha, BetaKey, _>())
-    <!INAPPLICABLE_CANDIDATE!>someFunc<!>(TA<Alpha, String, _>())
+    <!INAPPLICABLE_CANDIDATE!>someFunc<!>(TA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, BetaKey, _>())
+    <!INAPPLICABLE_CANDIDATE!>someFunc<!>(TA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>String<!>, _>())
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, sealed, typeConstraint,

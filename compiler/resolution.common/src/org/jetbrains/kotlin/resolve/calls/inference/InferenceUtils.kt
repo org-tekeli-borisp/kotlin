@@ -20,12 +20,6 @@ fun ConstraintStorage.buildCurrentSubstitutor(
 fun ConstraintStorage.buildAbstractResultingSubstitutor(
     context: TypeSystemInferenceExtensionContext,
     transformTypeVariablesToErrorTypes: Boolean = true,
-    /**
-     * In red code, type variables may be fixed to types with which we infer equality
-     * constraints instead of the actual type arguments the user supplied, which can
-     * lead to missing `UPPER_BOUND_VIOLATED`s.
-     */
-    argumentsMapping: Map<TypeConstructorMarker, KotlinTypeMarker> = emptyMap(),
 ): TypeSubstitutorMarker = with(context) {
     if (allTypeVariables.isEmpty()) return createEmptySubstitutor()
 
@@ -40,7 +34,7 @@ fun ConstraintStorage.buildAbstractResultingSubstitutor(
             freshTypeConstructor to typeVariable.typeVariable.defaultType(this)
         }
     }
-    return context.typeSubstitutorByTypeConstructor(fixedTypeVariables + uninferredSubstitutorMap + argumentsMapping)
+    return context.typeSubstitutorByTypeConstructor(fixedTypeVariables + uninferredSubstitutorMap)
 }
 
 fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(

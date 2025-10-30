@@ -30,13 +30,16 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
+import org.jetbrains.kotlin.fir.resolve.calls.stages.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable
 import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.FirTypeVariablesAfterPCLATransformer
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
@@ -100,8 +103,12 @@ class FirCallCompletionResultsWriterTransformer(
         return result?.approximateIntegerLiteralType()
     }
 
-    private fun finallySubstituteOrSelf(type: ConeKotlinType): ConeKotlinType {
-        return finallySubstituteOrNull(type) ?: type
+    private fun finallySubstituteOrSelf(
+        type: ConeKotlinType,
+        // Substitutor from type variables (not type parameters)
+        substitutor: ConeSubstitutor = finalSubstitutor,
+    ): ConeKotlinType {
+        return finallySubstituteOrNull(type, substitutor) ?: type
     }
 
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
@@ -983,16 +990,41 @@ class FirCallCompletionResultsWriterTransformer(
         candidate: Candidate,
     ): List<ConeKotlinType> {
         val declaration = candidate.symbol.fir as? FirCallableDeclaration ?: return emptyList()
+        val finalSubstitutorWithActualTypeArguments = when {
+            candidate.callInfo.typeArguments.isEmpty() -> finalSubstitutor
+            else -> prepareActualTypeArgumentSubstitutor(candidate).chain(finalSubstitutor)
+        }
 
         return declaration.typeParameters.map {
             val typeParameter = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
             val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
-            finallySubstituteOrSelf(substitution).let { substitutedType ->
+            finallySubstituteOrSelf(substitution, finalSubstitutorWithActualTypeArguments).let { substitutedType ->
                 typeApproximator.approximateToSuperType(
                     substitutedType, TypeApproximatorConfiguration.TypeArgumentApproximationAfterCompletionInK2,
                 ) ?: substitutedType
             }
         }
+    }
+
+    /**
+     * In red code, type variables may be fixed to types with which we infer equality
+     * constraints instead of the actual type arguments the user supplied, which can
+     * lead to missing `UPPER_BOUND_VIOLATED`s.
+     */
+    private fun prepareActualTypeArgumentSubstitutor(candidate: Candidate): ConeSubstitutor {
+        val argumentsMapping = candidate.freshVariables.zip(candidate.callInfo.typeArguments)
+            .mapNotNull { (variable, argument) ->
+                val type = (argument as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return@mapNotNull null
+
+                val transformedType = with(session.typeContext) {
+                    val parameterFir = (variable as ConeTypeParameterBasedTypeVariable).typeParameterSymbol.fir
+                    getTypePreservingFlexibilityWrtTypeVariable(type, parameterFir).fullyExpandedType()
+                }
+
+                variable.typeConstructor to transformedType
+            }.toMap<TypeConstructorMarker, ConeKotlinType>()
+
+        return session.typeContext.typeSubstitutorByTypeConstructor(argumentsMapping)
     }
 
     override fun transformAnonymousFunctionExpression(

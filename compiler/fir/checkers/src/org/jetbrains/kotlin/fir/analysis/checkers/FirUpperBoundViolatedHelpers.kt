@@ -77,7 +77,7 @@ internal fun checkUpperBoundViolated(
         isIgnoreTypeParameters,
         fallbackSource,
         isInsideTypeOperatorOrParameterBounds,
-        isTypealiasExpansion = type != notExpandedType,
+        isTypealiasExpansion = notExpandedType.abbreviatedTypeOrSelf.fullyExpandedType() != notExpandedType.abbreviatedTypeOrSelf
     )
 }
 

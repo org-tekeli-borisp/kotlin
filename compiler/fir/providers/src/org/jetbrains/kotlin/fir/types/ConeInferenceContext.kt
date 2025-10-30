@@ -216,7 +216,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         require(this is ConeRigidType)
 
         if (this is ConeClassLikeType) {
-            val fullyExpanded = fullyExpandedType(session)
+            val fullyExpanded = fullyExpandedType()
             if (this !== fullyExpanded) {
                 return fullyExpanded.typeDepth()
             }
@@ -617,7 +617,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             "Not a function type or subtype: ${this.renderForDebugging()}"
         }
 
-        val rigidType = fullyExpandedType(session).lowerBoundIfFlexible().asCone()
+        val rigidType = fullyExpandedType().lowerBoundIfFlexible().asCone()
 
         return when {
             rigidType.isSomeFunctionType(session) -> this

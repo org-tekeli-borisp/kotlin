@@ -1456,7 +1456,7 @@ open class PsiRawFirBuilder(
                         buildRegularClass {
                             source = null
                             moduleData = baseModuleData
-                            origin = FirDeclarationOrigin.Synthetic.ReplContainer
+                            origin = FirDeclarationOrigin.ReplCustomization.ContainerClass
                             name = snippetName
                             status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                             classKind = ClassKind.OBJECT
@@ -1525,7 +1525,7 @@ open class PsiRawFirBuilder(
                 buildSimpleFunction {
                     source = null
                     moduleData = baseModuleData
-                    origin = FirDeclarationOrigin.Synthetic.ReplContainer
+                    origin = FirDeclarationOrigin.ReplCustomization.EvalFunction
                     name = evalName
                     symbol = evalSymbol
                     dispatchReceiverType = currentDispatchReceiverType()

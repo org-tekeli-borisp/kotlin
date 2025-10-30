@@ -723,6 +723,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("falseNegativeUpperBoundViolated_WithPlaceholderAndOuterFunction.kt")
+    public void testFalseNegativeUpperBoundViolated_WithPlaceholderAndOuterFunction() {
+      runTest("compiler/testData/diagnostics/tests/falseNegativeUpperBoundViolated_WithPlaceholderAndOuterFunction.kt");
+    }
+
+    @Test
     @TestMetadata("falsePositiveRedundantVisibility.kt")
     public void testFalsePositiveRedundantVisibility() {
       runTest("compiler/testData/diagnostics/tests/falsePositiveRedundantVisibility.kt");

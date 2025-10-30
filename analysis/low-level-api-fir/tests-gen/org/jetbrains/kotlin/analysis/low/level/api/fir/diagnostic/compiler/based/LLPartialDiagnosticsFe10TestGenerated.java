@@ -38256,6 +38256,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("resolvingToClassMembersInHeader.kt")
+      public void testResolvingToClassMembersInHeader() {
+        runTest("compiler/testData/diagnostics/tests/resolve/resolvingToClassMembersInHeader.kt");
+      }
+
+      @Test
       @TestMetadata("sealedCompanionFunctionSameNameAsInheritor.kt")
       public void testSealedCompanionFunctionSameNameAsInheritor() {
         runTest("compiler/testData/diagnostics/tests/resolve/sealedCompanionFunctionSameNameAsInheritor.kt");

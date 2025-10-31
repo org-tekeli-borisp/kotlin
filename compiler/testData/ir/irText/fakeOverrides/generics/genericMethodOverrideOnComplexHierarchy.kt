@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
+// Mute the check because the code is sort of invalid. It's not possible to implement abstract class D
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 // FILE: Java1.java
 public class Java1 {
     public <T> void foo(T a) { }

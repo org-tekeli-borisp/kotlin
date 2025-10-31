@@ -67,6 +67,7 @@ internal class KTypeSubstitutor(public val substitution: Map<KTypeParameter, KTy
     }
 
     fun combinedWith(other: KTypeSubstitutor): KTypeSubstitutor {
+        // Optimization
         if (this.substitution.isEmpty()) return other
         if (other.substitution.isEmpty()) return this
         val map = substitution.mapValues { (_, typeProjection) ->

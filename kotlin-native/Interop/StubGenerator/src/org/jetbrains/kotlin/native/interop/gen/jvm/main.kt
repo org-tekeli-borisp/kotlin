@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.suffixIfNot
+import org.jetbrains.kotlin.util.toCInteropKlibMetadataVersion
 import java.io.File
 import java.nio.file.*
 import java.util.*
@@ -350,7 +351,17 @@ private fun processCLib(
         KotlinPlatform.NATIVE -> GenerationMode.METADATA
     }
     // when this tool does not compile native library, make the generated source consumable by external compiler (i.e. do not strip includes)
-    val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, mode, libName, allowPrecompiledHeaders = nativeLibsDir != null)
+    val stubIrContext = StubIrContext(
+            logger,
+            configuration,
+            nativeIndex,
+            imports,
+            flavor,
+            mode,
+            libName,
+            allowPrecompiledHeaders = nativeLibsDir != null,
+            metadataVersion = cinteropArguments.klibAbiCompatibilityLevel.toCInteropKlibMetadataVersion(),
+    )
     val stubIrOutput = run {
         val outKtFileCreator = {
             val outKtFileName = fqParts.last() + ".kt"

@@ -1009,3 +1009,1226 @@ internal fun interpretTernaryFunction(name: String, typeA: String, typeB: String
     throw InterpreterMethodNotFoundError("Unknown function: $name($typeA, $typeB, $typeC)")
 }
 
+internal fun canInterpretFunction(name: String, typeA: String, typeB: String? = null, typeC: String? = null): Boolean {
+    when (name) {
+        "hashCode" -> when (typeA) {
+            "kotlin.Boolean" -> return typeB == null && typeC == null
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.String" -> return typeB == null && typeC == null
+            "kotlin.Any" -> return typeB == null && typeC == null
+        }
+        "not" -> when (typeA) {
+            "kotlin.Boolean" -> return typeB == null && typeC == null
+        }
+        "toString" -> when (typeA) {
+            "kotlin.Boolean" -> return typeB == null && typeC == null
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+            "kotlin.String" -> return typeB == null && typeC == null
+            "kotlin.Any" -> return typeB == null && typeC == null
+            "kotlin.Any?" -> return typeB == null && typeC == null
+            "kotlin.Unit" -> return typeB == null && typeC == null
+        }
+        "dec" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+        }
+        "inc" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+        }
+        "toByte" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.Number" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "toChar" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.Number" -> return typeB == null && typeC == null
+        }
+        "toDouble" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.Number" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "toFloat" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.Number" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "toInt" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.Number" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "toLong" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.Number" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "toShort" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.Number" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "unaryMinus" -> when (typeA) {
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+        }
+        "unaryPlus" -> when (typeA) {
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+        }
+        "inv" -> when (typeA) {
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "length" -> when (typeA) {
+            "kotlin.String" -> return typeB == null && typeC == null
+            "kotlin.CharSequence" -> return typeB == null && typeC == null
+        }
+        "cause" -> when (typeA) {
+            "kotlin.Throwable" -> return typeB == null && typeC == null
+        }
+        "message" -> when (typeA) {
+            "kotlin.Throwable" -> return typeB == null && typeC == null
+        }
+        "size" -> when (typeA) {
+            "kotlin.BooleanArray" -> return typeB == null && typeC == null
+            "kotlin.CharArray" -> return typeB == null && typeC == null
+            "kotlin.ByteArray" -> return typeB == null && typeC == null
+            "kotlin.ShortArray" -> return typeB == null && typeC == null
+            "kotlin.IntArray" -> return typeB == null && typeC == null
+            "kotlin.FloatArray" -> return typeB == null && typeC == null
+            "kotlin.LongArray" -> return typeB == null && typeC == null
+            "kotlin.DoubleArray" -> return typeB == null && typeC == null
+            "kotlin.Array" -> return typeB == null && typeC == null
+        }
+        "iterator" -> when (typeA) {
+            "kotlin.BooleanArray" -> return typeB == null && typeC == null
+            "kotlin.CharArray" -> return typeB == null && typeC == null
+            "kotlin.ByteArray" -> return typeB == null && typeC == null
+            "kotlin.ShortArray" -> return typeB == null && typeC == null
+            "kotlin.IntArray" -> return typeB == null && typeC == null
+            "kotlin.FloatArray" -> return typeB == null && typeC == null
+            "kotlin.LongArray" -> return typeB == null && typeC == null
+            "kotlin.DoubleArray" -> return typeB == null && typeC == null
+            "kotlin.Array" -> return typeB == null && typeC == null
+        }
+        "toUByte" -> when (typeA) {
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "toUInt" -> when (typeA) {
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "toULong" -> when (typeA) {
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Float" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.Double" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "toUShort" -> when (typeA) {
+            "kotlin.Byte" -> return typeB == null && typeC == null
+            "kotlin.Short" -> return typeB == null && typeC == null
+            "kotlin.Int" -> return typeB == null && typeC == null
+            "kotlin.Long" -> return typeB == null && typeC == null
+            "kotlin.UByte" -> return typeB == null && typeC == null
+            "kotlin.UShort" -> return typeB == null && typeC == null
+            "kotlin.UInt" -> return typeB == null && typeC == null
+            "kotlin.ULong" -> return typeB == null && typeC == null
+        }
+        "CHECK_NOT_NULL" -> when (typeA) {
+            "T0?" -> return typeB == null && typeC == null
+        }
+        "code" -> when (typeA) {
+            "kotlin.Char" -> return typeB == null && typeC == null
+        }
+        "and" -> when (typeA) {
+            "kotlin.Boolean" -> when (typeB) {
+                "kotlin.Boolean" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UShort" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UInt" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.ULong" -> return typeC == null
+            }
+        }
+        "compareTo" -> when (typeA) {
+            "kotlin.Boolean" -> when (typeB) {
+                "kotlin.Boolean" -> return typeC == null
+            }
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Char" -> return typeC == null
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.String" -> when (typeB) {
+                "kotlin.String" -> return typeC == null
+            }
+            "kotlin.Comparable" -> when (typeB) {
+                "T" -> return typeC == null
+            }
+        }
+        "equals" -> when (typeA) {
+            "kotlin.Boolean" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.String" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+            "kotlin.Any" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+        }
+        "or" -> when (typeA) {
+            "kotlin.Boolean" -> when (typeB) {
+                "kotlin.Boolean" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UShort" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UInt" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.ULong" -> return typeC == null
+            }
+        }
+        "xor" -> when (typeA) {
+            "kotlin.Boolean" -> when (typeB) {
+                "kotlin.Boolean" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UShort" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UInt" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.ULong" -> return typeC == null
+            }
+        }
+        "minus" -> when (typeA) {
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Char" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+        }
+        "plus" -> when (typeA) {
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.String" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+        }
+        "rangeTo" -> when (typeA) {
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Char" -> return typeC == null
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+        }
+        "div" -> when (typeA) {
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+        }
+        "rem" -> when (typeA) {
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+        }
+        "times" -> when (typeA) {
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+        }
+        "shl" -> when (typeA) {
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+        }
+        "shr" -> when (typeA) {
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+        }
+        "ushr" -> when (typeA) {
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+        }
+        "get" -> when (typeA) {
+            "kotlin.BooleanArray" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.CharArray" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.ByteArray" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.ShortArray" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.IntArray" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.FloatArray" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.LongArray" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.DoubleArray" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Array" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.String" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.CharSequence" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+        }
+        "floorDiv" -> when (typeA) {
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+        }
+        "mod" -> when (typeA) {
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+                "kotlin.Short" -> return typeC == null
+                "kotlin.Int" -> return typeC == null
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Float" -> return typeC == null
+                "kotlin.Double" -> return typeC == null
+            }
+            "kotlin.UByte" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return typeC == null
+                "kotlin.UShort" -> return typeC == null
+                "kotlin.UInt" -> return typeC == null
+                "kotlin.ULong" -> return typeC == null
+            }
+        }
+        "less" -> when (typeA) {
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Char" -> return typeC == null
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Short" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Float" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Double" -> return typeC == null
+            }
+        }
+        "lessOrEqual" -> when (typeA) {
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Char" -> return typeC == null
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Short" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Float" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Double" -> return typeC == null
+            }
+        }
+        "greater" -> when (typeA) {
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Char" -> return typeC == null
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Short" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Float" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Double" -> return typeC == null
+            }
+        }
+        "greaterOrEqual" -> when (typeA) {
+            "kotlin.Char" -> when (typeB) {
+                "kotlin.Char" -> return typeC == null
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return typeC == null
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Short" -> return typeC == null
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Int" -> return typeC == null
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Float" -> return typeC == null
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Long" -> return typeC == null
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Double" -> return typeC == null
+            }
+        }
+        "EQEQ" -> when (typeA) {
+            "kotlin.Any?" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+        }
+        "EQEQEQ" -> when (typeA) {
+            "kotlin.Any?" -> when (typeB) {
+                "kotlin.Any?" -> return typeC == null
+            }
+        }
+        "ieee754equals" -> when (typeA) {
+            "kotlin.Float?" -> when (typeB) {
+                "kotlin.Float?" -> return typeC == null
+            }
+            "kotlin.Double?" -> when (typeB) {
+                "kotlin.Double?" -> return typeC == null
+            }
+        }
+        "ANDAND" -> when (typeA) {
+            "kotlin.Boolean" -> when (typeB) {
+                "kotlin.Boolean" -> return typeC == null
+            }
+        }
+        "OROR" -> when (typeA) {
+            "kotlin.Boolean" -> when (typeB) {
+                "kotlin.Boolean" -> return typeC == null
+            }
+        }
+        "subSequence" -> when (typeA) {
+            "kotlin.String" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Int" -> return true
+                }
+            }
+            "kotlin.CharSequence" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Int" -> return true
+                }
+            }
+        }
+        "set" -> when (typeA) {
+            "kotlin.BooleanArray" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Boolean" -> return true
+                }
+            }
+            "kotlin.CharArray" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Char" -> return true
+                }
+            }
+            "kotlin.ByteArray" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Byte" -> return true
+                }
+            }
+            "kotlin.ShortArray" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Short" -> return true
+                }
+            }
+            "kotlin.IntArray" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Int" -> return true
+                }
+            }
+            "kotlin.FloatArray" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Float" -> return true
+                }
+            }
+            "kotlin.LongArray" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Long" -> return true
+                }
+            }
+            "kotlin.DoubleArray" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "kotlin.Double" -> return true
+                }
+            }
+            "kotlin.Array" -> when (typeB) {
+                "kotlin.Int" -> when (typeC) {
+                    "T" -> return true
+                }
+            }
+        }
+    }
+    return false
+}
+

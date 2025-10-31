@@ -947,3 +947,799 @@ fun checkBinaryOp(
     }
     return null
 }
+fun canEvalOp(name: String, typeA: CompileTimeType, typeB: CompileTimeType?): Boolean {
+    if (typeB == null) {
+        when (typeA) {
+            BOOLEAN -> when (name) {
+                "not" -> return true
+                "toString" -> return true
+            }
+            BYTE -> when (name) {
+                "toByte" -> return true
+                "toChar" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "unaryMinus" -> return true
+                "unaryPlus" -> return true
+                "toULong" -> return true
+                "toUInt" -> return true
+                "toUShort" -> return true
+                "toUByte" -> return true
+            }
+            CHAR -> when (name) {
+                "toByte" -> return true
+                "toChar" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "code" -> return true
+            }
+            DOUBLE -> when (name) {
+                "toByte" -> return true
+                "toChar" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "unaryMinus" -> return true
+                "unaryPlus" -> return true
+                "toULong" -> return true
+                "toUInt" -> return true
+            }
+            FLOAT -> when (name) {
+                "toByte" -> return true
+                "toChar" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "unaryMinus" -> return true
+                "unaryPlus" -> return true
+                "toULong" -> return true
+                "toUInt" -> return true
+            }
+            INT -> when (name) {
+                "inv" -> return true
+                "toByte" -> return true
+                "toChar" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "unaryMinus" -> return true
+                "unaryPlus" -> return true
+                "toULong" -> return true
+                "toUInt" -> return true
+                "toUShort" -> return true
+                "toUByte" -> return true
+            }
+            LONG -> when (name) {
+                "inv" -> return true
+                "toByte" -> return true
+                "toChar" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "unaryMinus" -> return true
+                "unaryPlus" -> return true
+                "toULong" -> return true
+                "toUInt" -> return true
+                "toUShort" -> return true
+                "toUByte" -> return true
+            }
+            SHORT -> when (name) {
+                "toByte" -> return true
+                "toChar" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "unaryMinus" -> return true
+                "unaryPlus" -> return true
+                "toULong" -> return true
+                "toUInt" -> return true
+                "toUShort" -> return true
+                "toUByte" -> return true
+            }
+            STRING -> when (name) {
+                "length" -> return true
+                "toString" -> return true
+            }
+            UINT -> when (name) {
+                "inv" -> return true
+                "toByte" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "toUByte" -> return true
+                "toUInt" -> return true
+                "toULong" -> return true
+                "toUShort" -> return true
+            }
+            ULONG -> when (name) {
+                "inv" -> return true
+                "toByte" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "toUByte" -> return true
+                "toUInt" -> return true
+                "toULong" -> return true
+                "toUShort" -> return true
+            }
+            UBYTE -> when (name) {
+                "inv" -> return true
+                "toByte" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "toUByte" -> return true
+                "toUInt" -> return true
+                "toULong" -> return true
+                "toUShort" -> return true
+            }
+            USHORT -> when (name) {
+                "inv" -> return true
+                "toByte" -> return true
+                "toDouble" -> return true
+                "toFloat" -> return true
+                "toInt" -> return true
+                "toLong" -> return true
+                "toShort" -> return true
+                "toString" -> return true
+                "toUByte" -> return true
+                "toUInt" -> return true
+                "toULong" -> return true
+                "toUShort" -> return true
+            }
+            else -> {}
+        }
+    } else {
+        when (typeA) {
+            BOOLEAN -> when (typeB) {
+                BOOLEAN -> when (name) {
+                    "and" -> return true
+                    "compareTo" -> return true
+                    "or" -> return true
+                    "xor" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                else -> {}
+            }
+            BYTE -> when (typeB) {
+                BYTE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                SHORT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                INT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                LONG -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                FLOAT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                DOUBLE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                else -> {}
+            }
+            CHAR -> when (typeB) {
+                CHAR -> when (name) {
+                    "compareTo" -> return true
+                    "minus" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                INT -> when (name) {
+                    "minus" -> return true
+                    "plus" -> return true
+                }
+                else -> {}
+            }
+            DOUBLE -> when (typeB) {
+                BYTE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                SHORT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                INT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                LONG -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                FLOAT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                }
+                DOUBLE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                else -> {}
+            }
+            FLOAT -> when (typeB) {
+                BYTE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                SHORT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                INT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                LONG -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                FLOAT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                }
+                DOUBLE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                else -> {}
+            }
+            INT -> when (typeB) {
+                INT -> when (name) {
+                    "and" -> return true
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "or" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "shl" -> return true
+                    "shr" -> return true
+                    "times" -> return true
+                    "ushr" -> return true
+                    "xor" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                BYTE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                SHORT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                LONG -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                FLOAT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                DOUBLE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                else -> {}
+            }
+            LONG -> when (typeB) {
+                LONG -> when (name) {
+                    "and" -> return true
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "or" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "xor" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                BYTE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                SHORT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                INT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "shl" -> return true
+                    "shr" -> return true
+                    "times" -> return true
+                    "ushr" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                FLOAT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                DOUBLE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                else -> {}
+            }
+            SHORT -> when (typeB) {
+                BYTE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                SHORT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                INT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                LONG -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "mod" -> return true
+                    "floorDiv" -> return true
+                }
+                FLOAT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                DOUBLE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "minus" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                else -> {}
+            }
+            STRING -> when (typeB) {
+                STRING -> when (name) {
+                    "compareTo" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                    "plus" -> return true
+                }
+                INT -> when (name) {
+                    "get" -> return true
+                }
+                else -> {}
+            }
+            UINT -> when (typeB) {
+                UINT -> when (name) {
+                    "and" -> return true
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "or" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "xor" -> return true
+                }
+                UBYTE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                USHORT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ULONG -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                INT -> when (name) {
+                    "shl" -> return true
+                    "shr" -> return true
+                }
+                else -> {}
+            }
+            ULONG -> when (typeB) {
+                ULONG -> when (name) {
+                    "and" -> return true
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "or" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "xor" -> return true
+                }
+                UBYTE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                USHORT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                UINT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                INT -> when (name) {
+                    "shl" -> return true
+                    "shr" -> return true
+                }
+                else -> {}
+            }
+            UBYTE -> when (typeB) {
+                UBYTE -> when (name) {
+                    "and" -> return true
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "or" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "xor" -> return true
+                }
+                USHORT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                UINT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ULONG -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                else -> {}
+            }
+            USHORT -> when (typeB) {
+                USHORT -> when (name) {
+                    "and" -> return true
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "or" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                    "xor" -> return true
+                }
+                UBYTE -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                UINT -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ULONG -> when (name) {
+                    "compareTo" -> return true
+                    "div" -> return true
+                    "floorDiv" -> return true
+                    "minus" -> return true
+                    "mod" -> return true
+                    "plus" -> return true
+                    "rem" -> return true
+                    "times" -> return true
+                }
+                ANY -> when (name) {
+                    "equals" -> return true
+                }
+                else -> {}
+            }
+            else -> {}
+        }
+    }
+    return false
+}

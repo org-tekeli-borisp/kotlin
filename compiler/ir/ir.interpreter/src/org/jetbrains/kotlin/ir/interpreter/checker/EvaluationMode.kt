@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.interpreter.builtins.canInterpretFunction
+import org.jetbrains.kotlin.ir.interpreter.fqName
+import org.jetbrains.kotlin.ir.interpreter.fqNameWithNullability
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
 import org.jetbrains.kotlin.ir.interpreter.isConst
@@ -50,6 +53,17 @@ sealed class EvaluationMode {
         if (this is IrClass && this.isCompanion) return false
         if (this.hasAnnotation(annotation)) return true
         return (this.parent as? IrClass)?.isMarkedWith(annotation) ?: false
+    }
+
+    protected fun IrFunction.inInterpreterMap(): Boolean {
+        if (this.getPackageFragment().packageFqName.toString() != "kotlin") return true;
+        val methodName = when (val property = this.property) {
+            null -> this.name.asString()
+            else -> property.name.asString()
+        }
+        val parameterTypes = this.parameters.map { it.type.fqNameWithNullability() }
+        if (parameterTypes.isEmpty() || parameterTypes.size > 3) return false;
+        return canInterpretFunction(methodName, parameterTypes.first(), parameterTypes.getOrNull(1), parameterTypes.getOrNull(2));
     }
 
     data object Full : EvaluationMode() {
@@ -105,6 +119,8 @@ sealed class EvaluationMode {
             val returnType = function.returnType
             if (!returnType.isPrimitiveType() && !returnType.isString() && !returnType.isUnsignedType()) return false
 
+            if (!function.inInterpreterMap()) return false
+
             val fqName = function.fqNameWhenAvailable
             val parent = function.parentClassOrNull
             val parentType = parent?.defaultType
@@ -136,7 +152,7 @@ sealed class EvaluationMode {
     class OnlyIntrinsicConst(private val isFloatingPointOptimizationDisabled: Boolean = false) : EvaluationMode() {
         override fun canEvaluateFunction(function: IrFunction): Boolean {
             if (isFloatingPointOptimizationDisabled && function.isFloatingPointOperation()) return false
-            return function.isCompileTimePropertyAccessor() || function.isMarkedAsIntrinsicConstEvaluation()
+            return function.isCompileTimePropertyAccessor() || (function.isMarkedAsIntrinsicConstEvaluation() && function.inInterpreterMap())
         }
 
         private fun IrFunction.isFloatingPointOperation(): Boolean {

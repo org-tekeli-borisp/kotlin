@@ -36,6 +36,8 @@ fun generate(): String {
     generateBinaryOp(p, binaryOperationsMap)
     generateBinaryOpCheck(p, binaryOperationsMap)
 
+    generateCanEvalOpFunction(p, unaryOperationsMap, binaryOperationsMap)
+
     return sb.toString()
 }
 
@@ -195,6 +197,57 @@ private fun generateBinaryOp(
     p.popIndent()
     p.println("}")
     p.println()
+}
+
+private fun generateCanEvalOpFunction(p: Printer, unaryOperations: ArrayList<Operation>, binaryOperations: ArrayList<Operation>) {
+    p.println("fun canEvalOp(name: String, typeA: CompileTimeType, typeB: CompileTimeType?): Boolean {")
+    p.pushIndent()
+
+    p.println("if (typeB == null) {")
+    p.pushIndent()
+    p.println("when (typeA) {")
+    p.pushIndent()
+    for ((type, ops) in unaryOperations.groupBy { it.parameterTypes.single() }) {
+        p.println("${type.toCompilTimeTypeFormat()} -> when (name) {")
+        p.pushIndent()
+        for ((name, _) in ops) {
+            p.println("\"$name\" -> return true")
+        }
+        p.popIndent()
+        p.println("}")
+    }
+    p.println("else -> {}")
+    p.popIndent()
+    p.println("}")
+    p.popIndent()
+    p.println("} else {")
+    p.pushIndent()
+    p.println("when (typeA) {")
+    p.pushIndent()
+    for ((leftType, operationsOnThisLeftType) in binaryOperations.groupBy { it.parameterTypes.first() }) {
+        p.println("${leftType.toCompilTimeTypeFormat()} -> when (typeB) {")
+        p.pushIndent()
+        for ((rightType, ops) in operationsOnThisLeftType.groupBy { it.parameterTypes[1] }) {
+            p.println("${rightType.toCompilTimeTypeFormat()} -> when (name) {")
+            p.pushIndent()
+            for ((name, _) in ops) {
+                p.println("\"$name\" -> return true")
+            }
+            p.popIndent()
+            p.println("}")
+        }
+        p.println("else -> {}")
+        p.popIndent()
+        p.println("}")
+    }
+    p.println("else -> {}")
+    p.popIndent()
+    p.println("}")
+    p.popIndent()
+    p.println("}")
+    p.println("return false")
+    p.popIndent()
+    p.println("}")
 }
 
 // TODO, KT-75372: Can be dropped with K1

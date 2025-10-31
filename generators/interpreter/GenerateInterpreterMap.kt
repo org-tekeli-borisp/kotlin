@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.generators.interpreter
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -16,11 +15,13 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.IntrinsicConstEvaluation
 import org.jetbrains.kotlin.utils.Printer
 import kotlin.reflect.full.memberFunctions
 
 import java.io.File
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
 
 val DESTINATION = File("compiler/ir/ir.interpreter/src/org/jetbrains/kotlin/ir/interpreter/builtins/IrBuiltInsMapGenerated.kt")
 
@@ -54,6 +55,8 @@ fun generateMap(): String {
     generateInterpretUnaryFunction(p, unaryOperations)
     generateInterpretBinaryFunction(p, binaryOperations)
     generateInterpretTernaryFunction(p, ternaryOperations)
+
+    generateCanInterpretFunction(p, unaryOperations + binaryOperations + ternaryOperations)
 
     return sb.toString()
 }
@@ -152,9 +155,55 @@ private fun generateInterpretTernaryFunction(p: Printer, ternaryOperations: List
     p.println()
 }
 
+private fun generateCanInterpretFunction(p: Printer, operations: List<Operation>) {
+    p.println("internal fun canInterpretFunction(name: String, typeA: String, typeB: String? = null, typeC: String? = null): Boolean {")
+    p.pushIndent()
+    p.println("when (name) {")
+    p.pushIndent()
+    for ((name, operations) in operations.groupBy(Operation::name)) {
+        p.println("\"$name\" -> when (typeA) {")
+        p.pushIndent()
+        for ((typeA, operationsOnTypeA) in operations.sortedBy { it.typeA.typeSortKey() }.groupBy(Operation::typeA)) {
+            if (operationsOnTypeA.all { it.parameterTypes.size < 2 }) {
+                p.println("\"$typeA\" -> return typeB == null && typeC == null")
+                continue
+            }
+
+            p.println("\"$typeA\" -> when (typeB) {")
+            p.pushIndent()
+            for ((typeB, operationsOnTypeB) in operationsOnTypeA.groupBy{ if (it.parameterTypes.size >= 2) it.parameterTypes[1].addKotlinPackage() else null}) {
+                if (operationsOnTypeA.all { it.parameterTypes.size < 3 }) {
+                    p.println("\"$typeB\" -> return typeC == null")
+                    continue
+                }
+
+                p.println("\"$typeB\" -> when (typeC) {")
+                p.pushIndent()
+                for ((typeC, operationsOnTypeC) in operationsOnTypeB.groupBy{ if (it.parameterTypes.size >= 3) it.parameterTypes[2].addKotlinPackage() else null}) {
+                    for (operation in operationsOnTypeC.sortedBy { it.typeC.typeSortKey() }) {
+                        p.println("\"$typeC\" -> return true")
+                    }
+                }
+                p.popIndent()
+                p.println("}")
+            }
+            p.popIndent()
+            p.println("}")
+        }
+        p.popIndent()
+        p.println("}")
+    }
+    p.popIndent()
+    p.println("}")
+    p.println("return false")
+    p.popIndent()
+    p.println("}")
+    p.println()
+}
+
 private data class Operation(
     val name: String,
-    private val parameterTypes: List<String>,
+    val parameterTypes: List<String>,
     val isFunction: Boolean = true,
     val customExpression: String? = null,
 ) {
@@ -205,8 +254,6 @@ private data class Operation(
         }
     }
 
-    private fun String.addKotlinPackage(): String =
-        if (this == "T" || this == "T0?") this else "kotlin.$this"
 
     private fun castValue(name: String, type: String): String = when (type) {
         "Any?", "T" -> name
@@ -218,6 +265,8 @@ private data class Operation(
     private fun castValueParenthesized(name: String, type: String): String =
         if (type == "Any?") name else "(${castValue(name, type)})"
 }
+
+
 
 private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
     val builtIns = DefaultBuiltIns.Instance
@@ -337,6 +386,9 @@ private fun getExtensionOperationMap(): List<Operation> {
 
     return operationMap
 }
+
+private fun String.addKotlinPackage(): String =
+    if (this == "T" || this == "T0?") this else "kotlin.$this"
 
 private fun String.typeSortKey() =
     listOf("Boolean", "Char", "Byte", "Short", "Int", "Float", "Long", "Double", "Number", "UByte", "UShort", "UInt", "ULong", "String", "CharSequence", "Comparable", "Any", "Any?", "Unit", "Throwable")

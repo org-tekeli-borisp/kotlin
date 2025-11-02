@@ -34,6 +34,16 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
  */
 @ExperimentalBuildToolsApi
 public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
+
+    public interface Builder : BuildOperation.Builder {
+        public val compilerArguments: JvmCompilerArguments
+        public operator fun <V> get(key: Option<V>): V
+        public operator fun <V> set(key: Option<V>, value: V)
+        public fun build(): JvmCompilationOperation
+    }
+
+    public fun toBuilder(): Builder
+
     /**
      * Base class for [JvmCompilationOperation] options.
      *
@@ -53,6 +63,10 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
+    @Deprecated(
+        "Build operations will become immutable in an upcoming release. " +
+                "Use `JvmPlatformToolchain.jvmCompilationOperationBuilder` to create a mutable builder instead."
+    )
     public operator fun <V> set(key: Option<V>, value: V)
 
     /**
@@ -77,9 +91,9 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
      * )
      * ```
      * @see org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-     * @see JvmPlatformToolchain.createSnapshotBasedIcOptions
+     * @see JvmPlatformToolchain.snapshotBasedIcOptionsBuilder
      */
-    @Deprecated("Use `JvmPlatformToolchain.createSnapshotBasedIcOptions` instead.")
+    @Deprecated("Use `JvmPlatformToolchain.snapshotBasedIcOptionsBuilder` instead.")
     public fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
 
     public companion object {

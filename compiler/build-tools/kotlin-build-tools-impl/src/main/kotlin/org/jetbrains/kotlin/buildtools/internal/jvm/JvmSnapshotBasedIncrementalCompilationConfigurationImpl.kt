@@ -8,17 +8,32 @@ package org.jetbrains.kotlin.buildtools.internal.jvm
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
+import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import java.nio.file.Path
 
-internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl(
+internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl private constructor(
+    private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
     override val workingDirectory: Path,
     override val sourcesChanges: SourcesChanges,
     override val dependenciesSnapshotFiles: List<Path>,
     override val shrunkClasspathSnapshot: Path,
-) : JvmSnapshotBasedIncrementalCompilationOptions {
-    private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class)
+) : JvmSnapshotBasedIncrementalCompilationOptions, JvmSnapshotBasedIncrementalCompilationOptions.Builder,
+    DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsImpl> {
+
+    constructor(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ) : this(
+        Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
+        workingDirectory = workingDirectory,
+        sourcesChanges = sourcesChanges,
+        dependenciesSnapshotFiles = dependenciesSnapshotFiles,
+        shrunkClasspathSnapshot = shrunkClasspathSnapshot
+    )
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
@@ -34,6 +49,18 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl(
     override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>, value: V) {
         options[key] = value
     }
+
+    override fun build(): JvmSnapshotBasedIncrementalCompilationOptions = deepCopy()
+
+    override fun toBuilder() : JvmSnapshotBasedIncrementalCompilationOptions.Builder = deepCopy()
+
+    override fun deepCopy(): JvmSnapshotBasedIncrementalCompilationOptionsImpl = JvmSnapshotBasedIncrementalCompilationOptionsImpl(
+        options.deepCopy(),
+        workingDirectory,
+        sourcesChanges,
+        dependenciesSnapshotFiles,
+        shrunkClasspathSnapshot
+    )
 
     class Option<V> : BaseOptionWithDefault<V> {
         constructor(id: String) : super(id)

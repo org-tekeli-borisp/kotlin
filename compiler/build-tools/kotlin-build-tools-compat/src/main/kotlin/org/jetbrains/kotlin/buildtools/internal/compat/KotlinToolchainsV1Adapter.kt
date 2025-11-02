@@ -29,6 +29,7 @@ import java.nio.file.Path
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import java.nio.file.Paths
+import java.time.Duration
 import kotlin.io.path.absolutePathString
 
 public class KotlinToolchainsV1Adapter(
@@ -36,18 +37,22 @@ public class KotlinToolchainsV1Adapter(
 ) : KotlinToolchains {
     private val jvm: JvmPlatformToolchain by lazy {
         object : JvmPlatformToolchain {
-            override fun createSnapshotBasedIcOptions(
+            override fun snapshotBasedIcOptionsBuilder(
                 workingDirectory: Path,
                 sourcesChanges: SourcesChanges,
                 dependenciesSnapshotFiles: List<Path>,
                 shrunkClasspathSnapshot: Path,
-            ): JvmSnapshotBasedIncrementalCompilationOptions = JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
+            ): JvmSnapshotBasedIncrementalCompilationOptions.Builder = JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
                 workingDirectory,
                 sourcesChanges,
                 dependenciesSnapshotFiles,
                 shrunkClasspathSnapshot
             )
 
+            @Deprecated(
+                "Use jvmCompilationOperationBuilder instead",
+                replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
+            )
             override fun createJvmCompilationOperation(
                 sources: List<Path>,
                 destinationDirectory: Path,
@@ -55,7 +60,22 @@ public class KotlinToolchainsV1Adapter(
                 return JvmCompilationOperationV1Adapter(compilationService, sources, destinationDirectory, JvmCompilerArgumentsImpl())
             }
 
+            override fun jvmCompilationOperationBuilder(
+                sources: List<Path>,
+                destinationDirectory: Path,
+            ): JvmCompilationOperation.Builder {
+                return JvmCompilationOperationV1Adapter(compilationService, sources, destinationDirectory, JvmCompilerArgumentsImpl())
+            }
+
+            @Deprecated(
+                "Use `classpathSnapshottingOperationBuilder` instead",
+                replaceWith = ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)")
+            )
             override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
+                return JvmClasspathSnapshottingOperationV1Adapter(compilationService, classpathEntry)
+            }
+
+            override fun classpathSnapshottingOperationBuilder(classpathEntry: Path): JvmClasspathSnapshottingOperation.Builder {
                 return JvmClasspathSnapshottingOperationV1Adapter(compilationService, classpathEntry)
             }
         }
@@ -86,19 +106,31 @@ public class KotlinToolchainsV1Adapter(
     }
 }
 
-private class JvmClasspathSnapshottingOperationV1Adapter(
+private class JvmClasspathSnapshottingOperationV1Adapter private constructor(
+    override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
     @Suppress("DEPRECATION") val compilationService: CompilationService,
     val classpathEntry: Path,
-) :
-    BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
-    private val options: Options = Options(JvmClasspathSnapshottingOperation::class)
+) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
+    DeepCopyable<JvmClasspathSnapshottingOperationV1Adapter> {
+
+    constructor(
+        @Suppress("DEPRECATION") compilationService: CompilationService,
+        classpathEntry: Path,
+    ) : this(Options(JvmClasspathSnapshottingOperation::class), compilationService, classpathEntry)
+
 
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
-
 
     override fun <V> set(key: JvmClasspathSnapshottingOperation.Option<V>, value: V) {
         options[key] = value
     }
+
+    override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = deepCopy()
+
+    override fun build(): JvmClasspathSnapshottingOperation = deepCopy()
+
+    override fun deepCopy(): JvmClasspathSnapshottingOperationV1Adapter =
+        JvmClasspathSnapshottingOperationV1Adapter(options.deepCopy(), compilationService, classpathEntry)
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
@@ -128,18 +160,38 @@ private class JvmClasspathSnapshottingOperationV1Adapter(
     }
 }
 
-private class JvmCompilationOperationV1Adapter(
+private class JvmCompilationOperationV1Adapter private constructor(
+    override val options: Options = Options(JvmCompilationOperation::class),
     @Suppress("DEPRECATION") val compilationService: CompilationService,
     val kotlinSources: List<Path>,
     val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl,
-) : BuildOperationImpl<CompilationResult>(), JvmCompilationOperation {
-    private val options: Options = Options(JvmCompilationOperation::class)
+) : BuildOperationImpl<CompilationResult>(), JvmCompilationOperation, JvmCompilationOperation.Builder,
+    DeepCopyable<JvmCompilationOperationV1Adapter> {
+    constructor(
+        @Suppress("DEPRECATION") compilationService: CompilationService,
+        kotlinSources: List<Path>,
+        destinationDirectory: Path,
+        compilerArguments: JvmCompilerArgumentsImpl,
+    ) : this(Options(JvmCompilationOperation::class), compilationService, kotlinSources, destinationDirectory, compilerArguments)
+
+    override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
     override fun <V> get(key: JvmCompilationOperation.Option<V>): V = options[key]
 
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
         options[key] = value
+    }
+
+    override fun build(): JvmCompilationOperation = deepCopy()
+
+    override fun deepCopy(): JvmCompilationOperationV1Adapter {
+        return JvmCompilationOperationV1Adapter(
+            options.deepCopy(),
+            compilationService,
+            kotlinSources,
+            destinationDirectory,
+            JvmCompilerArgumentsImpl().also { it.applyArgumentStrings(compilerArguments.toArgumentStrings()) })
     }
 
     private operator fun <V> get(key: Option<V>): V = options[key]
@@ -208,8 +260,7 @@ private class JvmCompilationOperationV1Adapter(
 
         val javaSources = kotlinSources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
         val compilerArguments = compilerArguments.toArgumentStrings().fixForFirCheck() + listOf(
-            "-d",
-            destinationDirectory.absolutePathString()
+            "-d", destinationDirectory.absolutePathString()
         )
         return compilationService.compileJvm(
             projectId,
@@ -239,12 +290,24 @@ private class JvmCompilationOperationV1Adapter(
 }
 
 private class JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
+    private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
     override val workingDirectory: Path,
     override val sourcesChanges: SourcesChanges,
     override val dependenciesSnapshotFiles: List<Path>,
     override val shrunkClasspathSnapshot: Path,
-) : JvmSnapshotBasedIncrementalCompilationOptions {
-    private val options: Options = Options(JvmSnapshotBasedIncrementalCompilationOptions::class)
+) : JvmSnapshotBasedIncrementalCompilationOptions, JvmSnapshotBasedIncrementalCompilationOptions.Builder, DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter> {
+    constructor(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ) : this(
+        Options(JvmSnapshotBasedIncrementalCompilationOptions::class),
+        workingDirectory,
+        sourcesChanges,
+        dependenciesSnapshotFiles,
+        shrunkClasspathSnapshot,
+    )
 
     operator fun <V> get(key: Option<V>): V = options[key]
 
@@ -252,10 +315,20 @@ private class JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
         options[key] = value
     }
 
+    override fun toBuilder(): JvmSnapshotBasedIncrementalCompilationOptions.Builder =
+        deepCopy()
+
     override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V = options[key]
 
+    @Deprecated("JvmSnapshotBasedIncrementalCompilationOptions will become immutable in an upcoming release. Use `JvmPlatformToolchain.snapshotBasedIcOptionsBuilder` to create a mutable builder instead.")
     override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>, value: V) {
         options[key] = value
+    }
+
+    override fun build(): JvmSnapshotBasedIncrementalCompilationOptions = deepCopy()
+
+    override fun deepCopy(): JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter {
+        return JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(options.deepCopy(), workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot)
     }
 
     class Option<V> : BaseOptionWithDefault<V> {
@@ -314,8 +387,7 @@ private interface ExecutionPolicyV1Adapter {
     val strategyConfiguration: CompilerExecutionStrategyConfiguration
 
     class InProcess(@Suppress("DEPRECATION") override val strategyConfiguration: CompilerExecutionStrategyConfiguration) :
-        ExecutionPolicyV1Adapter,
-        ExecutionPolicy.InProcess
+        ExecutionPolicyV1Adapter, ExecutionPolicy.InProcess
 
     class WithDaemon(@Suppress("DEPRECATION") private val compilationService: CompilationService) : ExecutionPolicyV1Adapter,
         ExecutionPolicy.WithDaemon {
@@ -326,7 +398,7 @@ private interface ExecutionPolicyV1Adapter {
                 val jvmArguments = get(JVM_ARGUMENTS) ?: emptyList()
                 return get(SHUTDOWN_DELAY_MILLIS)?.let {
                     compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(
-                        jvmArguments, java.time.Duration.ofMillis(it)
+                        jvmArguments, Duration.ofMillis(it)
                     )
                 } ?: compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(
                     jvmArguments
@@ -402,11 +474,12 @@ public fun CompilationService.asKotlinToolchains(): KotlinToolchains = KotlinToo
 
 @OptIn(ExperimentalAtomicApi::class)
 private abstract class BuildOperationImpl<R> : BuildOperation<R> {
-    private val options: Options = Options(BuildOperation::class)
+    protected abstract val options: Options
     private val executionStarted = AtomicBoolean(false)
 
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
 
+    @Deprecated("Build operations will become immutable in an upcoming release. Obtain an instance of a mutable builder for the operation from the appropriate `Toolchain` instead.")
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
         options[key] = value
     }

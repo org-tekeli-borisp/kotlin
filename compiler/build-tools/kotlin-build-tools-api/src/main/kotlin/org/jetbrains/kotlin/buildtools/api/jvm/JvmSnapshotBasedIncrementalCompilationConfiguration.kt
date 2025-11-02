@@ -29,14 +29,14 @@ public interface JvmIncrementalCompilationConfiguration
  * A configuration for incremental compilation based on snapshots.
  *
  * This class will be removed in a future version of BTA.
- * Use [JvmPlatformToolchain.createSnapshotBasedIcOptions] instead.
+ * Use [JvmPlatformToolchain.snapshotBasedIcOptionsBuilder] instead.
  *
  * @property workingDirectory the working directory for the IC operation to store internal objects.
  * @property sourcesChanges changes in the source files, which can be unknown, to-be-calculated, or known.
  * @property dependenciesSnapshotFiles a list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
  * @property options an option set produced by [JvmCompilationOperation.createSnapshotBasedIcOptions]
  *
- * @see JvmPlatformToolchain.createSnapshotBasedIcOptions
+ * @see JvmPlatformToolchain.snapshotBasedIcOptionsBuilder
  */
 @Deprecated("Use `JvmSnapshotBasedIncrementalCompilationOptions` and `JvmPlatformToolchain.createSnapshotBasedIcOptions`.")
 @ExperimentalBuildToolsApi
@@ -48,7 +48,6 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration(
     public val options: JvmSnapshotBasedIncrementalCompilationOptions,
 ) : JvmIncrementalCompilationConfiguration
 
-// TODO: make this work with older impls where JvmSnapshotBasedIncrementalCompilationOptionsImpl doesn't implement JvmIncrementalCompilationConfiguration
 /**
  * Options for [JvmSnapshotBasedIncrementalCompilationConfiguration].
  *
@@ -85,6 +84,25 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : JvmIncrementalC
     public val shrunkClasspathSnapshot: Path
 
     /**
+     * A builder for [JvmSnapshotBasedIncrementalCompilationOptions].
+     *
+     * @since 2.3.20
+     */
+    public interface Builder {
+        public val workingDirectory: Path
+        public val sourcesChanges: SourcesChanges
+        public val dependenciesSnapshotFiles: List<Path>
+        public val shrunkClasspathSnapshot: Path
+
+        public operator fun <V> get(key: Option<V>): V
+        public operator fun <V> set(key: Option<V>, value: V)
+        public fun build(): JvmSnapshotBasedIncrementalCompilationOptions
+    }
+
+    public fun toBuilder(): JvmSnapshotBasedIncrementalCompilationOptions.Builder
+
+
+    /**
      * Base class for [JvmSnapshotBasedIncrementalCompilationOptions] options.
      *
      * @see get
@@ -103,6 +121,10 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : JvmIncrementalC
     /**
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
+    @Deprecated(
+        "JvmSnapshotBasedIncrementalCompilationOptions will become immutable in an upcoming release. " +
+                "Use `JvmPlatformToolchain.snapshotBasedIcOptionsBuilder` to create a mutable builder instead."
+    )
     public operator fun <V> set(key: Option<V>, value: V)
 
     public companion object {

@@ -37,7 +37,7 @@ class JvmModule(
     dependencies: List<Dependency>,
     defaultStrategyConfig: ExecutionPolicy,
     private val snapshotConfig: SnapshotConfig,
-    moduleCompilationConfigAction: (JvmCompilationOperation) -> Unit = {},
+    moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
     private val stdlibLocation: List<Path>,
 ) : AbstractModule(
     project,
@@ -60,12 +60,13 @@ class JvmModule(
 
     override fun compileImpl(
         strategyConfig: ExecutionPolicy,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        compilationAction: (JvmCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger
     ): CompilationResult {
         val allowedExtensions = setOf("kt", "kts", "java")
 
-        val compilationOperation = kotlinToolchain.jvm.createJvmCompilationOperation(
+        val compilationOperation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(
             sourcesDirectory.walk()
                 .filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
                 .toList(),
@@ -78,16 +79,19 @@ class JvmModule(
         compilationOperation.compilerArguments[CLASSPATH] = compileClasspath
         compilationOperation.compilerArguments[MODULE_NAME] = moduleName
 
-        return buildSession.executeOperation(compilationOperation, strategyConfig, kotlinLogger)
+        return compilationOperation.build().let {
+            compilationAction(it)
+            buildSession.executeOperation(it, strategyConfig, kotlinLogger)
+        }
     }
 
     private fun generateClasspathSnapshot(dependency: Dependency): Path {
-        val snapshotOperation = kotlinToolchain.jvm.createClasspathSnapshottingOperation(
+        val snapshotOperation = kotlinToolchain.jvm.classpathSnapshottingOperationBuilder(
             dependency.location
         )
         snapshotOperation[JvmClasspathSnapshottingOperation.GRANULARITY] = snapshotConfig.granularity
         snapshotOperation[PARSE_INLINED_LOCAL_CLASSES] = snapshotConfig.useInlineLambdaSnapshotting
-        val snapshotResult = buildSession.executeOperation(snapshotOperation)
+        val snapshotResult = buildSession.executeOperation(snapshotOperation.build())
         val hash = snapshotResult.classSnapshots.values
             .filterIsInstance<AccessibleClassSnapshot>()
             .withIndex()
@@ -104,16 +108,16 @@ class JvmModule(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
         forceNonIncrementalCompilation: Boolean,
-        compilationConfigAction: (JvmCompilationOperation) -> Unit,
-        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationOptions) -> Unit,
-        assertions: CompilationOutcome.(Module) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
+        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationOptions.Builder) -> Unit,
+        assertions: CompilationOutcome.(module: Module) -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationOperation ->
             val snapshots = dependencies.map {
                 generateClasspathSnapshot(it).toFile()
             }
 
-            val snapshotIcOptions = kotlinToolchain.jvm.createSnapshotBasedIcOptions(
+            val snapshotIcOptions = kotlinToolchain.jvm.snapshotBasedIcOptionsBuilder(
                 icCachesDir,
                 sourcesChanges,
                 snapshots.map { it.toPath() },
@@ -125,9 +129,9 @@ class JvmModule(
 
             icOptionsConfigAction(snapshotIcOptions)
 
-            compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = snapshotIcOptions
+            compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = snapshotIcOptions.build()
             compilationConfigAction(compilationOperation)
-        }, assertions)
+        }, {}, assertions)
     }
 
     override fun prepareExecutionProcessBuilder(

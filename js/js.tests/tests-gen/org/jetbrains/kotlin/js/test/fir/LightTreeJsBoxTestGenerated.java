@@ -7551,6 +7551,12 @@ public class LightTreeJsBoxTestGenerated extends AbstractLightTreeJsBoxTest {
     }
 
     @Test
+    @TestMetadata("new.kt")
+    public void testNew() {
+      runTest("js/js.translator/testData/box/jsCode/new.kt");
+    }
+
+    @Test
     @TestMetadata("numberLiteralOverflow.kt")
     public void testNumberLiteralOverflow() {
       runTest("js/js.translator/testData/box/jsCode/numberLiteralOverflow.kt");

@@ -22,6 +22,7 @@ package kotlin.collections
  *   constant time. When the internal array is full, it must be resized, which takes O(n) time to copy
  *   all existing elements to a new, larger array. However, these resize operations become less frequent
  *   as the list grows, making the average cost per appending constant over many operations.
+ * - **Removing from the end** ([removeLast], [removeAt]`(size - 1)`): O(1) constant time
  * - **Inserting or removing at a position** ([add] with index, [removeAt]): O(n) linear time,
  *   as elements after the position must be shifted
  * - **Search operations** ([contains], [indexOf], [lastIndexOf]): O(n) linear time

@@ -1,0 +1,5 @@
+CALLABLE:
+  /Derived.foo(<dispatch receiver>: Derived): kotlin.Unit
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  /Base.foo(<dispatch receiver>: Base): kotlin.Unit
+

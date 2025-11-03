@@ -1,0 +1,105 @@
+CALLABLE:
+  /MyList.add(<dispatch receiver>: MyList, element: kotlin.String): kotlin.Boolean
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
+
+CALLABLE:
+  /MyList.add(<dispatch receiver>: MyList, index: kotlin.Int, element: kotlin.String): kotlin.Unit
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): kotlin.Unit
+
+CALLABLE:
+  /MyList.addAll(<dispatch receiver>: MyList, elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.addAll(<dispatch receiver>: kotlin.collections.MutableList<E>, elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+CALLABLE:
+  /MyList.addAll(<dispatch receiver>: MyList, index: kotlin.Int, elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.addAll(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+CALLABLE:
+  /MyList.clear(<dispatch receiver>: MyList): kotlin.Unit
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.clear(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Unit
+
+CALLABLE:
+  /MyList.listIterator(<dispatch receiver>: MyList): kotlin.collections.MutableListIterator<kotlin.String>
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.listIterator(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.collections.MutableListIterator<E>
+
+CALLABLE:
+  /MyList.listIterator(<dispatch receiver>: MyList, index: kotlin.Int): kotlin.collections.MutableListIterator<kotlin.String>
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.listIterator(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): kotlin.collections.MutableListIterator<E>
+
+CALLABLE:
+  /MyList.remove(<dispatch receiver>: MyList, element: kotlin.String): kotlin.Boolean
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.remove(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
+
+CALLABLE:
+  /MyList.removeAll(<dispatch receiver>: MyList, elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.removeAll(<dispatch receiver>: kotlin.collections.MutableList<E>, elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+CALLABLE:
+  /MyList.removeAt(<dispatch receiver>: MyList, index: kotlin.Int): kotlin.String
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.removeAt(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+
+CALLABLE:
+  /MyList.retainAll(<dispatch receiver>: MyList, elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.retainAll(<dispatch receiver>: kotlin.collections.MutableList<E>, elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+CALLABLE:
+  /MyList.set(<dispatch receiver>: MyList, index: kotlin.Int, element: kotlin.String): kotlin.String
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E
+
+CALLABLE:
+  /MyList.subList(<dispatch receiver>: MyList, fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<kotlin.String>
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.subList(<dispatch receiver>: kotlin.collections.MutableList<E>, fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<E>
+
+CALLABLE:
+  val size: kotlin.Int
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  val size: kotlin.Int
+
+CALLABLE:
+  /MyList.isEmpty(<dispatch receiver>: MyList): kotlin.Boolean
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.isEmpty(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Boolean
+
+CALLABLE:
+  /MyList.contains(<dispatch receiver>: MyList, element: kotlin.String): kotlin.Boolean
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.contains(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
+
+CALLABLE:
+  /MyList.iterator(<dispatch receiver>: MyList): kotlin.collections.MutableIterator<kotlin.String>
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.iterator(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.collections.MutableIterator<E>
+
+CALLABLE:
+  /MyList.containsAll(<dispatch receiver>: MyList, elements: kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.containsAll(<dispatch receiver>: kotlin.collections.MutableList<E>, elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+CALLABLE:
+  /MyList.get(<dispatch receiver>: MyList, index: kotlin.Int): kotlin.String
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
+
+CALLABLE:
+  /MyList.indexOf(<dispatch receiver>: MyList, element: kotlin.String): kotlin.Int
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.indexOf(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Int
+
+CALLABLE:
+  /MyList.lastIndexOf(<dispatch receiver>: MyList, element: kotlin.String): kotlin.Int
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  kotlin/collections/MutableList.lastIndexOf(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Int
+

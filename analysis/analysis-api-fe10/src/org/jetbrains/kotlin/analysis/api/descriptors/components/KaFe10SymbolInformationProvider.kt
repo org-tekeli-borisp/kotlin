@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
@@ -156,4 +157,8 @@ internal class KaFe10SymbolInformationProvider(
 
     override val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
         get() = withValidityAssertion { KaReturnValueStatus.Unspecified }
+
+    @KaExperimentalApi
+    override val KaCallableSymbol.originalSymbolForDelegated: KaCallableSymbol?
+        get() = withValidityAssertion { null }
 }

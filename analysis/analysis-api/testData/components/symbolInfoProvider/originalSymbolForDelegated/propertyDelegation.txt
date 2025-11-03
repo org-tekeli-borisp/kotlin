@@ -1,0 +1,5 @@
+CALLABLE:
+  val value: kotlin.Int
+ORIGINAL_SYMBOL_FOR_DELEGATED:
+  val value: kotlin.Int
+

@@ -94,6 +94,29 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
     @KaExperimentalApi
     @KaK1Unsupported
     public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
+
+    /**
+     * Returns the original symbol that was wrapped by delegation, or `null` if this symbol is not from a delegated scope.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * interface Base {
+     *     fun foo()
+     * }
+     *
+     * class Delegate : Base {
+     *     override fun foo() {}
+     * }
+     *
+     * class Derived(val d: Delegate) : Base by d
+     * ```
+     *
+     * For the `foo` function symbol in `Derived`, this property will return the `foo` function symbol from `Base`.
+     */
+    @KaExperimentalApi
+    @KaK1Unsupported
+    public val KaCallableSymbol.originalSymbolForDelegated: KaCallableSymbol?
 }
 
 /**
@@ -250,3 +273,34 @@ public val KaSymbol.importableFqName: FqName?
 context(s: KaSession)
 public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
     get() = with(s) { returnValueStatus }
+
+/**
+ * Returns the original symbol that was wrapped by delegation, or `null` if this symbol is not from a delegated scope.
+ *
+ * When a class delegates to another class or interface (e.g., `class Foo : Bar by delegate`), the compiler creates
+ * delegated wrapper symbols in a [org.jetbrains.kotlin.fir.scopes.impl.FirDelegatedMemberScope]. This property returns
+ * the original symbol from the delegate's type that this wrapper delegates to.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * interface Base {
+ *     fun foo()
+ * }
+ *
+ * class Delegate : Base {
+ *     override fun foo() {}
+ * }
+ *
+ * class Derived(val d: Delegate) : Base by d
+ * ```
+ *
+ * For the `foo` function symbol in `Derived`, this property will return the `foo` function symbol from `Delegate`.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaK1Unsupported
+@KaContextParameterApi
+context(s: KaSession)
+public val KaCallableSymbol.originalSymbolForDelegated: KaCallableSymbol?
+    get() = with(s) { originalSymbolForDelegated }

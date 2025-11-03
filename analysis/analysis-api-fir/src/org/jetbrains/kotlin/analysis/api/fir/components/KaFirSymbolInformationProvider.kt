@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -189,5 +191,13 @@ internal class KaFirSymbolInformationProvider(
                 ReturnValueStatus.ExplicitlyIgnorable -> KaReturnValueStatus.ExplicitlyIgnorable
                 ReturnValueStatus.Unspecified -> KaReturnValueStatus.Unspecified
             }
+        }
+
+    override val KaCallableSymbol.originalSymbolForDelegated: KaCallableSymbol?
+        get() = withValidityAssertion {
+            require(this is KaFirSymbol<*>)
+            val callableSymbol = firSymbol as? FirCallableSymbol<*> ?: return null
+            val wrapperData = callableSymbol.delegatedWrapperData ?: return null
+            return analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(wrapperData.wrapped.symbol)
         }
 }

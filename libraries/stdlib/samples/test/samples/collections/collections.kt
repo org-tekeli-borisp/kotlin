@@ -479,19 +479,21 @@ class Collections {
 
             @Sample
             fun ensureCapacity() {
-                val list = arrayListOf<Int>()
+                // Suppose we have an existing list with unknown current capacity
+                val list = arrayListOf(1, 2, 3, 4, 5)
 
                 // When we know in advance that we'll add many elements,
                 // we can pre-allocate capacity to avoid multiple reallocations
-                list.ensureCapacity(1000)
+                val elementsToAdd = 1000
+                list.ensureCapacity(list.size + elementsToAdd)
 
                 // Now adding elements won't trigger internal array resizing
                 // until we exceed the ensured capacity
-                for (i in 1..1000) {
+                for (i in 1..elementsToAdd) {
                     list.add(i)
                 }
 
-                assertEquals(1000, list.size)
+                assertEquals(1005, list.size)
                 assertEquals(1, list.first())
                 assertEquals(1000, list.last())
             }

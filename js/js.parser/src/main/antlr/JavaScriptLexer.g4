@@ -187,7 +187,6 @@ Super   : 'super';
 Const   : 'const';
 Export  : 'export';
 Import  : 'import';
-Meta    : 'meta';
 
 Async : 'async';
 Await : 'await';

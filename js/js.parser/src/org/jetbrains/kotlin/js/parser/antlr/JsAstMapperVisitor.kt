@@ -681,10 +681,15 @@ internal class JsAstMapperVisitor(
         reportError("Super calls are not supported yet", ctx)
     }
 
-    override fun visitImportMetaExpression(ctx: JavaScriptParser.ImportMetaExpressionContext): JsNode? {
-        return makeRefNode("meta").apply {
-            qualifier = makeRefNode("import").applyLocation(ctx.Import())
-        }.applyLocation(ctx.Meta())
+    override fun visitImportMetaExpression(ctx: JavaScriptParser.ImportMetaExpressionContext): JsNameRef {
+        val identifier = ctx.identifier()
+        if (identifier.text != "meta") {
+            reportError("'meta' identifier expected, got '${identifier.text}'", ctx.identifier())
+        }
+
+        return makeRefNode(identifier.text).apply {
+            qualifier = makeRefNode(ctx.Import().text).applyLocation(ctx.Import())
+        }.applyLocation(identifier)
     }
 
     override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext): JsBinaryOperation {

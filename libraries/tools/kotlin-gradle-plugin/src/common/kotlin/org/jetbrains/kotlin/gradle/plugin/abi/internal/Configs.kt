@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.abi
+package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.ProjectLayout
@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationKlibKindExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiCheckTaskImpl
+import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiDumpTaskImpl
+import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiUpdateTask
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_ACTUAL_DUMP_DIR
 import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.tasks.abi.AbiToolsTask
@@ -78,12 +81,12 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
     layout: ProjectLayout,
     isEnabled: Property<Boolean>,
 ) {
-    val klibFileName = "$projectName$LEGACY_KLIB_DUMP_EXTENSION"
+    val klibFileName = "$projectName${AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION}"
 
     val referenceDir = legacyDump.referenceDumpDir
     val filters = filters
     val dumpDir =
-        layout.buildDirectory.dir(LEGACY_ACTUAL_DUMP_DIR)
+        layout.buildDirectory.dir(AbiValidationPaths.LEGACY_ACTUAL_DUMP_DIR)
 
     val dumpTaskProvider =
         tasks.register(KotlinAbiDumpTaskImpl.NAME, KotlinAbiDumpTaskImpl::class.java) {

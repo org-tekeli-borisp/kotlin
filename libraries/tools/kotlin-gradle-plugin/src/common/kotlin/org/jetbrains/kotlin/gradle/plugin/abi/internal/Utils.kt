@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.abi
+package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidBaseVariant
+import org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidTestVariant
+import org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidUnitTestVariant
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 
 private const val ABI_TOOLS_DEPENDENCY_CONFIGURATION = "kotlinInternalAbiValidation"
@@ -53,8 +56,8 @@ internal val KotlinTarget.emitsKlib: Boolean
     }
 
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
-internal val org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidBaseVariant.isTestVariant: Boolean
-    get() = this is org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidTestVariant || this is org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidUnitTestVariant
+internal val DeprecatedAndroidBaseVariant.isTestVariant: Boolean
+    get() = this is DeprecatedAndroidTestVariant || this is DeprecatedAndroidUnitTestVariant
 
 
 internal fun Project.prepareAbiClasspath(): Configuration {

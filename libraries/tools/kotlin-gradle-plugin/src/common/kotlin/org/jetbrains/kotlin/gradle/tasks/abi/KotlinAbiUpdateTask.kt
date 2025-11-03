@@ -9,8 +9,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
+import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
 
 @DisableCachingByDefault(because = "File copy should not be cacheable")
 internal abstract class KotlinAbiUpdateTask : DefaultTask() {

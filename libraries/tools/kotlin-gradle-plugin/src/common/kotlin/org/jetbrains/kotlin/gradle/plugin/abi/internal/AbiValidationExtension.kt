@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.abi
+package org.jetbrains.kotlin.gradle.plugin.abi.internal
 
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
@@ -30,8 +30,11 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
 ) : AbiValidationVariantSpecImpl(objects, tasks), AbiValidationExtension {
     final override val enabled: Property<Boolean> = objects.property<Boolean>().convention(false)
 
+    @Deprecated("Variants DSL was removed and is no longer supported.", level = DeprecationLevel.ERROR)
     override val variants: NamedDomainObjectContainer<AbiValidationVariantSpec>
-        get() = TODO("Not yet implemented")
+        get() {
+            throw GradleException("Variants DSL was removed and is no longer supported.")
+        }
 }
 
 internal fun ExtensionContainer.createAbiValidationExtension(project: Project): AbiValidationExtension {

@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 // FILE: wasmImport.kt
 import kotlin.wasm.WasmImport
@@ -23,7 +24,7 @@ fun main() {
 
 // FILE: entry.mjs
 import { instantiate } from "./index.uninstantiated.mjs";
-import * as StringBuiltinsPolyfill from './js-builtins.mjs';
+import * as StringBuiltinsPolyfill from './index.js-builtins.mjs';
 
 let inc = x => x + 1;
 

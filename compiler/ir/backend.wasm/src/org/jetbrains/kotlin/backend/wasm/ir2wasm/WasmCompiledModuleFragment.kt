@@ -327,18 +327,25 @@ class WasmCompiledModuleFragment(
         additionalTypes.add(wasmLongArray)
 
         val rttiTypeDeclarationSymbol = WasmSymbol<WasmStructDeclaration>()
+        val fieldsList = mutableListOf(
+            WasmStructFieldDeclaration("implementedIFaceIds", WasmRefNullType(WasmHeapType.Type(WasmSymbol(wasmLongArray))), false),
+            WasmStructFieldDeclaration("superClassRtti", WasmRefNullType(WasmHeapType.Type(rttiTypeDeclarationSymbol)), false),
+            WasmStructFieldDeclaration("packageNamePoolId", WasmI32, false),
+            WasmStructFieldDeclaration("simpleNamePoolId", WasmI32, false),
+            WasmStructFieldDeclaration("klassId", WasmI64, false),
+            WasmStructFieldDeclaration("typeInfoFlag", WasmI32, false),
+            WasmStructFieldDeclaration("qualifierStringLoader", WasmFuncRef, false),
+            WasmStructFieldDeclaration("simpleNameStringLoader", WasmFuncRef, false),
+        )
+        if (isWasmJsTarget) {
+            fieldsList += listOf(
+                WasmStructFieldDeclaration("packageNameGlobal", WasmRefType(WasmHeapType.Simple.Extern), false),
+                WasmStructFieldDeclaration("simpleNameGlobal", WasmRefType(WasmHeapType.Simple.Extern), false),
+            )
+        }
         val rttiTypeDeclaration = WasmStructDeclaration(
             name = "RTTI",
-            fields = listOf(
-                WasmStructFieldDeclaration("implementedIFaceIds", WasmRefNullType(WasmHeapType.Type(WasmSymbol(wasmLongArray))), false),
-                WasmStructFieldDeclaration("superClassRtti", WasmRefNullType(WasmHeapType.Type(rttiTypeDeclarationSymbol)), false),
-                WasmStructFieldDeclaration("packageNamePoolId", WasmI32, false),
-                WasmStructFieldDeclaration("simpleNamePoolId", WasmI32, false),
-                WasmStructFieldDeclaration("klassId", WasmI64, false),
-                WasmStructFieldDeclaration("typeInfoFlag", WasmI32, false),
-                WasmStructFieldDeclaration("qualifierStringLoader", WasmFuncRef, false),
-                WasmStructFieldDeclaration("simpleNameStringLoader", WasmFuncRef, false),
-            ),
+            fields = fieldsList,
             superType = null,
             isFinal = true
         )
@@ -761,7 +768,10 @@ class WasmCompiledModuleFragment(
                 // cache miss
                 if (isJsString) {
                     buildGetLocal(jsString ?: error("jsString is not set"), serviceCodeLocation)
-                    val jsToKotlinStringAdapter = tryFindBuiltInFunction { it.jsToKotlinStringAdapter }
+                    val jsToKotlinStringAdapter by lazy {
+                        tryFindBuiltInFunction { it.jsToKotlinStringAdapter }
+                            ?: compilationException("kotlin.jsToKotlinStringAdapter is not found in fragments", null)
+                    }
                     buildCall(WasmSymbol(jsToKotlinStringAdapter), serviceCodeLocation)
                 } else {
                     buildGetGlobal(WasmSymbol(stringAddressesAndLengthsGlobal), serviceCodeLocation)

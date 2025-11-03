@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.abi
 
+import org.gradle.api.GradleException
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.model.ObjectFactory
@@ -27,6 +29,9 @@ internal abstract class AbiValidationExtensionImpl @Inject constructor(
     tasks: TaskContainer,
 ) : AbiValidationVariantSpecImpl(objects, tasks), AbiValidationExtension {
     final override val enabled: Property<Boolean> = objects.property<Boolean>().convention(false)
+
+    override val variants: NamedDomainObjectContainer<AbiValidationVariantSpec>
+        get() = TODO("Not yet implemented")
 }
 
 internal fun ExtensionContainer.createAbiValidationExtension(project: Project): AbiValidationExtension {
@@ -74,6 +79,12 @@ internal abstract class AbiValidationMultiplatformExtensionImpl @Inject construc
     final override val enabled: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     override val klib: AbiValidationKlibKindExtension = objects.AbiValidationKlibKindExtension()
+
+    @Deprecated("Variants DSL was removed and is no longer supported.", level = DeprecationLevel.ERROR)
+    override val variants: NamedDomainObjectContainer<AbiValidationMultiplatformVariantSpec>
+        get() {
+            throw GradleException("Variants DSL was removed and is no longer supported.")
+        }
 }
 
 internal fun ExtensionContainer.createAbiValidationMultiplatformExtension(project: Project): AbiValidationMultiplatformExtension {

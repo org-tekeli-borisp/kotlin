@@ -51,6 +51,12 @@ interface AbiValidationMultiplatformExtension : AbiValidationMultiplatformVarian
      */
     @ExperimentalAbiValidation
     val enabled: Property<Boolean>
+
+    /**
+     * @deprecated Variants DSL was removed and is no longer supported.
+     */
+    @Deprecated("Variants DSL was removed and is no longer supported.", level = DeprecationLevel.ERROR)
+    val variants: NamedDomainObjectContainer<AbiValidationMultiplatformVariantSpec>
 }
 
 /**

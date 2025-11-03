@@ -10,8 +10,8 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
-import java.util.*
 
 /**
  * A parent class for all tasks that use Application Binary Interace (ABI) tools.

@@ -52,9 +52,11 @@ abstract class JsAbstractInvalidationTest(
         protected const val SOURCE_MAPPING_URL_PREFIX = "//# sourceMappingURL="
     }
 
-    private val testChecker = V8JsTestChecker(
-        testServices.getFixture("repl.js").absolutePath
-    )
+    private val testChecker by lazy {
+        V8JsTestChecker(
+            testServices.getFixture("repl.js").absolutePath
+        )
+    }
 
     override val modelTarget: ModelTarget = ModelTarget.JS
 
@@ -139,6 +141,7 @@ abstract class JsAbstractInvalidationTest(
                     includedLibrary = mainModuleInfo.modulePath,
                 ).apply {
                     put(JSConfigurationKeys.GENERATE_DTS, projectInfo.checkTypeScriptDefinitions)
+                    put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.NEVER)
                 }
 
                 val dirtyData = when (granularity) {

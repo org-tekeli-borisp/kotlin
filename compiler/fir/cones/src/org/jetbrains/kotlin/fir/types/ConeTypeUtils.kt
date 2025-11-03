@@ -180,13 +180,13 @@ fun ConeKotlinType.renderForDebugging(): String {
     return builder.toString()
 }
 
-fun ConeKotlinType.renderReadable(): String {
+fun ConeKotlinType.renderReadable(preRenderedConstructors: Map<TypeConstructorMarker, String?>? = null): String {
     val builder = StringBuilder()
-    ConeTypeRendererForReadability(builder) { ConeIdShortRenderer() }.render(this)
+    ConeTypeRendererForReadability(builder, preRenderedConstructors) { ConeIdShortRenderer() }.render(this)
     return builder.toString()
 }
 
-fun ConeKotlinType.renderReadableWithFqNames(preRenderedConstructors: Map<TypeConstructorMarker, String>? = null): String {
+fun ConeKotlinType.renderReadableWithFqNames(preRenderedConstructors: Map<TypeConstructorMarker, String?>? = null): String {
     val builder = StringBuilder()
     ConeTypeRendererForReadability(builder, preRenderedConstructors) { ConeFullyQualifiedIdRenderer() }.render(this)
     return builder.toString()

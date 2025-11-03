@@ -113,6 +113,9 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
             val lastStatement = statements.last()
             assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
 
+            // Instead of returning right away, we save the value to a temporary variable and after that return that variable.
+            // This is done solely to improve the debugging experience. Otherwise, a breakpoint set to the closing brace of the function
+            // cannot be hit.
             val tempVar = scope.createTemporaryVariable(delegatingCall, irType = context.irBuiltIns.anyType)
             statements[statements.lastIndex] = tempVar
             statements.add(irReturn(irGet(tempVar)))

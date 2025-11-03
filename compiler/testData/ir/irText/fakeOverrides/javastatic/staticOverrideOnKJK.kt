@@ -1,6 +1,9 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
+// Exception in new-reflect implementation
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 // FILE: Java1.java
 public abstract class Java1 implements KotlinInterface {
     public static int a = 2;

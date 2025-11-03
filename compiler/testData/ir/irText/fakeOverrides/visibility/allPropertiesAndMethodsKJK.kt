@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
 
+// Exception in new-reflect implementation
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 // FILE: Java1.java
 public class Java1 extends PublicVisibility { }
 

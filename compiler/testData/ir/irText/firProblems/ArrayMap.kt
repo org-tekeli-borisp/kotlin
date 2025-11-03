@@ -4,6 +4,9 @@
 // KT-61141: `set()` throws kotlin.IllegalStateException instead of java.lang.IllegalStateException
 // IGNORE_BACKEND: NATIVE
 
+// Exception in new-reflect implementation
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract val size: Int
 

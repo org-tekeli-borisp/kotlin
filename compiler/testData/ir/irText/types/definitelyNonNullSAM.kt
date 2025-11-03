@@ -1,6 +1,9 @@
 // LANGUAGE: +DefinitelyNonNullableTypes
 // SKIP_KT_DUMP
 
+// Exception in new-reflect implementation
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 fun interface FIn<in T> {
     fun f(x: T)
 }

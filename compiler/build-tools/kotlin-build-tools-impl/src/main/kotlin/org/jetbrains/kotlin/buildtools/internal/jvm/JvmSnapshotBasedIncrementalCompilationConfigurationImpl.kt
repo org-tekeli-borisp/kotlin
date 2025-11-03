@@ -52,7 +52,7 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl private constru
 
     override fun build(): JvmSnapshotBasedIncrementalCompilationOptions = deepCopy()
 
-    override fun toBuilder() : JvmSnapshotBasedIncrementalCompilationOptions.Builder = deepCopy()
+    override fun toBuilder(): JvmSnapshotBasedIncrementalCompilationOptions.Builder = deepCopy()
 
     override fun deepCopy(): JvmSnapshotBasedIncrementalCompilationOptionsImpl = JvmSnapshotBasedIncrementalCompilationOptionsImpl(
         options.deepCopy(),

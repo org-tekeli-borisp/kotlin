@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.buildtools.api.getToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
-import java.nio.file.Paths
 
 /**
  * Allows creating operations that can be used for performing Kotlin/JVM compilations.

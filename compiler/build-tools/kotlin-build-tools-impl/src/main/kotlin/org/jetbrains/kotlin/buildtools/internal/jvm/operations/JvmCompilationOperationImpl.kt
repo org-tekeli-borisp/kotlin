@@ -370,7 +370,7 @@ internal class JvmCompilationOperationImpl private constructor(
         classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
         kotlinFilenameExtensions: Set<String>,
         icFeatures: IncrementalCompilationFeatures,
-    ): IncrementalJvmCompilerRunner = this[LOOKUP_TRACKER]?.let { tracker ->
+    ): IncrementalJvmCompilerRunner =
         object : IncrementalJvmCompilerRunner(
             workingDirectory.toFile(),
             buildReporter,
@@ -381,18 +381,10 @@ internal class JvmCompilationOperationImpl private constructor(
             generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
         ) {
             override fun getLookupTrackerDelegate(): LookupTracker {
-                return LookupTrackerAdapter(tracker)
+                return this@JvmCompilationOperationImpl[LOOKUP_TRACKER]?.let { tracker -> LookupTrackerAdapter(tracker) }
+                    ?: super.getLookupTrackerDelegate()
             }
         }
-    } ?: IncrementalJvmCompilerRunner(
-        workingDirectory.toFile(),
-        buildReporter,
-        outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
-        classpathChanges = classpathChanges,
-        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-        icFeatures = icFeatures,
-        generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
-    )
 
     private fun JvmCompilationOperationImpl.getFirRunner(
         workingDirectory: Path,
@@ -401,7 +393,7 @@ internal class JvmCompilationOperationImpl private constructor(
         classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
         kotlinFilenameExtensions: Set<String>,
         icFeatures: IncrementalCompilationFeatures,
-    ): IncrementalFirJvmCompilerRunner = this[LOOKUP_TRACKER]?.let { tracker ->
+    ): IncrementalFirJvmCompilerRunner =
         object : IncrementalFirJvmCompilerRunner(
             workingDirectory.toFile(),
             buildReporter,
@@ -412,18 +404,10 @@ internal class JvmCompilationOperationImpl private constructor(
             generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
         ) {
             override fun getLookupTrackerDelegate(): LookupTracker {
-                return LookupTrackerAdapter(tracker)
+                return this@JvmCompilationOperationImpl[LOOKUP_TRACKER]?.let { tracker -> LookupTrackerAdapter(tracker) }
+                    ?: super.getLookupTrackerDelegate()
             }
         }
-    } ?: IncrementalFirJvmCompilerRunner(
-        workingDirectory.toFile(),
-        buildReporter,
-        outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
-        classpathChanges = classpathChanges,
-        kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-        icFeatures = icFeatures,
-        generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
-    )
 
     @Suppress("DEPRECATION")
     private fun JvmIncrementalCompilationConfiguration.toOptions(): JvmSnapshotBasedIncrementalCompilationOptionsImpl {

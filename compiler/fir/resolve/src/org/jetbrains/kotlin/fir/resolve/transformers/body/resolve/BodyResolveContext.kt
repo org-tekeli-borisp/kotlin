@@ -345,6 +345,7 @@ class BodyResolveContext(
         holder: SessionAndScopeSessionHolder,
     ) {
         if (owningClass == null) return
+        if (with(holder) { LanguageFeature.ImprovedResolutionInSecondaryConstructors.isEnabled() }) return
         addReceiver(
             name = owningClass.name,
             implicitReceiverValue = InaccessibleImplicitReceiverValue(

@@ -211,10 +211,14 @@ public interface KaLibraryModule : KaModule {
      * library.contentScope.contains(file) <=> library.binaryRoots.listRecursively().contains(file)
      * ```
      */
+    @Deprecated("Use `binaryVirtualFiles` instead. See KT-72676", ReplaceWith("binaryVirtualFiles"))
     public val binaryRoots: Collection<Path>
 
     /**
-     * A list of binary files in [VirtualFile] form if the library module represents a library in an in-memory file system.
+     * A list of binary roots and files in [VirtualFile] form.
+     *
+     * [VirtualFile]s for `jar` and `klib` roots represent files in the `jar` file system.
+     * Other [VirtualFile]s are taken from the regular virtual file system.
      */
     @KaExperimentalApi
     public val binaryVirtualFiles: Collection<VirtualFile>

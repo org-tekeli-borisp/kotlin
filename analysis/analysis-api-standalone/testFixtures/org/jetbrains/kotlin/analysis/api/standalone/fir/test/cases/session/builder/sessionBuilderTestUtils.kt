@@ -66,7 +66,7 @@ fun KtCallExpression.assertIsCallOf(
 
 internal fun compileCommonKlib(kLibSourcesRoot: Path): Path {
     val ktFiles = Files.walk(kLibSourcesRoot).asSequence().filter { it.extension == "kt" }.toList()
-    val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library.klib").toPath()
+    val testKlib = KtTestUtil.tmpDir("testLibrary").resolve("library").toPath()
 
     val arguments = buildList {
         ktFiles.mapTo(this) { it.absolutePathString() }

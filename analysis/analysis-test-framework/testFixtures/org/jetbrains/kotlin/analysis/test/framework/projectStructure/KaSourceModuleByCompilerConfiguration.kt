@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getVirtualFilesForLibraryRoots
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
@@ -72,10 +73,14 @@ abstract class KtModuleByCompilerConfiguration(
 
     private fun createJdkFromConfiguration(): KaLibraryModule? = configuration.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
         val jdkHomePaths = StandaloneProjectFactory.getDefaultJdkModulePaths(project, jdkHome.toPath())
-        val scope = StandaloneProjectFactory.createLibraryModuleSearchScope(
+        val libraryVirtualFiles = getVirtualFilesForLibraryRoots(
             jdkHomePaths,
+            testServices.environmentManager.getApplicationEnvironment()
+        )
+
+        val scope = StandaloneProjectFactory.createLibraryModuleSearchScope(
+            libraryVirtualFiles,
             emptyList(),
-            testServices.environmentManager.getApplicationEnvironment(),
             project
         )
 
@@ -85,6 +90,7 @@ abstract class KtModuleByCompilerConfiguration(
             scope,
             project,
             jdkHomePaths,
+            libraryVirtualFiles,
             librarySources = null,
             isSdk = true,
         )
@@ -147,6 +153,7 @@ class KaLibraryModuleByCompilerConfiguration(
     project: Project,
     testModule: TestModule,
     psiFiles: List<PsiFile>,
+    @Deprecated("Use `binaryVirtualFiles` instead. See KT-72676", replaceWith = ReplaceWith("binaryVirtualFiles"))
     override val binaryRoots: List<Path>,
     testServices: TestServices
 ) : KtModuleByCompilerConfiguration(project, testModule, psiFiles, testServices), KaLibraryModule {
@@ -154,7 +161,10 @@ class KaLibraryModuleByCompilerConfiguration(
     override val libraryName: String get() = testModule.name
     override val librarySources: KaLibrarySourceModule? get() = null
     override val isSdk: Boolean get() = false
-    override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
+
+    @Suppress("DEPRECATION")
+    override val binaryVirtualFiles: Collection<VirtualFile>
+        get() = getVirtualFilesForLibraryRoots(binaryRoots, testServices.environmentManager.getApplicationEnvironment())
 
     override val baseContentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
@@ -177,23 +187,27 @@ private class LibraryByRoots(
     private val roots: List<Path>,
     private val parentModule: KaModule,
     override val project: Project,
-    testServices: TestServices,
+    private val testServices: TestServices,
 ) : KaLibraryModule, KaModuleBase() {
-    override val baseContentScope: GlobalSearchScope = StandaloneProjectFactory.createLibraryModuleSearchScope(
-        roots,
-        emptyList(),
-        testServices.environmentManager.getApplicationEnvironment(),
-        project,
-    )
     override val libraryName: String get() = "Test Library $roots"
     override val directRegularDependencies: List<KaModule> get() = emptyList()
     override val directDependsOnDependencies: List<KaModule> get() = emptyList()
     override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
     override val directFriendDependencies: List<KaModule> get() = emptyList()
     override val targetPlatform: TargetPlatform get() = parentModule.targetPlatform
+
+    @Deprecated("Use `binaryVirtualFiles` instead. See KT-72676", replaceWith = ReplaceWith("binaryVirtualFiles"))
     override val binaryRoots: Collection<Path> get() = roots
+
     override val isSdk: Boolean get() = false
-    override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
+    override val binaryVirtualFiles: Collection<VirtualFile>
+        get() = getVirtualFilesForLibraryRoots(roots, testServices.environmentManager.getApplicationEnvironment())
+
+    override val baseContentScope: GlobalSearchScope = StandaloneProjectFactory.createLibraryModuleSearchScope(
+        binaryVirtualFiles,
+        emptyList(),
+        project,
+    )
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

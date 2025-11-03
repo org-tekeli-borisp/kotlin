@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getAllVirtualFilesFromJar
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils.getLibraryRootsForVirtualFiles
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.*
-import kotlin.error
 
 /**
  * This test targets `ContentScopeProvider` and `KaResolutionScopeProvider`.
@@ -189,7 +189,7 @@ open class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysisApi
         val kaModule = ktTestModule.ktModule
         val testFiles = if (kaModule is KaLibraryModule) {
             val jarFileSystem = testServices.environmentManager.getApplicationEnvironment().jarFileSystem as CoreJarFileSystem
-            val binaryFiles = kaModule.binaryRoots.flatMap { binaryRoot ->
+            val binaryFiles = getLibraryRootsForVirtualFiles(kaModule.binaryVirtualFiles).flatMap { binaryRoot ->
                 getAllVirtualFilesFromJar(binaryRoot, jarFileSystem, includeRoot = false)
             }
 

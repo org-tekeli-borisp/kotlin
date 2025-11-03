@@ -1,0 +1,100 @@
+KClass: KotlinClass
+  members:
+    fun KotlinClass.add(kotlin.String): kotlin.Boolean
+    fun KotlinClass.addAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun KotlinClass.clear(): kotlin.Unit
+    fun KotlinClass.clone(): kotlin.Any
+    fun KotlinClass.contains(kotlin.String): kotlin.Boolean
+    fun KotlinClass.containsAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun KotlinClass.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinClass.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun KotlinClass.hashCode(): kotlin.Int
+    fun KotlinClass.isEmpty(): kotlin.Boolean
+    fun KotlinClass.iterator(): kotlin.collections.MutableIterator<kotlin.String>
+    fun KotlinClass.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun KotlinClass.remove(kotlin.String): kotlin.Boolean
+    fun KotlinClass.removeAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun KotlinClass.retainAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun KotlinClass.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun KotlinClass.stream(): java.util.stream.Stream<kotlin.String>
+    fun KotlinClass.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    fun KotlinClass.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    fun KotlinClass.toString(): kotlin.String
+    val KotlinClass.size: kotlin.Int
+  declaredMembers:
+KClass: Java1
+  members:
+    fun Java1.add(kotlin.String): kotlin.Boolean
+    fun Java1.addAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Java1.clear(): kotlin.Unit
+    fun Java1.clone(): kotlin.Any
+    fun Java1.contains(kotlin.String): kotlin.Boolean
+    fun Java1.containsAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.isEmpty(): kotlin.Boolean
+    fun Java1.iterator(): kotlin.collections.MutableIterator<kotlin.String>
+    fun Java1.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun Java1.remove(kotlin.String): kotlin.Boolean
+    fun Java1.removeAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Java1.retainAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Java1.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun Java1.stream(): java.util.stream.Stream<kotlin.String>
+    fun Java1.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    fun Java1.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    fun Java1.toString(): kotlin.String
+    val Java1.size: kotlin.Int
+  declaredMembers:
+KClass: B
+  members:
+    fun B.add(kotlin.String): kotlin.Boolean
+    fun B.addAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun B.clear(): kotlin.Unit
+    fun B.clone(): kotlin.Any
+    fun B.contains(kotlin.String): kotlin.Boolean
+    fun B.containsAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun B.hashCode(): kotlin.Int
+    fun B.isEmpty(): kotlin.Boolean
+    fun B.iterator(): kotlin.collections.MutableIterator<kotlin.String>
+    fun B.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun B.remove(kotlin.String): kotlin.Boolean
+    fun B.removeAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun B.retainAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun B.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun B.stream(): java.util.stream.Stream<kotlin.String>
+    fun B.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    fun B.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    fun B.toString(): kotlin.String
+    val B.size: kotlin.Int
+  declaredMembers:
+    fun B.add(kotlin.String): kotlin.Boolean
+    val B.size: kotlin.Int
+KPackage: _1Kt
+  fun test(A, B): kotlin.Unit
+KClass: A
+  members:
+    fun A.add(kotlin.String): kotlin.Boolean
+    fun A.addAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun A.clear(): kotlin.Unit
+    fun A.clone(): kotlin.Any
+    fun A.contains(kotlin.String): kotlin.Boolean
+    fun A.containsAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun A.hashCode(): kotlin.Int
+    fun A.isEmpty(): kotlin.Boolean
+    fun A.iterator(): kotlin.collections.MutableIterator<kotlin.String>
+    fun A.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun A.remove(kotlin.String): kotlin.Boolean
+    fun A.removeAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun A.retainAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun A.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun A.stream(): java.util.stream.Stream<kotlin.String>
+    fun A.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    fun A.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    fun A.toString(): kotlin.String
+    val A.size: kotlin.Int
+  declaredMembers:

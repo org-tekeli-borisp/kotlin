@@ -1,0 +1,49 @@
+KClass: Java1
+  members:
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.remove(kotlin.Int!): kotlin.Boolean!
+    fun Java1.toString(): kotlin.String
+  declaredMembers:
+    fun Java1.remove(kotlin.Int!): kotlin.Boolean!
+KClass: B
+  members:
+    fun B.add(kotlin.Int): kotlin.Boolean
+    fun B.add(kotlin.Int, kotlin.Int): kotlin.Unit
+    fun B.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    fun B.addAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    fun B.clear(): kotlin.Unit
+    fun B.clone(): kotlin.Any
+    fun B.contains(kotlin.Int): kotlin.Boolean
+    fun B.containsAll(kotlin.collections.Collection<kotlin.Int!>): kotlin.Boolean
+    fun B.ensureCapacity(kotlin.Int): kotlin.Unit
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    fun B.get(kotlin.Int): kotlin.Int
+    fun B.hashCode(): kotlin.Int
+    fun B.indexOf(kotlin.Int): kotlin.Int
+    fun B.isEmpty(): kotlin.Boolean
+    fun B.iterator(): kotlin.collections.MutableIterator<kotlin.Int>
+    fun B.lastIndexOf(kotlin.Int): kotlin.Int
+    fun B.listIterator(): kotlin.collections.MutableListIterator<kotlin.Int>
+    fun B.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.Int>
+    fun B.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    fun B.remove(kotlin.Int): kotlin.Boolean
+    fun B.removeAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    fun B.removeAt(kotlin.Int): kotlin.Int
+    fun B.removeIf(java.util.function.Predicate<in kotlin.Int>): kotlin.Boolean
+    fun B.removeRange(kotlin.Int, kotlin.Int): kotlin.Unit
+    fun B.replaceAll(java.util.function.UnaryOperator<kotlin.Int>): kotlin.Unit
+    fun B.retainAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    fun B.set(kotlin.Int, kotlin.Int): kotlin.Int
+    fun B.sort(java.util.Comparator<in kotlin.Int!>!): kotlin.Unit
+    fun B.spliterator(): java.util.Spliterator<kotlin.Int!>
+    fun B.stream(): java.util.stream.Stream<kotlin.Int>
+    fun B.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.Int>
+    fun B.toArray(): kotlin.Array<(out) kotlin.Any!>!
+    fun B.toArray(kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    fun B.toString(): kotlin.String
+    fun B.trimToSize(): kotlin.Unit
+    val B.size: kotlin.Int
+    var B.modCount: kotlin.Int
+  declaredMembers:

@@ -1,0 +1,94 @@
+KClass: Java1
+  members:
+    fun Java1<T>.clear(): kotlin.Unit
+    fun Java1<T>.clone(): kotlin.Any!
+    fun Java1<T>.compute(T!, java.util.function.BiFunction<in T!, in T?, out T?>): T?
+    fun Java1<T>.computeIfAbsent(T!, java.util.function.Function<in T!, out T!>): T!
+    fun Java1<T>.computeIfPresent(T!, java.util.function.BiFunction<in T!, in T, out T?>): T?
+    fun Java1<T>.containsKey(T!): kotlin.Boolean
+    fun Java1<T>.containsValue(T!): kotlin.Boolean
+    fun Java1<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1<T>.forEach(java.util.function.BiConsumer<in T!, in T!>): kotlin.Unit
+    fun Java1<T>.get(T!): T?
+    fun Java1<T>.getOrDefault(T!, T!): T!
+    fun Java1<T>.hashCode(): kotlin.Int
+    fun Java1<T>.isEmpty(): kotlin.Boolean
+    fun Java1<T>.merge(T!, T, java.util.function.BiFunction<in T, in T, out T?>): T?
+    fun Java1<T>.put(T!, T!): T?
+    fun Java1<T>.putAll(kotlin.collections.Map<out T!, T!>): kotlin.Unit
+    fun Java1<T>.putIfAbsent(T!, T!): T?
+    fun Java1<T>.remove(T!): T?
+    fun Java1<T>.remove(T!, T!): kotlin.Boolean
+    fun Java1<T>.replace(T!, T!): T?
+    fun Java1<T>.replace(T!, T!, T!): kotlin.Boolean
+    fun Java1<T>.replaceAll(java.util.function.BiFunction<in T!, in T!, out T!>): kotlin.Unit
+    fun Java1<T>.toString(): kotlin.String
+    val Java1<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T!, T!>>
+    val Java1<T>.keys: kotlin.collections.MutableSet<T!>
+    val Java1<T>.size: kotlin.Int
+    val Java1<T>.values: kotlin.collections.MutableCollection<T!>
+  declaredMembers:
+KClass: B
+  members:
+    fun B<T>.clear(): kotlin.Unit
+    fun B<T>.clone(): kotlin.Any!
+    fun B<T>.compute(T!, java.util.function.BiFunction<in T!, in T?, out T?>): T?
+    fun B<T>.computeIfAbsent(T!, java.util.function.Function<in T!, out T!>): T!
+    fun B<T>.computeIfPresent(T!, java.util.function.BiFunction<in T!, in T, out T?>): T?
+    fun B<T>.containsKey(T!): kotlin.Boolean
+    fun B<T>.containsValue(T!): kotlin.Boolean
+    fun B<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun B<T>.forEach(java.util.function.BiConsumer<in T!, in T!>): kotlin.Unit
+    fun B<T>.get(T!): T?
+    fun B<T>.getOrDefault(T!, T!): T!
+    fun B<T>.hashCode(): kotlin.Int
+    fun B<T>.isEmpty(): kotlin.Boolean
+    fun B<T>.merge(T!, T, java.util.function.BiFunction<in T, in T, out T?>): T?
+    fun B<T>.put(T, T): T?
+    fun B<T>.putAll(kotlin.collections.Map<out T!, T!>): kotlin.Unit
+    fun B<T>.putIfAbsent(T!, T!): T?
+    fun B<T>.remove(T!): T?
+    fun B<T>.remove(T!, T!): kotlin.Boolean
+    fun B<T>.replace(T!, T!): T?
+    fun B<T>.replace(T!, T!, T!): kotlin.Boolean
+    fun B<T>.replaceAll(java.util.function.BiFunction<in T!, in T!, out T!>): kotlin.Unit
+    fun B<T>.toString(): kotlin.String
+    val B<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T, T>>
+    val B<T>.keys: kotlin.collections.MutableSet<T!>
+    val B<T>.size: kotlin.Int
+    val B<T>.values: kotlin.collections.MutableCollection<T!>
+  declaredMembers:
+    fun B<T>.put(T, T): T?
+    val B<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T, T>>
+KPackage: _1Kt
+  fun test(A<kotlin.Boolean>, B<kotlin.Boolean?>): kotlin.Unit
+KClass: A
+  members:
+    fun A<T>.clear(): kotlin.Unit
+    fun A<T>.clone(): kotlin.Any!
+    fun A<T>.compute(T!, java.util.function.BiFunction<in T!, in T?, out T?>): T?
+    fun A<T>.computeIfAbsent(T!, java.util.function.Function<in T!, out T!>): T!
+    fun A<T>.computeIfPresent(T!, java.util.function.BiFunction<in T!, in T, out T?>): T?
+    fun A<T>.containsKey(T!): kotlin.Boolean
+    fun A<T>.containsValue(T!): kotlin.Boolean
+    fun A<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun A<T>.forEach(java.util.function.BiConsumer<in T!, in T!>): kotlin.Unit
+    fun A<T>.get(T!): T?
+    fun A<T>.getOrDefault(T!, T!): T!
+    fun A<T>.hashCode(): kotlin.Int
+    fun A<T>.isEmpty(): kotlin.Boolean
+    fun A<T>.merge(T!, T, java.util.function.BiFunction<in T, in T, out T?>): T?
+    fun A<T>.put(T!, T!): T?
+    fun A<T>.putAll(kotlin.collections.Map<out T!, T!>): kotlin.Unit
+    fun A<T>.putIfAbsent(T!, T!): T?
+    fun A<T>.remove(T!): T?
+    fun A<T>.remove(T!, T!): kotlin.Boolean
+    fun A<T>.replace(T!, T!): T?
+    fun A<T>.replace(T!, T!, T!): kotlin.Boolean
+    fun A<T>.replaceAll(java.util.function.BiFunction<in T!, in T!, out T!>): kotlin.Unit
+    fun A<T>.toString(): kotlin.String
+    val A<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T!, T!>>
+    val A<T>.keys: kotlin.collections.MutableSet<T!>
+    val A<T>.size: kotlin.Int
+    val A<T>.values: kotlin.collections.MutableCollection<T!>
+  declaredMembers:

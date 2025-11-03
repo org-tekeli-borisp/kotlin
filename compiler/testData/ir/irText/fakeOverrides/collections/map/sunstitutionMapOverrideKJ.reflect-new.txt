@@ -1,0 +1,49 @@
+KPackage: _1Kt
+  fun test(C<kotlin.Boolean>, D<kotlin.Boolean>): kotlin.Unit
+KClass: D
+  members:
+    fun D<T>.comparator(): java.util.Comparator<in T!>!
+    fun D<T>.containsKey(K): kotlin.Boolean
+    fun D<T>.containsValue(V): kotlin.Boolean
+    fun D<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun D<T>.firstKey(): T!
+    fun D<T>.forEach(java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+    fun D<T>.get(K): V?
+    fun D<T>.getOrDefault(K, V): V
+    fun D<T>.hashCode(): kotlin.Int
+    fun D<T>.headMap(T!): java.util.SortedMap<T!, T!>!
+    fun D<T>.isEmpty(): kotlin.Boolean
+    fun D<T>.lastKey(): T!
+    fun D<T>.remove(T): T?
+    fun D<T>.subMap(T!, T!): java.util.SortedMap<T!, T!>!
+    fun D<T>.tailMap(T!): java.util.SortedMap<T!, T!>!
+    fun D<T>.toString(): kotlin.String
+    val D<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T!, T!>>
+    val D<T>.keys: kotlin.collections.MutableSet<T!>
+    val D<T>.size: kotlin.Int
+    val D<T>.values: kotlin.collections.MutableCollection<T!>
+  declaredMembers:
+    fun D<T>.remove(T): T?
+    val D<T>.size: kotlin.Int
+KClass: C
+  members:
+    fun C<T>.comparator(): java.util.Comparator<in T!>!
+    fun C<T>.containsKey(K): kotlin.Boolean
+    fun C<T>.containsValue(V): kotlin.Boolean
+    fun C<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun C<T>.firstKey(): T!
+    fun C<T>.forEach(java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+    fun C<T>.get(K): V?
+    fun C<T>.getOrDefault(K, V): V
+    fun C<T>.hashCode(): kotlin.Int
+    fun C<T>.headMap(T!): java.util.SortedMap<T!, T!>!
+    fun C<T>.isEmpty(): kotlin.Boolean
+    fun C<T>.lastKey(): T!
+    fun C<T>.subMap(T!, T!): java.util.SortedMap<T!, T!>!
+    fun C<T>.tailMap(T!): java.util.SortedMap<T!, T!>!
+    fun C<T>.toString(): kotlin.String
+    val C<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T!, T!>>
+    val C<T>.keys: kotlin.collections.MutableSet<T!>
+    val C<T>.size: kotlin.Int
+    val C<T>.values: kotlin.collections.MutableCollection<T!>
+  declaredMembers:

@@ -1,0 +1,222 @@
+KClass: I
+  members:
+    fun I.chars(): java.util.stream.IntStream!
+    fun I.codePoints(): java.util.stream.IntStream
+    fun I.equals(kotlin.Any?): kotlin.Boolean
+    fun I.get(kotlin.Int): kotlin.Char
+    fun I.hashCode(): kotlin.Int
+    fun I.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun I.toString(): kotlin.String
+    val I.length: kotlin.Int
+  declaredMembers:
+    fun I.codePoints(): java.util.stream.IntStream
+KClass: Java4
+  members:
+    fun Java4.charAt(kotlin.Int): kotlin.Char
+    fun Java4.chars(): java.util.stream.IntStream!
+    fun Java4.codePoints(): java.util.stream.IntStream!
+    fun Java4.equals(kotlin.Any?): kotlin.Boolean
+    fun Java4.hashCode(): kotlin.Int
+    fun Java4.length(): kotlin.Int
+    fun Java4.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence!
+    fun Java4.toString(): kotlin.String
+  declaredMembers:
+KClass: K
+  members:
+    fun K.charAt(kotlin.Int): kotlin.Char
+    fun K.chars(): java.util.stream.IntStream!
+    fun K.codePoints(): java.util.stream.IntStream!
+    fun K.equals(kotlin.Any?): kotlin.Boolean
+    fun K.hashCode(): kotlin.Int
+    fun K.length(): kotlin.Int
+    fun K.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun K.toString(): kotlin.String
+  declaredMembers:
+    fun K.charAt(kotlin.Int): kotlin.Char
+    fun K.length(): kotlin.Int
+    fun K.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+KClass: M
+  members:
+    fun M.charAt(kotlin.Int): kotlin.Char
+    fun M.chars(): java.util.stream.IntStream
+    fun M.codePoints(): java.util.stream.IntStream
+    fun M.equals(kotlin.Any?): kotlin.Boolean
+    fun M.get(kotlin.Int): kotlin.Char
+    fun M.hashCode(): kotlin.Int
+    fun M.length(): kotlin.Int
+    fun M.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun M.toString(): kotlin.String
+    val M.length: kotlin.Int
+  declaredMembers:
+    fun M.chars(): java.util.stream.IntStream
+    fun M.codePoints(): java.util.stream.IntStream
+KClass: Java2
+  members:
+    fun Java2.codePoints(): java.util.stream.IntStream!
+    fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    fun Java2.hashCode(): kotlin.Int
+    fun Java2.toString(): kotlin.String
+  declaredMembers:
+    fun Java2.codePoints(): java.util.stream.IntStream!
+KClass: J
+  members:
+    fun J.charAt(kotlin.Int): kotlin.Char
+    fun J.chars(): java.util.stream.IntStream!
+    fun J.codePoints(): java.util.stream.IntStream!
+    fun J.equals(kotlin.Any?): kotlin.Boolean
+    fun J.hashCode(): kotlin.Int
+    fun J.length(): kotlin.Int
+    fun J.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence!
+    fun J.toString(): kotlin.String
+  declaredMembers:
+KClass: H
+  members:
+    fun H.chars(): java.util.stream.IntStream!
+    fun H.codePoints(): java.util.stream.IntStream
+    fun H.equals(kotlin.Any?): kotlin.Boolean
+    fun H.get(kotlin.Int): kotlin.Char
+    fun H.get(kotlin.Number): kotlin.Char
+    fun H.hashCode(): kotlin.Int
+    fun H.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun H.toString(): kotlin.String
+    val H.length: kotlin.Int
+  declaredMembers:
+    fun H.codePoints(): java.util.stream.IntStream
+    fun H.get(kotlin.Number): kotlin.Char
+KClass: KotlinInterface
+  members:
+    fun KotlinInterface.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinInterface.get(kotlin.Number): kotlin.Char
+    fun KotlinInterface.hashCode(): kotlin.Int
+    fun KotlinInterface.toString(): kotlin.String
+    val KotlinInterface.length: kotlin.Number
+  declaredMembers:
+    fun KotlinInterface.get(kotlin.Number): kotlin.Char
+    val KotlinInterface.length: kotlin.Number
+KClass: Java3
+  members:
+    fun Java3.codePoints(): java.util.stream.IntStream!
+    fun Java3.equals(kotlin.Any?): kotlin.Boolean
+    fun Java3.hashCode(): kotlin.Int
+    fun Java3.toString(): kotlin.String
+  declaredMembers:
+    fun Java3.codePoints(): java.util.stream.IntStream!
+KClass: L
+  members:
+    fun L.charAt(kotlin.Int): kotlin.Char
+    fun L.chars(): java.util.stream.IntStream
+    fun L.codePoints(): java.util.stream.IntStream
+    fun L.equals(kotlin.Any?): kotlin.Boolean
+    fun L.get(kotlin.Int): kotlin.Char
+    fun L.hashCode(): kotlin.Int
+    fun L.length(): kotlin.Int
+    fun L.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun L.toString(): kotlin.String
+    val L.length: kotlin.Int
+  declaredMembers:
+    fun L.chars(): java.util.stream.IntStream
+    fun L.codePoints(): java.util.stream.IntStream
+KClass: Java1
+  members:
+    fun Java1.chars(): java.util.stream.IntStream!
+    fun Java1.codePoints(): java.util.stream.IntStream!
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.get(kotlin.Int): kotlin.Char
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun Java1.toString(): kotlin.String
+    val Java1.length: kotlin.Int
+  declaredMembers:
+    fun Java1.get(kotlin.Int): kotlin.Char
+    fun Java1.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    val Java1.length: kotlin.Int
+KClass: B
+  members:
+    fun B.charAt(kotlin.Int): kotlin.Char
+    fun B.chars(): java.util.stream.IntStream!
+    fun B.codePoints(): java.util.stream.IntStream!
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.hashCode(): kotlin.Int
+    fun B.length(): kotlin.Int
+    fun B.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun B.toString(): kotlin.String
+  declaredMembers:
+    fun B.charAt(kotlin.Int): kotlin.Char
+    fun B.length(): kotlin.Int
+    fun B.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+KPackage: _1Kt
+  fun test(A, B, C, D, E, F, G, H, I, J, K, L, M): kotlin.Unit
+KClass: D
+  members:
+    fun D.chars(): java.util.stream.IntStream!
+    fun D.codePoints(): java.util.stream.IntStream!
+    fun D.equals(kotlin.Any?): kotlin.Boolean
+    fun D.get(kotlin.Int): kotlin.Char
+    fun D.hashCode(): kotlin.Int
+    fun D.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun D.toString(): kotlin.String
+    val D.length: kotlin.Int
+  declaredMembers:
+    fun D.get(kotlin.Int): kotlin.Char
+    val D.length: kotlin.Int
+KClass: F
+  members:
+    fun F.chars(): java.util.stream.IntStream!
+    fun F.codePoints(): java.util.stream.IntStream!
+    fun F.equals(kotlin.Any?): kotlin.Boolean
+    fun F.get(kotlin.Int): kotlin.Char
+    fun F.get(kotlin.Number): kotlin.Char
+    fun F.hashCode(): kotlin.Int
+    fun F.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun F.toString(): kotlin.String
+    val F.length: kotlin.Int
+  declaredMembers:
+    fun F.get(kotlin.Number): kotlin.Char
+KClass: A
+  members:
+    fun A.charAt(kotlin.Int): kotlin.Char
+    fun A.chars(): java.util.stream.IntStream!
+    fun A.codePoints(): java.util.stream.IntStream!
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.hashCode(): kotlin.Int
+    fun A.length(): kotlin.Int
+    fun A.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence!
+    fun A.toString(): kotlin.String
+  declaredMembers:
+KClass: C
+  members:
+    fun C.chars(): java.util.stream.IntStream!
+    fun C.codePoints(): java.util.stream.IntStream!
+    fun C.equals(kotlin.Any?): kotlin.Boolean
+    fun C.get(kotlin.Int): kotlin.Char
+    fun C.hashCode(): kotlin.Int
+    fun C.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun C.toString(): kotlin.String
+    val C.length: kotlin.Int
+  declaredMembers:
+KClass: G
+  members:
+    fun G.chars(): java.util.stream.IntStream!
+    fun G.codePoints(): java.util.stream.IntStream!
+    fun G.equals(kotlin.Any?): kotlin.Boolean
+    fun G.get(kotlin.Int): kotlin.Char
+    fun G.get(kotlin.Number): kotlin.Char
+    fun G.hashCode(): kotlin.Int
+    fun G.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun G.toString(): kotlin.String
+    val G.length: kotlin.Int
+  declaredMembers:
+    fun G.get(kotlin.Int): kotlin.Char
+    fun G.get(kotlin.Number): kotlin.Char
+KClass: E
+  members:
+    fun E.chars(): java.util.stream.IntStream!
+    fun E.codePoints(): java.util.stream.IntStream
+    fun E.equals(kotlin.Any?): kotlin.Boolean
+    fun E.get(kotlin.Int): kotlin.Char
+    fun E.hashCode(): kotlin.Int
+    fun E.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    fun E.toString(): kotlin.String
+    val E.length: kotlin.Int
+  declaredMembers:
+    fun E.codePoints(): java.util.stream.IntStream

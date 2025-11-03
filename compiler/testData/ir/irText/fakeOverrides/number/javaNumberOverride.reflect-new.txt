@@ -1,0 +1,364 @@
+KClass: R
+  members:
+    fun R.equals(kotlin.Any?): kotlin.Boolean
+    fun R.hashCode(): kotlin.Int
+    fun R.intValue(): kotlin.Int
+    fun R.toByte(): kotlin.Byte
+    fun R.toChar(): kotlin.Char
+    fun R.toDouble(): kotlin.Double
+    fun R.toFloat(): kotlin.Float
+    fun R.toInt(): kotlin.Int
+    fun R.toLong(): kotlin.Long
+    fun R.toShort(): kotlin.Short
+    fun R.toString(): kotlin.String
+  declaredMembers:
+    fun R.toInt(): kotlin.Int
+KClass: I
+  members:
+    fun I.equals(kotlin.Any?): kotlin.Boolean
+    fun I.hashCode(): kotlin.Int
+    fun I.toByte(): kotlin.Byte
+    fun I.toChar(): kotlin.Char
+    fun I.toDouble(): kotlin.Double
+    fun I.toFloat(): kotlin.Float
+    fun I.toInt(): kotlin.Int
+    fun I.toLong(): kotlin.Long
+    fun I.toShort(): kotlin.Short
+    fun I.toString(): kotlin.String
+  declaredMembers:
+KClass: Java4
+  members:
+    fun Java4.equals(kotlin.Any?): kotlin.Boolean
+    fun Java4.hashCode(): kotlin.Int
+    fun Java4.toByte(): kotlin.Byte
+    fun Java4.toChar(): kotlin.Char
+    fun Java4.toDouble(): kotlin.Double
+    fun Java4.toFloat(): kotlin.Float
+    fun Java4.toInt(): kotlin.Int
+    fun Java4.toLong(): kotlin.Long
+    fun Java4.toShort(): kotlin.Short
+    fun Java4.toString(): kotlin.String
+  declaredMembers:
+KClass: P
+  members:
+    fun P.equals(kotlin.Any?): kotlin.Boolean
+    fun P.hashCode(): kotlin.Int
+    fun P.intValue(): kotlin.Int
+    fun P.longValue(): kotlin.Long
+    fun P.toByte(): kotlin.Byte
+    fun P.toChar(): kotlin.Char
+    fun P.toDouble(): kotlin.Double
+    fun P.toFloat(): kotlin.Float
+    fun P.toInt(): kotlin.Int
+    fun P.toLong(): kotlin.Long
+    fun P.toShort(): kotlin.Short
+    fun P.toString(): kotlin.String
+  declaredMembers:
+    fun P.intValue(): kotlin.Int
+    fun P.longValue(): kotlin.Long
+KClass: K
+  members:
+    fun K.equals(kotlin.Any?): kotlin.Boolean
+    fun K.hashCode(): kotlin.Int
+    fun K.toByte(): kotlin.Byte
+    fun K.toChar(): kotlin.Char
+    fun K.toDouble(): kotlin.Double
+    fun K.toFloat(): kotlin.Float
+    fun K.toInt(): kotlin.Int
+    fun K.toLong(): kotlin.Long
+    fun K.toShort(): kotlin.Short
+    fun K.toString(): kotlin.String
+  declaredMembers:
+KClass: O
+  members:
+    fun O.equals(kotlin.Any?): kotlin.Boolean
+    fun O.hashCode(): kotlin.Int
+    fun O.intValue(): kotlin.Int
+    fun O.toByte(): kotlin.Byte
+    fun O.toChar(): kotlin.Char
+    fun O.toDouble(): kotlin.Double
+    fun O.toFloat(): kotlin.Float
+    fun O.toInt(): kotlin.Int
+    fun O.toLong(): kotlin.Long
+    fun O.toShort(): kotlin.Short
+    fun O.toString(): kotlin.String
+  declaredMembers:
+KClass: M
+  members:
+    fun M.doubleValue(): kotlin.Double
+    fun M.equals(kotlin.Any?): kotlin.Boolean
+    fun M.floatValue(): kotlin.Float
+    fun M.hashCode(): kotlin.Int
+    fun M.intValue(): kotlin.Int
+    fun M.longValue(): kotlin.Long
+    fun M.toByte(): kotlin.Byte
+    fun M.toChar(): kotlin.Char
+    fun M.toDouble(): kotlin.Double
+    fun M.toFloat(): kotlin.Float
+    fun M.toInt(): kotlin.Int
+    fun M.toLong(): kotlin.Long
+    fun M.toShort(): kotlin.Short
+    fun M.toString(): kotlin.String
+  declaredMembers:
+KClass: Java2
+  members:
+    fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    fun Java2.hashCode(): kotlin.Int
+    fun Java2.intValue(): kotlin.Int
+    fun Java2.toString(): kotlin.String
+  declaredMembers:
+    fun Java2.intValue(): kotlin.Int
+KClass: J
+  members:
+    fun J.equals(kotlin.Any?): kotlin.Boolean
+    fun J.hashCode(): kotlin.Int
+    fun J.toByte(): kotlin.Byte
+    fun J.toChar(): kotlin.Char
+    fun J.toDouble(): kotlin.Double
+    fun J.toFloat(): kotlin.Float
+    fun J.toInt(): kotlin.Int
+    fun J.toLong(): kotlin.Long
+    fun J.toShort(): kotlin.Short
+    fun J.toString(): kotlin.String
+  declaredMembers:
+    fun J.toByte(): kotlin.Byte
+    fun J.toShort(): kotlin.Short
+KClass: Q
+  members:
+    fun Q.equals(kotlin.Any?): kotlin.Boolean
+    fun Q.hashCode(): kotlin.Int
+    fun Q.intValue(): kotlin.Int
+    fun Q.toByte(): kotlin.Byte
+    fun Q.toChar(): kotlin.Char
+    fun Q.toDouble(): kotlin.Double
+    fun Q.toFloat(): kotlin.Float
+    fun Q.toInt(): kotlin.Int
+    fun Q.toLong(): kotlin.Long
+    fun Q.toShort(): kotlin.Short
+    fun Q.toString(): kotlin.String
+  declaredMembers:
+KClass: Java5
+  members:
+    fun Java5.doubleValue(): kotlin.Double
+    fun Java5.equals(kotlin.Any?): kotlin.Boolean
+    fun Java5.floatValue(): kotlin.Float
+    fun Java5.hashCode(): kotlin.Int
+    fun Java5.intValue(): kotlin.Int
+    fun Java5.longValue(): kotlin.Long
+    fun Java5.toByte(): kotlin.Byte
+    fun Java5.toChar(): kotlin.Char
+    fun Java5.toDouble(): kotlin.Double
+    fun Java5.toFloat(): kotlin.Float
+    fun Java5.toInt(): kotlin.Int
+    fun Java5.toLong(): kotlin.Long
+    fun Java5.toShort(): kotlin.Short
+    fun Java5.toString(): kotlin.String
+  declaredMembers:
+    fun Java5.doubleValue(): kotlin.Double
+    fun Java5.floatValue(): kotlin.Float
+    fun Java5.intValue(): kotlin.Int
+    fun Java5.longValue(): kotlin.Long
+KClass: H
+  members:
+    fun H.equals(kotlin.Any?): kotlin.Boolean
+    fun H.hashCode(): kotlin.Int
+    fun H.toByte(): kotlin.Byte
+    fun H.toChar(): kotlin.Char
+    fun H.toDouble(): kotlin.Double
+    fun H.toFloat(): kotlin.Float
+    fun H.toInt(): kotlin.Int
+    fun H.toLong(): kotlin.Long
+    fun H.toShort(): kotlin.Short
+    fun H.toString(): kotlin.String
+  declaredMembers:
+    fun H.toByte(): kotlin.Byte
+    fun H.toDouble(): kotlin.Double
+KClass: KotlinInterface
+  members:
+    fun KotlinInterface.byteValue(): kotlin.Byte
+    fun KotlinInterface.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinInterface.hashCode(): kotlin.Int
+    fun KotlinInterface.toString(): kotlin.String
+  declaredMembers:
+    fun KotlinInterface.byteValue(): kotlin.Byte
+KClass: Java3
+  members:
+    fun Java3.equals(kotlin.Any?): kotlin.Boolean
+    fun Java3.hashCode(): kotlin.Int
+    fun Java3.toByte(): kotlin.Byte
+    fun Java3.toChar(): kotlin.Char
+    fun Java3.toDouble(): kotlin.Double
+    fun Java3.toFloat(): kotlin.Float
+    fun Java3.toInt(): kotlin.Int
+    fun Java3.toLong(): kotlin.Long
+    fun Java3.toShort(): kotlin.Short
+    fun Java3.toString(): kotlin.String
+  declaredMembers:
+    fun Java3.toDouble(): kotlin.Double
+    fun Java3.toFloat(): kotlin.Float
+    fun Java3.toInt(): kotlin.Int
+    fun Java3.toLong(): kotlin.Long
+KClass: L
+  members:
+    fun L.doubleValue(): kotlin.Double
+    fun L.equals(kotlin.Any?): kotlin.Boolean
+    fun L.floatValue(): kotlin.Float
+    fun L.hashCode(): kotlin.Int
+    fun L.intValue(): kotlin.Int
+    fun L.longValue(): kotlin.Long
+    fun L.toByte(): kotlin.Byte
+    fun L.toChar(): kotlin.Char
+    fun L.toDouble(): kotlin.Double
+    fun L.toFloat(): kotlin.Float
+    fun L.toInt(): kotlin.Int
+    fun L.toLong(): kotlin.Long
+    fun L.toShort(): kotlin.Short
+    fun L.toString(): kotlin.String
+  declaredMembers:
+    fun L.doubleValue(): kotlin.Double
+    fun L.floatValue(): kotlin.Float
+    fun L.intValue(): kotlin.Int
+    fun L.longValue(): kotlin.Long
+KClass: N
+  members:
+    fun N.doubleValue(): kotlin.Double
+    fun N.equals(kotlin.Any?): kotlin.Boolean
+    fun N.floatValue(): kotlin.Float
+    fun N.hashCode(): kotlin.Int
+    fun N.intValue(): kotlin.Int
+    fun N.longValue(): kotlin.Long
+    fun N.toByte(): kotlin.Byte
+    fun N.toChar(): kotlin.Char
+    fun N.toDouble(): kotlin.Double
+    fun N.toFloat(): kotlin.Float
+    fun N.toInt(): kotlin.Int
+    fun N.toLong(): kotlin.Long
+    fun N.toShort(): kotlin.Short
+    fun N.toString(): kotlin.String
+  declaredMembers:
+    fun N.intValue(): kotlin.Int
+KClass: Java1
+  members:
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.toByte(): kotlin.Byte
+    fun Java1.toChar(): kotlin.Char
+    fun Java1.toDouble(): kotlin.Double
+    fun Java1.toFloat(): kotlin.Float
+    fun Java1.toInt(): kotlin.Int
+    fun Java1.toLong(): kotlin.Long
+    fun Java1.toShort(): kotlin.Short
+    fun Java1.toString(): kotlin.String
+  declaredMembers:
+KClass: B
+  members:
+    fun B.doubleValue(): kotlin.Double
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.floatValue(): kotlin.Float
+    fun B.hashCode(): kotlin.Int
+    fun B.intValue(): kotlin.Int
+    fun B.longValue(): kotlin.Long
+    fun B.toByte(): kotlin.Byte
+    fun B.toChar(): kotlin.Char
+    fun B.toDouble(): kotlin.Double
+    fun B.toFloat(): kotlin.Float
+    fun B.toInt(): kotlin.Int
+    fun B.toLong(): kotlin.Long
+    fun B.toShort(): kotlin.Short
+    fun B.toString(): kotlin.String
+  declaredMembers:
+    fun B.doubleValue(): kotlin.Double
+    fun B.floatValue(): kotlin.Float
+    fun B.intValue(): kotlin.Int
+    fun B.longValue(): kotlin.Long
+KPackage: _1Kt
+  fun test(A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R): kotlin.Unit
+KClass: D
+  members:
+    fun D.equals(kotlin.Any?): kotlin.Boolean
+    fun D.hashCode(): kotlin.Int
+    fun D.intValue(): kotlin.Int
+    fun D.longValue(): kotlin.Long
+    fun D.toByte(): kotlin.Byte
+    fun D.toChar(): kotlin.Char
+    fun D.toDouble(): kotlin.Double
+    fun D.toFloat(): kotlin.Float
+    fun D.toInt(): kotlin.Int
+    fun D.toLong(): kotlin.Long
+    fun D.toShort(): kotlin.Short
+    fun D.toString(): kotlin.String
+  declaredMembers:
+    fun D.intValue(): kotlin.Int
+    fun D.longValue(): kotlin.Long
+KClass: F
+  members:
+    fun F.byteValue(): kotlin.Byte
+    fun F.doubleValue(): kotlin.Double
+    fun F.equals(kotlin.Any?): kotlin.Boolean
+    fun F.floatValue(): kotlin.Float
+    fun F.hashCode(): kotlin.Int
+    fun F.toByte(): kotlin.Byte
+    fun F.toChar(): kotlin.Char
+    fun F.toDouble(): kotlin.Double
+    fun F.toFloat(): kotlin.Float
+    fun F.toInt(): kotlin.Int
+    fun F.toLong(): kotlin.Long
+    fun F.toShort(): kotlin.Short
+    fun F.toString(): kotlin.String
+  declaredMembers:
+    fun F.doubleValue(): kotlin.Double
+    fun F.floatValue(): kotlin.Float
+KClass: A
+  members:
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.hashCode(): kotlin.Int
+    fun A.toByte(): kotlin.Byte
+    fun A.toChar(): kotlin.Char
+    fun A.toDouble(): kotlin.Double
+    fun A.toFloat(): kotlin.Float
+    fun A.toInt(): kotlin.Int
+    fun A.toLong(): kotlin.Long
+    fun A.toShort(): kotlin.Short
+    fun A.toString(): kotlin.String
+  declaredMembers:
+KClass: C
+  members:
+    fun C.equals(kotlin.Any?): kotlin.Boolean
+    fun C.hashCode(): kotlin.Int
+    fun C.intValue(): kotlin.Int
+    fun C.toByte(): kotlin.Byte
+    fun C.toChar(): kotlin.Char
+    fun C.toDouble(): kotlin.Double
+    fun C.toFloat(): kotlin.Float
+    fun C.toInt(): kotlin.Int
+    fun C.toLong(): kotlin.Long
+    fun C.toShort(): kotlin.Short
+    fun C.toString(): kotlin.String
+  declaredMembers:
+KClass: G
+  members:
+    fun G.equals(kotlin.Any?): kotlin.Boolean
+    fun G.hashCode(): kotlin.Int
+    fun G.toByte(): kotlin.Byte
+    fun G.toChar(): kotlin.Char
+    fun G.toDouble(): kotlin.Double
+    fun G.toFloat(): kotlin.Float
+    fun G.toInt(): kotlin.Int
+    fun G.toLong(): kotlin.Long
+    fun G.toShort(): kotlin.Short
+    fun G.toString(): kotlin.String
+  declaredMembers:
+KClass: E
+  members:
+    fun E.byteValue(): kotlin.Byte
+    fun E.equals(kotlin.Any?): kotlin.Boolean
+    fun E.hashCode(): kotlin.Int
+    fun E.toByte(): kotlin.Byte
+    fun E.toChar(): kotlin.Char
+    fun E.toDouble(): kotlin.Double
+    fun E.toFloat(): kotlin.Float
+    fun E.toInt(): kotlin.Int
+    fun E.toLong(): kotlin.Long
+    fun E.toShort(): kotlin.Short
+    fun E.toString(): kotlin.String
+  declaredMembers:

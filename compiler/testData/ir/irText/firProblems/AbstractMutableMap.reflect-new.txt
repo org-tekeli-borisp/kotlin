@@ -1,0 +1,26 @@
+KClass: MyMap
+  members:
+    fun MyMap<K, V>.clear(): kotlin.Unit
+    fun MyMap<K, V>.clone(): kotlin.Any!
+    fun MyMap<K, V>.containsKey(K!): kotlin.Boolean
+    fun MyMap<K, V>.containsKey(K): kotlin.Boolean
+    fun MyMap<K, V>.containsValue(V!): kotlin.Boolean
+    fun MyMap<K, V>.containsValue(V): kotlin.Boolean
+    fun MyMap<K, V>.equals(kotlin.Any?): kotlin.Boolean
+    fun MyMap<K, V>.forEach(java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+    fun MyMap<K, V>.get(K!): V?
+    fun MyMap<K, V>.get(K): V?
+    fun MyMap<K, V>.getOrDefault(K, V): V
+    fun MyMap<K, V>.hashCode(): kotlin.Int
+    fun MyMap<K, V>.isEmpty(): kotlin.Boolean
+    fun MyMap<K, V>.put(K, V): V?
+    fun MyMap<K, V>.putAll(kotlin.collections.Map<out K!, V!>): kotlin.Unit
+    fun MyMap<K, V>.remove(K!): V?
+    fun MyMap<K, V>.toString(): kotlin.String
+    val MyMap<K, V>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
+    val MyMap<K, V>.keys: kotlin.collections.Set<K>
+    val MyMap<K, V>.size: kotlin.Int
+    val MyMap<K, V>.values: kotlin.collections.Collection<V>
+  declaredMembers:
+    fun MyMap<K, V>.put(K, V): V?
+    val MyMap<K, V>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>

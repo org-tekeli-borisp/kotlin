@@ -1,0 +1,567 @@
+KClass: I
+  members:
+    fun I.clear(): kotlin.Unit
+    fun I.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun I.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun I.computeIfAbsent(kotlin.Boolean!, java.util.function.Function<in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Boolean!
+    fun I.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun I.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun I.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun I.equals(kotlin.Any?): kotlin.Boolean
+    fun I.firstKey(): kotlin.Boolean!
+    fun I.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun I.get(kotlin.Boolean!): kotlin.Boolean?
+    fun I.getOrDefault(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean!
+    fun I.hashCode(): kotlin.Int
+    fun I.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun I.isEmpty(): kotlin.Boolean
+    fun I.lastKey(): kotlin.Boolean!
+    fun I.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun I.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun I.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun I.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun I.remove(kotlin.Any!): kotlin.Boolean!
+    fun I.remove(kotlin.Boolean!): kotlin.Boolean?
+    fun I.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun I.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun I.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun I.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun I.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun I.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun I.toString(): kotlin.String
+    val I.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val I.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val I.size: kotlin.Int
+    val I.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+KClass: K
+  members:
+    fun K.clear(): kotlin.Unit
+    fun K.clone(): kotlin.Any!
+    fun K.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun K.computeIfAbsent(kotlin.Boolean!, java.util.function.Function<in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Boolean!
+    fun K.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun K.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun K.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun K.equals(kotlin.Any?): kotlin.Boolean
+    fun K.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun K.get(kotlin.Boolean!): kotlin.Boolean?
+    fun K.getOrDefault(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean!
+    fun K.hashCode(): kotlin.Int
+    fun K.isEmpty(): kotlin.Boolean
+    fun K.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun K.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun K.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun K.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun K.remove(kotlin.Any!): kotlin.Boolean!
+    fun K.remove(kotlin.Boolean!): kotlin.Boolean?
+    fun K.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun K.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun K.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun K.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun K.toString(): kotlin.String
+    val K.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val K.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val K.size: kotlin.Int
+    val K.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+KClass: M
+  members:
+    fun M.clear(): kotlin.Unit
+    fun M.compute(kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun M.computeIfAbsent(kotlin.Boolean, java.util.function.Function<in kotlin.Boolean, out kotlin.Boolean>): kotlin.Boolean
+    fun M.computeIfPresent(kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun M.containsKey(kotlin.Boolean): kotlin.Boolean
+    fun M.containsValue(kotlin.Boolean): kotlin.Boolean
+    fun M.equals(kotlin.Any?): kotlin.Boolean
+    fun M.forEach(java.util.function.BiConsumer<in kotlin.Boolean, in kotlin.Boolean>): kotlin.Unit
+    fun M.get(kotlin.Boolean): kotlin.Boolean?
+    fun M.getOrDefault(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun M.hashCode(): kotlin.Int
+    fun M.isEmpty(): kotlin.Boolean
+    fun M.merge(kotlin.Boolean, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun M.put(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean?
+    fun M.putAll(kotlin.collections.Map<out kotlin.Boolean, kotlin.Boolean>): kotlin.Unit
+    fun M.putIfAbsent(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean?
+    fun M.remove(kotlin.Any!): kotlin.Boolean!
+    fun M.remove(kotlin.Boolean): kotlin.Boolean?
+    fun M.remove(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun M.replace(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean?
+    fun M.replace(kotlin.Boolean, kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun M.replaceAll(java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean>): kotlin.Unit
+    fun M.toString(): kotlin.String
+    val M.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean, kotlin.Boolean>>
+    val M.keys: kotlin.collections.MutableSet<kotlin.Boolean>
+    val M.size: kotlin.Int
+    val M.values: kotlin.collections.MutableCollection<kotlin.Boolean>
+  declaredMembers:
+KClass: Java2
+  members:
+    fun Java2.clear(): kotlin.Unit
+    fun Java2.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun Java2.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun Java2.computeIfAbsent(kotlin.Boolean!, java.util.function.Function<in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Boolean!
+    fun Java2.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun Java2.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun Java2.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    fun Java2.firstKey(): kotlin.Boolean!
+    fun Java2.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun Java2.get(kotlin.Boolean!): kotlin.Boolean?
+    fun Java2.getOrDefault(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean!
+    fun Java2.hashCode(): kotlin.Int
+    fun Java2.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun Java2.isEmpty(): kotlin.Boolean
+    fun Java2.lastKey(): kotlin.Boolean!
+    fun Java2.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun Java2.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun Java2.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun Java2.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun Java2.remove(kotlin.Boolean!): kotlin.Boolean?
+    fun Java2.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun Java2.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun Java2.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun Java2.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun Java2.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun Java2.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun Java2.toString(): kotlin.String
+    val Java2.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val Java2.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val Java2.size: kotlin.Int
+    val Java2.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+KClass: J
+  members:
+    fun J.clear(): kotlin.Unit
+    fun J.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun J.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun J.computeIfAbsent(kotlin.Boolean!, java.util.function.Function<in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Boolean!
+    fun J.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun J.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun J.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun J.equals(kotlin.Any?): kotlin.Boolean
+    fun J.firstKey(): kotlin.Boolean!
+    fun J.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun J.get(kotlin.Boolean!): kotlin.Boolean?
+    fun J.getOrDefault(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean!
+    fun J.hashCode(): kotlin.Int
+    fun J.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun J.isEmpty(): kotlin.Boolean
+    fun J.lastKey(): kotlin.Boolean!
+    fun J.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun J.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun J.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun J.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun J.remove(kotlin.Any!): kotlin.Boolean!
+    fun J.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun J.remove(kotlin.Boolean?): kotlin.Boolean?
+    fun J.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun J.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun J.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun J.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun J.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun J.toString(): kotlin.String
+    val J.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val J.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val J.size: kotlin.Int
+    val J.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+    fun J.remove(kotlin.Boolean?): kotlin.Boolean?
+KClass: KotlinInterface
+  members:
+    fun KotlinInterface.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinInterface.hashCode(): kotlin.Int
+    fun KotlinInterface.remove(kotlin.Any): kotlin.Boolean
+    fun KotlinInterface.toString(): kotlin.String
+  declaredMembers:
+    fun KotlinInterface.remove(kotlin.Any): kotlin.Boolean
+KClass: Java3
+  members:
+    fun Java3.clear(): kotlin.Unit
+    fun Java3.clone(): kotlin.Any!
+    fun Java3.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun Java3.computeIfAbsent(kotlin.Boolean!, java.util.function.Function<in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Boolean!
+    fun Java3.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun Java3.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun Java3.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun Java3.equals(kotlin.Any?): kotlin.Boolean
+    fun Java3.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun Java3.get(kotlin.Boolean!): kotlin.Boolean?
+    fun Java3.getOrDefault(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean!
+    fun Java3.hashCode(): kotlin.Int
+    fun Java3.isEmpty(): kotlin.Boolean
+    fun Java3.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun Java3.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun Java3.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun Java3.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun Java3.remove(kotlin.Boolean!): kotlin.Boolean?
+    fun Java3.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun Java3.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun Java3.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun Java3.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun Java3.toString(): kotlin.String
+    val Java3.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val Java3.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val Java3.size: kotlin.Int
+    val Java3.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+KClass: L
+  members:
+    fun L.clear(): kotlin.Unit
+    fun L.clone(): kotlin.Any!
+    fun L.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun L.computeIfAbsent(kotlin.Boolean!, java.util.function.Function<in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Boolean!
+    fun L.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun L.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun L.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun L.equals(kotlin.Any?): kotlin.Boolean
+    fun L.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun L.get(kotlin.Boolean!): kotlin.Boolean?
+    fun L.getOrDefault(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean!
+    fun L.hashCode(): kotlin.Int
+    fun L.isEmpty(): kotlin.Boolean
+    fun L.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun L.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun L.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun L.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun L.remove(kotlin.Any!): kotlin.Boolean!
+    fun L.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun L.remove(kotlin.Boolean): kotlin.Boolean
+    fun L.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun L.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun L.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun L.toString(): kotlin.String
+    val L.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val L.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val L.size: kotlin.Int
+    val L.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+    fun L.remove(kotlin.Boolean): kotlin.Boolean
+KClass: N
+  members:
+    fun N.clear(): kotlin.Unit
+    fun N.compute(kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun N.computeIfAbsent(kotlin.Boolean, java.util.function.Function<in kotlin.Boolean, out kotlin.Boolean>): kotlin.Boolean
+    fun N.computeIfPresent(kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun N.containsKey(kotlin.Boolean): kotlin.Boolean
+    fun N.containsValue(kotlin.Boolean): kotlin.Boolean
+    fun N.equals(kotlin.Any?): kotlin.Boolean
+    fun N.forEach(java.util.function.BiConsumer<in kotlin.Boolean, in kotlin.Boolean>): kotlin.Unit
+    fun N.get(kotlin.Boolean): kotlin.Boolean?
+    fun N.getOrDefault(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun N.hashCode(): kotlin.Int
+    fun N.isEmpty(): kotlin.Boolean
+    fun N.merge(kotlin.Boolean, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun N.put(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean?
+    fun N.putAll(kotlin.collections.Map<out kotlin.Boolean, kotlin.Boolean>): kotlin.Unit
+    fun N.putIfAbsent(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean?
+    fun N.remove(kotlin.Any!): kotlin.Boolean!
+    fun N.remove(kotlin.Boolean): kotlin.Boolean?
+    fun N.remove(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun N.replace(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean?
+    fun N.replace(kotlin.Boolean, kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun N.replaceAll(java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean>): kotlin.Unit
+    fun N.toString(): kotlin.String
+    val N.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean, kotlin.Boolean>>
+    val N.keys: kotlin.collections.MutableSet<kotlin.Boolean>
+    val N.size: kotlin.Int
+    val N.values: kotlin.collections.MutableCollection<kotlin.Boolean>
+  declaredMembers:
+    fun N.remove(kotlin.Boolean): kotlin.Boolean?
+KClass: Java1
+  members:
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.remove(kotlin.Any!): kotlin.Boolean!
+    fun Java1.toString(): kotlin.String
+  declaredMembers:
+    fun Java1.remove(kotlin.Any!): kotlin.Boolean!
+KClass: B
+  members:
+    fun B.clear(): kotlin.Unit
+    fun B.clone(): kotlin.Any
+    fun B.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun B.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun B.computeIfAbsent(kotlin.Boolean, java.util.function.Function<in kotlin.Boolean, out kotlin.Boolean>): kotlin.Boolean
+    fun B.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun B.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun B.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.firstKey(): kotlin.Boolean!
+    fun B.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun B.get(kotlin.Boolean!): kotlin.Boolean?
+    fun B.getOrDefault(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun B.hashCode(): kotlin.Int
+    fun B.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun B.isEmpty(): kotlin.Boolean
+    fun B.lastKey(): kotlin.Boolean!
+    fun B.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun B.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun B.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun B.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun B.remove(kotlin.Any!): kotlin.Boolean!
+    fun B.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun B.remove(kotlin.Boolean): kotlin.Boolean?
+    fun B.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun B.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun B.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun B.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun B.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun B.toString(): kotlin.String
+    val B.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val B.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val B.size: kotlin.Int
+    val B.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+    fun B.remove(kotlin.Boolean): kotlin.Boolean?
+KPackage: _1Kt
+  fun test(A, B, C, D, E, F, I, J, K, L, M, N): kotlin.Unit
+KClass: D
+  members:
+    fun D.clear(): kotlin.Unit
+    fun D.clone(): kotlin.Any
+    fun D.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun D.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun D.computeIfAbsent(kotlin.Boolean, java.util.function.Function<in kotlin.Boolean, out kotlin.Boolean>): kotlin.Boolean
+    fun D.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun D.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun D.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun D.equals(kotlin.Any?): kotlin.Boolean
+    fun D.firstKey(): kotlin.Boolean!
+    fun D.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun D.get(kotlin.Boolean!): kotlin.Boolean?
+    fun D.getOrDefault(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun D.hashCode(): kotlin.Int
+    fun D.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun D.isEmpty(): kotlin.Boolean
+    fun D.lastKey(): kotlin.Boolean!
+    fun D.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun D.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun D.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun D.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun D.remove(kotlin.Any): kotlin.Boolean
+    fun D.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun D.remove(kotlin.Boolean): kotlin.Boolean
+    fun D.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun D.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun D.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun D.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun D.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun D.toString(): kotlin.String
+    val D.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val D.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val D.size: kotlin.Int
+    val D.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+    fun D.remove(kotlin.Boolean): kotlin.Boolean
+KClass: F
+  members:
+    fun F.clear(): kotlin.Unit
+    fun F.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun F.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun F.computeIfAbsent(kotlin.Boolean, java.util.function.Function<in kotlin.Boolean, out kotlin.Boolean>): kotlin.Boolean
+    fun F.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun F.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun F.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun F.equals(kotlin.Any?): kotlin.Boolean
+    fun F.firstKey(): kotlin.Boolean!
+    fun F.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun F.get(kotlin.Boolean!): kotlin.Boolean?
+    fun F.getOrDefault(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun F.hashCode(): kotlin.Int
+    fun F.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun F.isEmpty(): kotlin.Boolean
+    fun F.lastKey(): kotlin.Boolean!
+    fun F.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun F.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun F.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun F.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun F.remove(kotlin.Any): kotlin.Boolean
+    fun F.remove(kotlin.Boolean!): kotlin.Boolean?
+    fun F.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun F.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun F.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun F.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun F.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun F.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun F.toString(): kotlin.String
+    val F.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val F.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val F.size: kotlin.Int
+    val F.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+    fun F.remove(kotlin.Any): kotlin.Boolean
+KClass: KotlinInterface3
+  members:
+    fun KotlinInterface3.clear(): kotlin.Unit
+    fun KotlinInterface3.compute(kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun KotlinInterface3.computeIfAbsent(kotlin.Boolean, java.util.function.Function<in kotlin.Boolean, out kotlin.Boolean>): kotlin.Boolean
+    fun KotlinInterface3.computeIfPresent(kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun KotlinInterface3.containsKey(kotlin.Boolean): kotlin.Boolean
+    fun KotlinInterface3.containsValue(kotlin.Boolean): kotlin.Boolean
+    fun KotlinInterface3.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinInterface3.forEach(java.util.function.BiConsumer<in kotlin.Boolean, in kotlin.Boolean>): kotlin.Unit
+    fun KotlinInterface3.get(kotlin.Boolean): kotlin.Boolean?
+    fun KotlinInterface3.getOrDefault(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun KotlinInterface3.hashCode(): kotlin.Int
+    fun KotlinInterface3.isEmpty(): kotlin.Boolean
+    fun KotlinInterface3.merge(kotlin.Boolean, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun KotlinInterface3.put(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean?
+    fun KotlinInterface3.putAll(kotlin.collections.Map<out kotlin.Boolean, kotlin.Boolean>): kotlin.Unit
+    fun KotlinInterface3.putIfAbsent(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean?
+    fun KotlinInterface3.remove(kotlin.Boolean): kotlin.Boolean?
+    fun KotlinInterface3.remove(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun KotlinInterface3.replace(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean?
+    fun KotlinInterface3.replace(kotlin.Boolean, kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun KotlinInterface3.replaceAll(java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean>): kotlin.Unit
+    fun KotlinInterface3.toString(): kotlin.String
+    val KotlinInterface3.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean, kotlin.Boolean>>
+    val KotlinInterface3.keys: kotlin.collections.MutableSet<kotlin.Boolean>
+    val KotlinInterface3.size: kotlin.Int
+    val KotlinInterface3.values: kotlin.collections.MutableCollection<kotlin.Boolean>
+  declaredMembers:
+KClass: A
+  members:
+    fun A.clear(): kotlin.Unit
+    fun A.clone(): kotlin.Any
+    fun A.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun A.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun A.computeIfAbsent(kotlin.Boolean, java.util.function.Function<in kotlin.Boolean, out kotlin.Boolean>): kotlin.Boolean
+    fun A.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun A.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun A.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.firstKey(): kotlin.Boolean!
+    fun A.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun A.get(kotlin.Boolean!): kotlin.Boolean?
+    fun A.getOrDefault(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun A.hashCode(): kotlin.Int
+    fun A.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun A.isEmpty(): kotlin.Boolean
+    fun A.lastKey(): kotlin.Boolean!
+    fun A.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun A.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun A.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun A.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun A.remove(kotlin.Any!): kotlin.Boolean!
+    fun A.remove(kotlin.Boolean!): kotlin.Boolean?
+    fun A.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun A.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun A.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun A.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun A.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun A.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun A.toString(): kotlin.String
+    val A.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val A.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val A.size: kotlin.Int
+    val A.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+KClass: C
+  members:
+    fun C.clear(): kotlin.Unit
+    fun C.clone(): kotlin.Any
+    fun C.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun C.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun C.computeIfAbsent(kotlin.Boolean, java.util.function.Function<in kotlin.Boolean, out kotlin.Boolean>): kotlin.Boolean
+    fun C.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun C.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun C.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun C.equals(kotlin.Any?): kotlin.Boolean
+    fun C.firstKey(): kotlin.Boolean!
+    fun C.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun C.get(kotlin.Boolean!): kotlin.Boolean?
+    fun C.getOrDefault(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun C.hashCode(): kotlin.Int
+    fun C.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun C.isEmpty(): kotlin.Boolean
+    fun C.lastKey(): kotlin.Boolean!
+    fun C.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun C.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun C.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun C.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun C.remove(kotlin.Any): kotlin.Boolean
+    fun C.remove(kotlin.Boolean!): kotlin.Boolean?
+    fun C.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun C.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun C.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun C.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun C.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun C.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun C.toString(): kotlin.String
+    val C.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val C.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val C.size: kotlin.Int
+    val C.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+KClass: KotlinInterface2
+  members:
+    fun KotlinInterface2.clear(): kotlin.Unit
+    fun KotlinInterface2.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun KotlinInterface2.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun KotlinInterface2.computeIfAbsent(kotlin.Boolean!, java.util.function.Function<in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Boolean!
+    fun KotlinInterface2.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun KotlinInterface2.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun KotlinInterface2.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun KotlinInterface2.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinInterface2.firstKey(): kotlin.Boolean!
+    fun KotlinInterface2.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun KotlinInterface2.get(kotlin.Boolean!): kotlin.Boolean?
+    fun KotlinInterface2.getOrDefault(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean!
+    fun KotlinInterface2.hashCode(): kotlin.Int
+    fun KotlinInterface2.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun KotlinInterface2.isEmpty(): kotlin.Boolean
+    fun KotlinInterface2.lastKey(): kotlin.Boolean!
+    fun KotlinInterface2.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun KotlinInterface2.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun KotlinInterface2.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun KotlinInterface2.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun KotlinInterface2.remove(kotlin.Boolean!): kotlin.Boolean?
+    fun KotlinInterface2.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun KotlinInterface2.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun KotlinInterface2.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun KotlinInterface2.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun KotlinInterface2.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun KotlinInterface2.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun KotlinInterface2.toString(): kotlin.String
+    val KotlinInterface2.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val KotlinInterface2.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val KotlinInterface2.size: kotlin.Int
+    val KotlinInterface2.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:
+KClass: E
+  members:
+    fun E.clear(): kotlin.Unit
+    fun E.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun E.compute(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean?, out kotlin.Boolean?>): kotlin.Boolean?
+    fun E.computeIfAbsent(kotlin.Boolean, java.util.function.Function<in kotlin.Boolean, out kotlin.Boolean>): kotlin.Boolean
+    fun E.computeIfPresent(kotlin.Boolean!, java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun E.containsKey(kotlin.Boolean!): kotlin.Boolean
+    fun E.containsValue(kotlin.Boolean!): kotlin.Boolean
+    fun E.equals(kotlin.Any?): kotlin.Boolean
+    fun E.firstKey(): kotlin.Boolean!
+    fun E.forEach(java.util.function.BiConsumer<in kotlin.Boolean!, in kotlin.Boolean!>): kotlin.Unit
+    fun E.get(kotlin.Boolean!): kotlin.Boolean?
+    fun E.getOrDefault(kotlin.Boolean, kotlin.Boolean): kotlin.Boolean
+    fun E.hashCode(): kotlin.Int
+    fun E.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun E.isEmpty(): kotlin.Boolean
+    fun E.lastKey(): kotlin.Boolean!
+    fun E.merge(kotlin.Boolean!, kotlin.Boolean, java.util.function.BiFunction<in kotlin.Boolean, in kotlin.Boolean, out kotlin.Boolean?>): kotlin.Boolean?
+    fun E.put(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun E.putAll(kotlin.collections.Map<out kotlin.Boolean!, kotlin.Boolean!>): kotlin.Unit
+    fun E.putIfAbsent(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun E.remove(kotlin.Any): kotlin.Boolean
+    fun E.remove(kotlin.Boolean!): kotlin.Boolean?
+    fun E.remove(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun E.replace(kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean?
+    fun E.replace(kotlin.Boolean!, kotlin.Boolean!, kotlin.Boolean!): kotlin.Boolean
+    fun E.replaceAll(java.util.function.BiFunction<in kotlin.Boolean!, in kotlin.Boolean!, out kotlin.Boolean!>): kotlin.Unit
+    fun E.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun E.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun E.toString(): kotlin.String
+    val E.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val E.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val E.size: kotlin.Int
+    val E.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:

@@ -1,0 +1,74 @@
+KPackage: _1Kt
+  fun test(C<kotlin.Boolean>, D<kotlin.Boolean>): kotlin.Unit
+KClass: D
+  members:
+    fun D<T>.clear(): kotlin.Unit
+    fun D<T>.comparator(): java.util.Comparator<in T!>!
+    fun D<T>.compute(T!, java.util.function.BiFunction<in T!, in T?, out T?>): T?
+    fun D<T>.computeIfAbsent(T!, java.util.function.Function<in T!, out T!>): T!
+    fun D<T>.computeIfPresent(T!, java.util.function.BiFunction<in T!, in T, out T?>): T?
+    fun D<T>.containsKey(T!): kotlin.Boolean
+    fun D<T>.containsValue(T!): kotlin.Boolean
+    fun D<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun D<T>.firstKey(): T!
+    fun D<T>.forEach(java.util.function.BiConsumer<in T!, in T!>): kotlin.Unit
+    fun D<T>.get(T!): T?
+    fun D<T>.getOrDefault(T!, T!): T!
+    fun D<T>.hashCode(): kotlin.Int
+    fun D<T>.headMap(T!): java.util.SortedMap<T!, T!>!
+    fun D<T>.isEmpty(): kotlin.Boolean
+    fun D<T>.lastKey(): T!
+    fun D<T>.merge(T!, T, java.util.function.BiFunction<in T, in T, out T?>): T?
+    fun D<T>.put(T!, T!): T?
+    fun D<T>.putAll(kotlin.collections.Map<out T!, T!>): kotlin.Unit
+    fun D<T>.putIfAbsent(T!, T!): T?
+    fun D<T>.remove(T!, T!): kotlin.Boolean
+    fun D<T>.remove(T): T?
+    fun D<T>.replace(T!, T!): T?
+    fun D<T>.replace(T!, T!, T!): kotlin.Boolean
+    fun D<T>.replaceAll(java.util.function.BiFunction<in T!, in T!, out T!>): kotlin.Unit
+    fun D<T>.subMap(T!, T!): java.util.SortedMap<T!, T!>!
+    fun D<T>.tailMap(T!): java.util.SortedMap<T!, T!>!
+    fun D<T>.toString(): kotlin.String
+    val D<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T!, T!>>
+    val D<T>.keys: kotlin.collections.MutableSet<T!>
+    val D<T>.size: kotlin.Int
+    val D<T>.values: kotlin.collections.MutableCollection<T!>
+  declaredMembers:
+    fun D<T>.remove(T): T?
+    val D<T>.size: kotlin.Int
+KClass: C
+  members:
+    fun C<T>.clear(): kotlin.Unit
+    fun C<T>.comparator(): java.util.Comparator<in T!>!
+    fun C<T>.compute(T!, java.util.function.BiFunction<in T!, in T?, out T?>): T?
+    fun C<T>.computeIfAbsent(T!, java.util.function.Function<in T!, out T!>): T!
+    fun C<T>.computeIfPresent(T!, java.util.function.BiFunction<in T!, in T, out T?>): T?
+    fun C<T>.containsKey(T!): kotlin.Boolean
+    fun C<T>.containsValue(T!): kotlin.Boolean
+    fun C<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun C<T>.firstKey(): T!
+    fun C<T>.forEach(java.util.function.BiConsumer<in T!, in T!>): kotlin.Unit
+    fun C<T>.get(T!): T?
+    fun C<T>.getOrDefault(T!, T!): T!
+    fun C<T>.hashCode(): kotlin.Int
+    fun C<T>.headMap(T!): java.util.SortedMap<T!, T!>!
+    fun C<T>.isEmpty(): kotlin.Boolean
+    fun C<T>.lastKey(): T!
+    fun C<T>.merge(T!, T, java.util.function.BiFunction<in T, in T, out T?>): T?
+    fun C<T>.put(T!, T!): T?
+    fun C<T>.putAll(kotlin.collections.Map<out T!, T!>): kotlin.Unit
+    fun C<T>.putIfAbsent(T!, T!): T?
+    fun C<T>.remove(T!): T?
+    fun C<T>.remove(T!, T!): kotlin.Boolean
+    fun C<T>.replace(T!, T!): T?
+    fun C<T>.replace(T!, T!, T!): kotlin.Boolean
+    fun C<T>.replaceAll(java.util.function.BiFunction<in T!, in T!, out T!>): kotlin.Unit
+    fun C<T>.subMap(T!, T!): java.util.SortedMap<T!, T!>!
+    fun C<T>.tailMap(T!): java.util.SortedMap<T!, T!>!
+    fun C<T>.toString(): kotlin.String
+    val C<T>.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T!, T!>>
+    val C<T>.keys: kotlin.collections.MutableSet<T!>
+    val C<T>.size: kotlin.Int
+    val C<T>.values: kotlin.collections.MutableCollection<T!>
+  declaredMembers:

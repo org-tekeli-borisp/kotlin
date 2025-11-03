@@ -1,0 +1,35 @@
+KClass: Java1
+  members:
+    fun Java1<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1<T>.get(T!): T!
+    fun Java1<T>.hashCode(): kotlin.Int
+    fun Java1<T>.invoke(): kotlin.Unit
+    fun Java1<T>.plus(T!): Java1<(raw) kotlin.Any!>
+    fun Java1<T>.toString(): kotlin.String
+  declaredMembers:
+    fun Java1<T>.get(T!): T!
+    fun Java1<T>.invoke(): kotlin.Unit
+    fun Java1<T>.plus(T!): Java1<(raw) kotlin.Any!>
+KClass: B
+  members:
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.get(kotlin.Any?): kotlin.Any
+    fun B.hashCode(): kotlin.Int
+    fun B.invoke(): kotlin.Unit
+    fun B.plus(kotlin.Any?): Java1<kotlin.Any>
+    fun B.toString(): kotlin.String
+  declaredMembers:
+    fun B.get(kotlin.Any?): kotlin.Any
+    fun B.invoke(): kotlin.Unit
+    fun B.plus(kotlin.Any?): Java1<kotlin.Any>
+KPackage: _1Kt
+  fun test(A, B): kotlin.Unit
+KClass: A
+  members:
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.get(kotlin.Int?): kotlin.Int?
+    fun A.hashCode(): kotlin.Int
+    fun A.invoke(): kotlin.Unit
+    fun A.plus(kotlin.Int?): Java1<(raw) kotlin.Any!>
+    fun A.toString(): kotlin.String
+  declaredMembers:

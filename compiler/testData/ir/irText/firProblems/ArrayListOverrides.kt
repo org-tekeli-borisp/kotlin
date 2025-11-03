@@ -1,5 +1,6 @@
 // FULL_JDK
 // TARGET_BACKEND: JVM_IR
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
 
 class A1 : java.util.ArrayList<String>()
 

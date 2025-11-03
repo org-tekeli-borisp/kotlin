@@ -1,0 +1,42 @@
+KClass: SpecificList
+  members:
+    fun SpecificList.contains(kotlin.String): kotlin.Boolean
+    fun SpecificList.containsAll(kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    fun SpecificList.equals(kotlin.Any?): kotlin.Boolean
+    fun SpecificList.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun SpecificList.get(kotlin.Int): kotlin.String
+    fun SpecificList.hashCode(): kotlin.Int
+    fun SpecificList.indexOf(kotlin.String): kotlin.Int
+    fun SpecificList.isEmpty(): kotlin.Boolean
+    fun SpecificList.iterator(): kotlin.collections.Iterator<kotlin.String>
+    fun SpecificList.lastIndexOf(kotlin.String): kotlin.Int
+    fun SpecificList.listIterator(): kotlin.collections.ListIterator<kotlin.String>
+    fun SpecificList.listIterator(kotlin.Int): kotlin.collections.ListIterator<kotlin.String>
+    fun SpecificList.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun SpecificList.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun SpecificList.stream(): java.util.stream.Stream<kotlin.String>
+    fun SpecificList.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<kotlin.String>
+    fun SpecificList.toString(): kotlin.String
+    val SpecificList.size: kotlin.Int
+  declaredMembers:
+KClass: KotlinList
+  members:
+    fun KotlinList<T>.contains(T): kotlin.Boolean
+    fun KotlinList<T>.containsAll(kotlin.collections.Collection<T>): kotlin.Boolean
+    fun KotlinList<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinList<T>.forEach(java.util.function.Consumer<in T!>!): kotlin.Unit
+    fun KotlinList<T>.get(kotlin.Int): T
+    fun KotlinList<T>.hashCode(): kotlin.Int
+    fun KotlinList<T>.indexOf(T): kotlin.Int
+    fun KotlinList<T>.isEmpty(): kotlin.Boolean
+    fun KotlinList<T>.iterator(): kotlin.collections.Iterator<T>
+    fun KotlinList<T>.lastIndexOf(T): kotlin.Int
+    fun KotlinList<T>.listIterator(): kotlin.collections.ListIterator<T>
+    fun KotlinList<T>.listIterator(kotlin.Int): kotlin.collections.ListIterator<T>
+    fun KotlinList<T>.parallelStream(): java.util.stream.Stream<T>
+    fun KotlinList<T>.spliterator(): java.util.Spliterator<T!>
+    fun KotlinList<T>.stream(): java.util.stream.Stream<T>
+    fun KotlinList<T>.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<T>
+    fun KotlinList<T>.toString(): kotlin.String
+    val KotlinList<T>.size: kotlin.Int
+  declaredMembers:

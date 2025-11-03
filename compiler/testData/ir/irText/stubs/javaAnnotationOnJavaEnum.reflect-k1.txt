@@ -1,0 +1,26 @@
+KClass: JavaEnum
+  members:
+    fun JavaEnum.clone(): kotlin.Any
+    fun JavaEnum.compareTo(JavaEnum!): kotlin.Int
+    fun JavaEnum.equals(kotlin.Any?): kotlin.Boolean
+    fun JavaEnum.finalize(): kotlin.Unit
+    fun JavaEnum.getDeclaringClass(): java.lang.Class<JavaEnum!>!
+    fun JavaEnum.hashCode(): kotlin.Int
+    fun JavaEnum.toString(): kotlin.String
+    fun valueOf(kotlin.String): JavaEnum
+    fun values(): kotlin.Array<JavaEnum>
+    val JavaEnum.name: kotlin.String
+    val JavaEnum.ordinal: kotlin.Int
+    val entries: kotlin.enums.EnumEntries<JavaEnum>
+  declaredMembers:
+    fun valueOf(kotlin.String): JavaEnum
+    fun values(): kotlin.Array<JavaEnum>
+    val entries: kotlin.enums.EnumEntries<JavaEnum>
+KPackage: TestKt
+  fun foo(): kotlin.Unit
+KClass: JavaPropertyAnnotation
+  members:
+    fun JavaPropertyAnnotation.equals(kotlin.Any?): kotlin.Boolean
+    fun JavaPropertyAnnotation.hashCode(): kotlin.Int
+    fun JavaPropertyAnnotation.toString(): kotlin.String
+  declaredMembers:

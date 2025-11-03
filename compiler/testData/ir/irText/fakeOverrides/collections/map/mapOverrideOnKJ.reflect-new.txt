@@ -1,0 +1,52 @@
+KClass: B
+  members:
+    fun B.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun B.containsKey(K): kotlin.Boolean
+    fun B.containsValue(V): kotlin.Boolean
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.firstKey(): kotlin.Boolean!
+    fun B.forEach(java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+    fun B.get(K): V?
+    fun B.get(kotlin.Boolean?): kotlin.Boolean?
+    fun B.getOrDefault(K, V): V
+    fun B.hashCode(): kotlin.Int
+    fun B.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun B.isEmpty(): kotlin.Boolean
+    fun B.lastKey(): kotlin.Boolean!
+    fun B.remove(kotlin.Boolean?): kotlin.Boolean?
+    fun B.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun B.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun B.toString(): kotlin.String
+    val B.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val B.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val B.size: kotlin.Int
+    val B.values: kotlin.collections.MutableCollection<kotlin.Boolean>
+  declaredMembers:
+    fun B.get(kotlin.Boolean?): kotlin.Boolean?
+    fun B.remove(kotlin.Boolean?): kotlin.Boolean?
+    val B.size: kotlin.Int
+    val B.values: kotlin.collections.MutableCollection<kotlin.Boolean>
+KPackage: _1Kt
+  fun test(A, B): kotlin.Unit
+KClass: A
+  members:
+    fun A.comparator(): java.util.Comparator<in kotlin.Boolean!>!
+    fun A.containsKey(K): kotlin.Boolean
+    fun A.containsValue(V): kotlin.Boolean
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.firstKey(): kotlin.Boolean!
+    fun A.forEach(java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+    fun A.get(K): V?
+    fun A.getOrDefault(K, V): V
+    fun A.hashCode(): kotlin.Int
+    fun A.headMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun A.isEmpty(): kotlin.Boolean
+    fun A.lastKey(): kotlin.Boolean!
+    fun A.subMap(kotlin.Boolean!, kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun A.tailMap(kotlin.Boolean!): java.util.SortedMap<kotlin.Boolean!, kotlin.Boolean!>!
+    fun A.toString(): kotlin.String
+    val A.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean!, kotlin.Boolean!>>
+    val A.keys: kotlin.collections.MutableSet<kotlin.Boolean!>
+    val A.size: kotlin.Int
+    val A.values: kotlin.collections.MutableCollection<kotlin.Boolean!>
+  declaredMembers:

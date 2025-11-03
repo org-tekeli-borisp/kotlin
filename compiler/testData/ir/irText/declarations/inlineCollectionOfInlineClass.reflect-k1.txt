@@ -1,0 +1,49 @@
+KClass: IT
+  members:
+    fun IT.equals(kotlin.Any?): kotlin.Boolean
+    fun IT.hashCode(): kotlin.Int
+    fun IT.toString(): kotlin.String
+    val IT.x: kotlin.Int
+  declaredMembers:
+    fun IT.equals(kotlin.Any?): kotlin.Boolean
+    fun IT.hashCode(): kotlin.Int
+    fun IT.toString(): kotlin.String
+    val IT.x: kotlin.Int
+KClass: InlineMutableSet
+  members:
+    fun InlineMutableSet.add(IT): kotlin.Boolean
+    fun InlineMutableSet.addAll(kotlin.collections.Collection<IT>): kotlin.Boolean
+    fun InlineMutableSet.clear(): kotlin.Unit
+    fun InlineMutableSet.contains(IT): kotlin.Boolean
+    fun InlineMutableSet.containsAll(kotlin.collections.Collection<IT>): kotlin.Boolean
+    fun InlineMutableSet.equals(kotlin.Any?): kotlin.Boolean
+    fun InlineMutableSet.forEach(java.util.function.Consumer<in IT!>!): kotlin.Unit
+    fun InlineMutableSet.hashCode(): kotlin.Int
+    fun InlineMutableSet.isEmpty(): kotlin.Boolean
+    fun InlineMutableSet.iterator(): kotlin.collections.MutableIterator<IT>
+    fun InlineMutableSet.parallelStream(): java.util.stream.Stream<IT>
+    fun InlineMutableSet.remove(IT): kotlin.Boolean
+    fun InlineMutableSet.removeAll(kotlin.collections.Collection<IT>): kotlin.Boolean
+    fun InlineMutableSet.removeIf(java.util.function.Predicate<in IT>): kotlin.Boolean
+    fun InlineMutableSet.retainAll(kotlin.collections.Collection<IT>): kotlin.Boolean
+    fun InlineMutableSet.spliterator(): java.util.Spliterator<IT!>
+    fun InlineMutableSet.stream(): java.util.stream.Stream<IT>
+    fun InlineMutableSet.toString(): kotlin.String
+    val InlineMutableSet.ms: kotlin.collections.MutableSet<IT>
+    val InlineMutableSet.size: kotlin.Int
+  declaredMembers:
+    fun InlineMutableSet.add(IT): kotlin.Boolean
+    fun InlineMutableSet.addAll(kotlin.collections.Collection<IT>): kotlin.Boolean
+    fun InlineMutableSet.clear(): kotlin.Unit
+    fun InlineMutableSet.contains(IT): kotlin.Boolean
+    fun InlineMutableSet.containsAll(kotlin.collections.Collection<IT>): kotlin.Boolean
+    fun InlineMutableSet.equals(kotlin.Any?): kotlin.Boolean
+    fun InlineMutableSet.hashCode(): kotlin.Int
+    fun InlineMutableSet.isEmpty(): kotlin.Boolean
+    fun InlineMutableSet.iterator(): kotlin.collections.MutableIterator<IT>
+    fun InlineMutableSet.remove(IT): kotlin.Boolean
+    fun InlineMutableSet.removeAll(kotlin.collections.Collection<IT>): kotlin.Boolean
+    fun InlineMutableSet.retainAll(kotlin.collections.Collection<IT>): kotlin.Boolean
+    fun InlineMutableSet.toString(): kotlin.String
+    val InlineMutableSet.ms: kotlin.collections.MutableSet<IT>
+    val InlineMutableSet.size: kotlin.Int

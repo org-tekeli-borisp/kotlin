@@ -1,0 +1,77 @@
+KClass: Java1
+  members:
+    fun Java1.clear(): kotlin.Unit
+    fun Java1.clone(): kotlin.Any!
+    fun Java1.containsKey(K): kotlin.Boolean
+    fun Java1.containsKey(kotlin.Any!): kotlin.Boolean
+    fun Java1.containsValue(V): kotlin.Boolean
+    fun Java1.containsValue(kotlin.Any!): kotlin.Boolean
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.forEach(java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+    fun Java1.get(K): V?
+    fun Java1.get(kotlin.Any!): kotlin.Any?
+    fun Java1.getOrDefault(K, V): V
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.isEmpty(): kotlin.Boolean
+    fun Java1.put(kotlin.Any, kotlin.Any): kotlin.Any?
+    fun Java1.putAll(kotlin.collections.Map<out kotlin.Any!, kotlin.Any!>): kotlin.Unit
+    fun Java1.remove(kotlin.Any!): kotlin.Any?
+    fun Java1.toString(): kotlin.String
+    val Java1.entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
+    val Java1.keys: kotlin.collections.Set<K>
+    val Java1.size: kotlin.Int
+    val Java1.values: kotlin.collections.Collection<V>
+  declaredMembers:
+KClass: B
+  members:
+    fun B.clear(): kotlin.Unit
+    fun B.clone(): kotlin.Any!
+    fun B.containsKey(K): kotlin.Boolean
+    fun B.containsKey(kotlin.Any!): kotlin.Boolean
+    fun B.containsValue(V): kotlin.Boolean
+    fun B.containsValue(kotlin.Any!): kotlin.Boolean
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.forEach(java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+    fun B.get(K): V?
+    fun B.get(kotlin.Any!): kotlin.Any?
+    fun B.getOrDefault(K, V): V
+    fun B.hashCode(): kotlin.Int
+    fun B.isEmpty(): kotlin.Boolean
+    fun B.put(kotlin.Any, kotlin.Any): kotlin.Any?
+    fun B.put(kotlin.Any?, kotlin.Any?): kotlin.Any?
+    fun B.putAll(kotlin.collections.Map<out kotlin.Any!, kotlin.Any!>): kotlin.Unit
+    fun B.remove(kotlin.Any!): kotlin.Any?
+    fun B.toString(): kotlin.String
+    val B.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Any, kotlin.Any>>
+    val B.keys: kotlin.collections.Set<K>
+    val B.size: kotlin.Int
+    val B.values: kotlin.collections.Collection<V>
+  declaredMembers:
+    fun B.put(kotlin.Any?, kotlin.Any?): kotlin.Any?
+    val B.entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Any, kotlin.Any>>
+KPackage: _1Kt
+  fun test(A, B): kotlin.Unit
+KClass: A
+  members:
+    fun A.clear(): kotlin.Unit
+    fun A.clone(): kotlin.Any!
+    fun A.containsKey(K): kotlin.Boolean
+    fun A.containsKey(kotlin.Any!): kotlin.Boolean
+    fun A.containsValue(V): kotlin.Boolean
+    fun A.containsValue(kotlin.Any!): kotlin.Boolean
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.forEach(java.util.function.BiConsumer<in K, in V>): kotlin.Unit
+    fun A.get(K): V?
+    fun A.get(kotlin.Any!): kotlin.Any?
+    fun A.getOrDefault(K, V): V
+    fun A.hashCode(): kotlin.Int
+    fun A.isEmpty(): kotlin.Boolean
+    fun A.put(kotlin.Any, kotlin.Any): kotlin.Any?
+    fun A.putAll(kotlin.collections.Map<out kotlin.Any!, kotlin.Any!>): kotlin.Unit
+    fun A.remove(kotlin.Any!): kotlin.Any?
+    fun A.toString(): kotlin.String
+    val A.entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
+    val A.keys: kotlin.collections.Set<K>
+    val A.size: kotlin.Int
+    val A.values: kotlin.collections.Collection<V>
+  declaredMembers:

@@ -1,0 +1,42 @@
+KClass: Java1
+  members:
+    fun Java1.contains(kotlin.String): kotlin.Boolean
+    fun Java1.containsAll(kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun Java1.get(kotlin.Int): kotlin.String
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.indexOf(kotlin.String): kotlin.Int
+    fun Java1.isEmpty(): kotlin.Boolean
+    fun Java1.iterator(): kotlin.collections.Iterator<kotlin.String>
+    fun Java1.lastIndexOf(kotlin.String): kotlin.Int
+    fun Java1.listIterator(): kotlin.collections.ListIterator<kotlin.String>
+    fun Java1.listIterator(kotlin.Int): kotlin.collections.ListIterator<kotlin.String>
+    fun Java1.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun Java1.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun Java1.stream(): java.util.stream.Stream<kotlin.String>
+    fun Java1.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<kotlin.String>
+    fun Java1.toString(): kotlin.String
+    val Java1.size: kotlin.Int
+  declaredMembers:
+KClass: A
+  members:
+    fun A.contains(kotlin.String): kotlin.Boolean
+    fun A.containsAll(kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun A.get(kotlin.Int): kotlin.String
+    fun A.hashCode(): kotlin.Int
+    fun A.indexOf(kotlin.String): kotlin.Int
+    fun A.isEmpty(): kotlin.Boolean
+    fun A.iterator(): kotlin.collections.Iterator<kotlin.String>
+    fun A.lastIndexOf(kotlin.String): kotlin.Int
+    fun A.listIterator(): kotlin.collections.ListIterator<kotlin.String>
+    fun A.listIterator(kotlin.Int): kotlin.collections.ListIterator<kotlin.String>
+    fun A.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun A.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun A.stream(): java.util.stream.Stream<kotlin.String>
+    fun A.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<kotlin.String>
+    fun A.toString(): kotlin.String
+    val A.size: kotlin.Int
+  declaredMembers:

@@ -1,0 +1,70 @@
+KClass: Foo.A
+  members:
+    fun Foo.A.contains(kotlin.String): kotlin.Boolean
+    fun Foo.A.containsAll(kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    fun Foo.A.equals(kotlin.Any?): kotlin.Boolean
+    fun Foo.A.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun Foo.A.hashCode(): kotlin.Int
+    fun Foo.A.isEmpty(): kotlin.Boolean
+    fun Foo.A.iterator(): kotlin.collections.Iterator<kotlin.String>
+    fun Foo.A.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun Foo.A.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun Foo.A.stream(): java.util.stream.Stream<kotlin.String>
+    fun Foo.A.toString(): kotlin.String
+    val Foo.A.size: kotlin.Int
+  declaredMembers:
+KClass: Foo.B
+  members:
+    fun Foo.B.contains(kotlin.String): kotlin.Boolean
+    fun Foo.B.containsAll(kotlin.collections.Collection<kotlin.String>): kotlin.Boolean
+    fun Foo.B.equals(kotlin.Any?): kotlin.Boolean
+    fun Foo.B.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun Foo.B.hashCode(): kotlin.Int
+    fun Foo.B.isEmpty(): kotlin.Boolean
+    fun Foo.B.iterator(): kotlin.collections.Iterator<kotlin.String>
+    fun Foo.B.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun Foo.B.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun Foo.B.stream(): java.util.stream.Stream<kotlin.String>
+    fun Foo.B.toString(): kotlin.String
+    val Foo.B.size: kotlin.Int
+  declaredMembers:
+KClass: Impl
+  members:
+    fun Impl.add(kotlin.String!): kotlin.Boolean
+    fun Impl.addAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Impl.clear(): kotlin.Unit
+    fun Impl.contains(kotlin.String!): kotlin.Boolean
+    fun Impl.containsAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Impl.equals(kotlin.Any?): kotlin.Boolean
+    fun Impl.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun Impl.hashCode(): kotlin.Int
+    fun Impl.isEmpty(): kotlin.Boolean
+    fun Impl.iterator(): kotlin.collections.MutableIterator<kotlin.String!>
+    fun Impl.parallelStream(): java.util.stream.Stream<kotlin.String>
+    fun Impl.remove(kotlin.String!): kotlin.Boolean
+    fun Impl.removeAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Impl.retainAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Impl.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun Impl.stream(): java.util.stream.Stream<kotlin.String>
+    fun Impl.toString(): kotlin.String
+    val Impl.size: kotlin.Int
+  declaredMembers:
+    fun Impl.add(kotlin.String!): kotlin.Boolean
+    fun Impl.addAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Impl.clear(): kotlin.Unit
+    fun Impl.contains(kotlin.String!): kotlin.Boolean
+    fun Impl.containsAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Impl.isEmpty(): kotlin.Boolean
+    fun Impl.iterator(): kotlin.collections.MutableIterator<kotlin.String!>
+    fun Impl.remove(kotlin.String!): kotlin.Boolean
+    fun Impl.removeAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Impl.retainAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    val Impl.size: kotlin.Int
+KClass: Foo
+  members:
+    fun Foo.equals(kotlin.Any?): kotlin.Boolean
+    fun Foo.hashCode(): kotlin.Int
+    fun Foo.toString(): kotlin.String
+  declaredMembers:
+KPackage: DelegationAndInheritanceFromJavaKt
+  fun box(): kotlin.String

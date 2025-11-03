@@ -1,0 +1,68 @@
+KClass: Java1
+  members:
+    fun Java1.add(kotlin.Int, kotlin.String!): kotlin.Unit
+    fun Java1.add(kotlin.String!): kotlin.Boolean
+    fun Java1.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Java1.addAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Java1.clear(): kotlin.Unit
+    fun Java1.contains(kotlin.String!): kotlin.Boolean
+    fun Java1.containsAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun Java1.get(kotlin.Int): kotlin.String!
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.indexOf(kotlin.String!): kotlin.Int
+    fun Java1.isEmpty(): kotlin.Boolean
+    fun Java1.iterator(): kotlin.collections.MutableIterator<kotlin.String!>
+    fun Java1.lastIndexOf(kotlin.String!): kotlin.Int
+    fun Java1.listIterator(): kotlin.collections.MutableListIterator<kotlin.String!>
+    fun Java1.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.String!>
+    fun Java1.parallelStream(): java.util.stream.Stream<kotlin.String!>
+    fun Java1.remove(kotlin.String!): kotlin.Boolean
+    fun Java1.removeAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Java1.removeAt(kotlin.Int): kotlin.String!
+    fun Java1.removeIf(java.util.function.Predicate<in kotlin.String!>): kotlin.Boolean
+    fun Java1.replaceAll(java.util.function.UnaryOperator<kotlin.String!>): kotlin.Unit
+    fun Java1.retainAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun Java1.set(kotlin.Int, kotlin.String!): kotlin.String!
+    fun Java1.sort(java.util.Comparator<in kotlin.String!>!): kotlin.Unit
+    fun Java1.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun Java1.stream(): java.util.stream.Stream<kotlin.String!>
+    fun Java1.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.String!>
+    fun Java1.toString(): kotlin.String
+    val Java1.size: kotlin.Int
+  declaredMembers:
+KClass: A
+  members:
+    fun A.add(kotlin.Int, kotlin.String!): kotlin.Unit
+    fun A.add(kotlin.String!): kotlin.Boolean
+    fun A.addAll(kotlin.Int, kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun A.addAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun A.clear(): kotlin.Unit
+    fun A.contains(kotlin.String!): kotlin.Boolean
+    fun A.containsAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.forEach(java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    fun A.get(kotlin.Int): kotlin.String!
+    fun A.hashCode(): kotlin.Int
+    fun A.indexOf(kotlin.String!): kotlin.Int
+    fun A.isEmpty(): kotlin.Boolean
+    fun A.iterator(): kotlin.collections.MutableIterator<kotlin.String!>
+    fun A.lastIndexOf(kotlin.String!): kotlin.Int
+    fun A.listIterator(): kotlin.collections.MutableListIterator<kotlin.String!>
+    fun A.listIterator(kotlin.Int): kotlin.collections.MutableListIterator<kotlin.String!>
+    fun A.parallelStream(): java.util.stream.Stream<kotlin.String!>
+    fun A.remove(kotlin.String!): kotlin.Boolean
+    fun A.removeAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun A.removeAt(kotlin.Int): kotlin.String!
+    fun A.removeIf(java.util.function.Predicate<in kotlin.String!>): kotlin.Boolean
+    fun A.replaceAll(java.util.function.UnaryOperator<kotlin.String!>): kotlin.Unit
+    fun A.retainAll(kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    fun A.set(kotlin.Int, kotlin.String!): kotlin.String!
+    fun A.sort(java.util.Comparator<in kotlin.String!>!): kotlin.Unit
+    fun A.spliterator(): java.util.Spliterator<kotlin.String!>
+    fun A.stream(): java.util.stream.Stream<kotlin.String!>
+    fun A.subList(kotlin.Int, kotlin.Int): kotlin.collections.MutableList<kotlin.String!>
+    fun A.toString(): kotlin.String
+    val A.size: kotlin.Int
+  declaredMembers:

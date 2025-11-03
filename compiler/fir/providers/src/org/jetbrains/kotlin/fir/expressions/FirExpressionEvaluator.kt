@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.*
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.declarations.utils.isFromEnumClass
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -235,6 +236,8 @@ object FirExpressionEvaluator {
                 }
             }
 
+            val calleePropertySymbol = (propertyAccessExpression.explicitReceiver as? FirPropertyAccessExpression)?.calleeReference?.toResolvedCallableSymbol()
+
             return when (propertySymbol) {
                 is FirPropertySymbol -> {
                     when {
@@ -244,6 +247,10 @@ object FirExpressionEvaluator {
                                 evaluateUnary(unaryArg, propertySymbol.callableId!!)
                                     .adjustTypeAndConvertToLiteral(propertyAccessExpression)
                             }
+                        }
+                        propertyAccessExpression.calleeReference.name.toString() == "name" && calleePropertySymbol is FirEnumEntrySymbol -> {
+                                val enumEntryName = calleePropertySymbol.callableId.callableName.toString()
+                                enumEntryName.adjustTypeAndConvertToLiteral(propertyAccessExpression)
                         }
                         else -> evaluateWithSourceCopy(propertySymbol.fir.initializer)
                     }

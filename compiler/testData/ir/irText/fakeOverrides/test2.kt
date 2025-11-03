@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 class Foo {
     @JvmName("a1") fun <A> foo1(a: A) where A : Number = Unit
     @JvmName("b1") fun foo1(a: Number) = Unit

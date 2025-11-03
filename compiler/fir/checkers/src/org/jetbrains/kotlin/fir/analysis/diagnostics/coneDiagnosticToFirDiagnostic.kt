@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import com.intellij.lang.LighterASTTokenNode
 import com.intellij.psi.TokenType
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.projectionKindAsString
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FirDynamicUnsupportedChecker
 import org.jetbrains.kotlin.fir.analysis.getChild
@@ -1029,13 +1031,24 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
     }
 }
 
+private fun FirSession.toDiagnosticContext(): DiagnosticBaseContext {
+    // Data class is required to preserve structural equality of KtDiagnostics.
+    data class SessionWrapper(
+        override val session: FirSession
+    ) : DiagnosticBaseContext, SessionHolder {
+        override val languageVersionSettings: LanguageVersionSettings
+            get() = session.languageVersionSettings
+    }
+
+    return SessionWrapper(this)
+}
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 private fun KtDiagnosticFactory0.createOn(
     element: KtSourceElement?,
     session: FirSession,
 ): KtSimpleDiagnostic? {
-    return on(element.requireNotNull(), positioningStrategy = null, session.languageVersionSettings)
+    return on(element.requireNotNull(), positioningStrategy = null, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1044,7 +1057,7 @@ private fun <A> KtDiagnosticFactory1<A>.createOn(
     a: A,
     session: FirSession,
 ): KtDiagnosticWithParameters1<A>? {
-    return on(element.requireNotNull(), a, positioningStrategy = null, session.languageVersionSettings)
+    return on(element.requireNotNull(), a, positioningStrategy = null, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1054,7 +1067,7 @@ private fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
     b: B,
     session: FirSession,
 ): KtDiagnosticWithParameters2<A, B>? {
-    return on(element.requireNotNull(), a, b, positioningStrategy = null, session.languageVersionSettings)
+    return on(element.requireNotNull(), a, b, positioningStrategy = null, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1065,7 +1078,7 @@ private fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
     c: C,
     session: FirSession,
 ): KtDiagnosticWithParameters3<A, B, C>? {
-    return on(element.requireNotNull(), a, b, c, positioningStrategy = null, session.languageVersionSettings)
+    return on(element.requireNotNull(), a, b, c, positioningStrategy = null, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1077,5 +1090,5 @@ private fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     d: D,
     session: FirSession,
 ): KtDiagnosticWithParameters4<A, B, C, D>? {
-    return on(element.requireNotNull(), a, b, c, d, positioningStrategy = null, session.languageVersionSettings)
+    return on(element.requireNotNull(), a, b, c, d, positioningStrategy = null, session.toDiagnosticContext())
 }

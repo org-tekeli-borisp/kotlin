@@ -1,5 +1,8 @@
 // WITH_STDLIB
 
+// Ignore reflect check because Suppress("CONFLICTING_OVERLOADS")
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 class Foo {
     @JvmName("a1") fun <A> foo1(a: A) where A : Number = Unit
     @JvmName("b1") fun foo1(a: Number) = Unit

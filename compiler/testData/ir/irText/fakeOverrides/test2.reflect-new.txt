@@ -1,0 +1,21 @@
+KClass: Foo
+  members:
+    fun Foo.equals(kotlin.Any?): kotlin.Boolean
+    fun Foo.foo1(A): kotlin.Unit
+    fun Foo.foo1(kotlin.Number): kotlin.Unit
+    fun Foo.foo2(A): kotlin.Unit
+    fun Foo.foo3(A): kotlin.Unit
+    fun Foo.foo3(B): kotlin.Unit
+    fun Foo.foo4(A): kotlin.Unit
+    fun Foo.foo4(B): kotlin.Unit
+    fun Foo.hashCode(): kotlin.Int
+    fun Foo.toString(): kotlin.String
+  declaredMembers:
+    fun Foo.foo1(A): kotlin.Unit
+    fun Foo.foo1(kotlin.Number): kotlin.Unit
+    fun Foo.foo2(A): kotlin.Unit
+    fun Foo.foo2(A): kotlin.Unit
+    fun Foo.foo3(A): kotlin.Unit
+    fun Foo.foo3(B): kotlin.Unit
+    fun Foo.foo4(A): kotlin.Unit
+    fun Foo.foo4(B): kotlin.Unit

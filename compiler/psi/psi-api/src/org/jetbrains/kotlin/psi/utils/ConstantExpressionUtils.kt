@@ -17,28 +17,27 @@ import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
-import org.jetbrains.kotlin.utils.extractRadix
 
 /**
  * Checks whether the [text] representation of a number literal has a long number suffix.
  */
 fun hasLongNumericLiteralSuffix(text: String): Boolean {
-    return text.endsWith('l') || text.endsWith('L')
+    return text.lastOrNull()?.let { it == 'l' || it == 'L' } ?: false
 }
 
 /**
  * Checks whether the [text] representation of a number literal has an unsigned number suffix.
  */
 fun hasUnsignedNumericLiteralSuffix(text: String): Boolean {
-    return text.endsWith('u') || text.endsWith('U')
+    return text.lastOrNull()?.let { it == 'u' || it == 'U' } ?: false
 }
 
 /**
  * Checks whether the [text] representation of a number literal has both along and unsigned number suffixes.
  */
 fun hasUnsignedLongNumericLiteralSuffix(text: String): Boolean {
-    return text.endsWith("ul") || text.endsWith("uL") ||
-            text.endsWith("Ul") || text.endsWith("UL")
+    val length = text.length
+    return length >= 2 && text[length - 2].let { it == 'u' || it == 'U' } && text[length - 1].let { it == 'l' || it == 'L' }
 }
 
 /**
@@ -49,7 +48,7 @@ fun hasLeadingZeros(text: String): Boolean {
 }
 
 fun hasFloatNumericLiteralSuffix(text: String): Boolean {
-    return text.endsWith('f') || text.endsWith('F')
+    return text.lastOrNull()?.let { it == 'f' || it == 'F' } ?: false
 }
 
 /**
@@ -68,31 +67,52 @@ fun parseNumericLiteral(text: String, isFloatingPointLiteral: Boolean): Number? 
 }
 
 private fun parseLongNumericLiteral(text: String): Long? {
-    fun String.removeSuffix(i: Int): String = this.substring(0, this.length - i)
-
     return try {
+        val firstIndex: Int
+        val lastIndex: Int
+        val radix: Int
         val isUnsigned: Boolean
-        val numberWithoutSuffix: String
+
         when {
             hasUnsignedLongNumericLiteralSuffix(text) -> {
                 isUnsigned = true
-                numberWithoutSuffix = text.removeSuffix(2)
+                lastIndex = text.length - 2
             }
             hasUnsignedNumericLiteralSuffix(text) -> {
                 isUnsigned = true
-                numberWithoutSuffix = text.removeSuffix(1)
+                lastIndex = text.length - 1
             }
             hasLongNumericLiteralSuffix(text) -> {
                 isUnsigned = false
-                numberWithoutSuffix = text.removeSuffix(1)
+                lastIndex = text.length - 1
             }
             else -> {
                 isUnsigned = false
-                numberWithoutSuffix = text
+                lastIndex = text.length
             }
         }
 
-        val (number, radix) = extractRadix(numberWithoutSuffix)
+        if (text.length >= 2 && text[0] == '0') {
+            when (text[1]) {
+                'x', 'X' -> {
+                    firstIndex = 2
+                    radix = 16
+                }
+                'b', 'B' -> {
+                    firstIndex = 2
+                    radix = 2
+                }
+                else -> {
+                    firstIndex = 0
+                    radix = 10
+                }
+            }
+        } else {
+            firstIndex = 0
+            radix = 10
+        }
+
+        val number = text.substring(firstIndex, lastIndex)
 
         if (isUnsigned) {
             java.lang.Long.parseUnsignedLong(number, radix)
@@ -148,17 +168,18 @@ private val FP_LITERAL_PARTS = "([_\\d]*)\\.?([_\\d]*)e?[+-]?([_\\d]*)[f]?".toRe
  * Underscores are allowed only between digits, not at the beginning or end of the number or one of its parts.
  */
 fun hasIllegallyPositionedUnderscore(text: String, isFloatingPoint: Boolean): Boolean {
-    val parts: List<String?> = if (isFloatingPoint) {
-        FP_LITERAL_PARTS.findAll(text).flatMap { it.groupValues }.toList()
+    return if (isFloatingPoint) {
+        FP_LITERAL_PARTS.findAll(text).any { matchResult ->
+            matchResult.groupValues.any { it.startsWith("_") || it.endsWith("_") }
+        }
     } else {
         var start = 0
-        var end: Int = text.length
+        var end: Int = text.length - 1
         if (text.startsWith("0x", ignoreCase = true) || text.startsWith("0b", ignoreCase = true)) start += 2
         if (text.endsWith('l', ignoreCase = true)) --end
-        listOf(text.substring(start, end))
-    }
 
-    return parts.any { it != null && (it.startsWith("_") || it.endsWith("_")) }
+        text.elementAtOrNull(start) == '_' || text.elementAtOrNull(end) == '_'
+    }
 }
 
 /**

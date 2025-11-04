@@ -16,9 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidBaseVariant
-import org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidTestVariant
-import org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidUnitTestVariant
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 
 private const val ABI_TOOLS_DEPENDENCY_CONFIGURATION = "kotlinInternalAbiValidation"
@@ -56,8 +53,8 @@ internal val KotlinTarget.emitsKlib: Boolean
     }
 
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
-internal val DeprecatedAndroidBaseVariant.isTestVariant: Boolean
-    get() = this is DeprecatedAndroidTestVariant || this is DeprecatedAndroidUnitTestVariant
+internal val org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidBaseVariant.isTestVariant: Boolean
+    get() = this is org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidTestVariant || this is org.jetbrains.kotlin.gradle.utils.DeprecatedAndroidUnitTestVariant
 
 
 internal fun Project.prepareAbiClasspath(): Configuration {

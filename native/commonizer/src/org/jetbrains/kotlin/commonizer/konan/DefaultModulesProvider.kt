@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.util.Logger
 
 internal class DefaultModulesProvider private constructor(
@@ -76,7 +77,7 @@ internal class DefaultModulesProvider private constructor(
             module = moduleHeader,
             fragments = fragments,
             fragmentNames = fragmentNames.toList(),
-            metadataVersion = library.metadataVersion?.toArray() ?: IntArray(0)
+            metadataVersion = library.metadataVersion?.toArray() ?: MetadataVersion.INVALID_VERSION.toArray()
         )
     }
 

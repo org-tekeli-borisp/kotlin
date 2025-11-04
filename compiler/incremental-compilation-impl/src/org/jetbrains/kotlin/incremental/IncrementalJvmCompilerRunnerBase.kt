@@ -74,14 +74,14 @@ abstract class IncrementalJvmCompilerRunnerBase(
         messageCollector,
     )
 
-    private val subtypeTracker = if (generateCompilerRefIndex) SubtypeTrackerImpl() else SubtypeTracker.DoNothing
+    private val subtypeTracker = if (generateCompilerRefIndex) SubtypeTrackerImpl() else null
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
         IncrementalJvmCachesManager(
             icContext = icContext,
             outputDir = args.destination?.let { File(it) },
             cachesRootDir = cacheDirectory,
-            subtypeTracker = subtypeTracker,
+            subtypeTracker = subtypeTracker ?: SubtypeTracker.DoNothing,
         )
 
     override fun updateCaches(
@@ -231,7 +231,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         lookupsFile.appendBytes(lookupData.lookups)
         fileIdsToPathsFile.appendBytes(lookupData.fileIdsToPaths)
 
-        val subtypes = (subtypeTracker as SubtypeTrackerImpl).subtypeMap
+        val subtypes = subtypeTracker?.subtypeMap ?: emptyMap()
         subtypesFile.appendBytes(serializer.serializeSubtypes(subtypes))
 
         reporter.info { "Compiler Reference Index data saved to ${lookupsFile.path}, ${fileIdsToPathsFile.path}, ${subtypesFile.path}" }

@@ -85,7 +85,7 @@ internal class JvmCompilationOperationImpl private constructor(
             options.deepCopy(),
             kotlinSources,
             destinationDirectory,
-            JvmCompilerArgumentsImpl().also { newArgs -> newArgs.applyArgumentStrings(compilerArguments.toArgumentStrings()) },
+            compilerArguments.deepCopy(),
             buildIdToSessionFlagFile
         )
     }

@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLoweringSelector
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStableJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.jsFunctionSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-@PhasePrerequisites(JsSuspendFunctionsLoweringSelector::class)
+@PhasePrerequisites(JsSuspendFunctionsLowering::class, JsSuspendFunctionWithGeneratorsLowering::class)
 class JsBridgesConstruction(val context: JsIrBackendContext) : BridgesConstruction(context) {
 
     private val calculator = JsIrArithBuilder(context)

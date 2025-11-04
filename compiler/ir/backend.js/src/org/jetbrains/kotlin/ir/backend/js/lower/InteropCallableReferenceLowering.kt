@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLoweringSelector
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -50,7 +51,8 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
  * Interop layer for function references and lambdas.
  */
 @PhasePrerequisites(
-    JsSuspendFunctionsLoweringSelector::class,
+    JsSuspendFunctionsLowering::class,
+    JsSuspendFunctionWithGeneratorsLowering::class,
     LocalDeclarationsLowering::class,
     LocalDelegatedPropertiesLowering::class,
     JsCallableReferenceLowering::class

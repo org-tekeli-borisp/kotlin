@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLoweringSelector
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 /**
  * Transforms statement-like-expression nodes into pure-statement to make it easily transform into JS.
  */
-@PhasePrerequisites(TypeOperatorLowering::class, JsSuspendFunctionsLoweringSelector::class)
+@PhasePrerequisites(TypeOperatorLowering::class, JsSuspendFunctionsLowering::class, JsSuspendFunctionWithGeneratorsLowering::class)
 class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlockDecomposerLowering(context) {
     override fun unreachableExpression(): IrExpression =
         JsIrBuilder.buildCall(context.symbols.unreachable, context.irBuiltIns.nothingType)

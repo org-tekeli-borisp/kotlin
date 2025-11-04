@@ -15,7 +15,7 @@ package kotlin.collections
  *
  * ## Performance characteristics
  *
- * [ArrayList] provides efficient performance for common operations:
+ * [ArrayList] provides efficient implementation for common operations:
  *
  * - **Indexed access** ([get], [set]): O(1) constant time
  * - **Appending to the end** ([add]): O(1) [amortized](https://en.wikipedia.org/wiki/Amortized_analysis)

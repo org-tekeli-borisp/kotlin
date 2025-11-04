@@ -1488,6 +1488,15 @@ object ArrayOps : TemplateGroupBase() {
                 override fun get(index: Int): T = this@asList[index]
                 override fun indexOf(element: T): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
                 override fun lastIndexOf(element: T): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
+                override fun iterator(): Iterator<T> = object : Iterator<T> {
+                    val size_ = size
+                    var index = 0
+                    override fun next(): T {
+                        if (index >= size) throw NoSuchElementException()
+                        return this@asList[index++]
+                    }
+                    override fun hasNext(): Boolean = index < size_
+                }
             }
             """
         else """
@@ -1498,6 +1507,15 @@ object ArrayOps : TemplateGroupBase() {
                 override fun get(index: Int): T = this@asList[index]
                 override fun indexOf(element: T): Int = this@asList.indexOf(element)
                 override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
+                override fun iterator(): Iterator<T> = object : Iterator<T> {
+                    val size_ = size
+                    var index = 0
+                    override fun next(): T {
+                        if (index >= size) throw NoSuchElementException()
+                        return this@asList[index++]
+                    }
+                    override fun hasNext(): Boolean = index < size_
+                }
             }
             """
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) {

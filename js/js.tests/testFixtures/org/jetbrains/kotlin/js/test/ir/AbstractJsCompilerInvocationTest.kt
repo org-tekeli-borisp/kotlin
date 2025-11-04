@@ -17,16 +17,24 @@ import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
+import org.jetbrains.kotlin.test.services.FixtureManager
+import org.jetbrains.kotlin.test.services.KotlinTestInfo
+import org.jetbrains.kotlin.test.services.TemporaryDirectoryManager
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.getFixture
+import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import kotlin.String
 import kotlin.io.path.createTempDirectory
 
 /**
@@ -74,7 +82,7 @@ internal class JsCompilerInvocationTestConfiguration(
     override val buildDir: File,
     val compilerType: CompilerType,
 ) : KlibCompilerInvocationTestUtils.TestConfiguration {
-    override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
+    override val stdlibFile: File get() = File(JsEnvironmentConfigurator.stdlibPath).absoluteFile
     override val targetBackend get() = if (compilerType.es6Mode) TargetBackend.JS_IR_ES6 else TargetBackend.JS_IR
 
     override fun onIgnoredTest() {
@@ -255,10 +263,15 @@ internal class JsCompilerInvocationTestArtifactBuilder(
 
 internal object JsCompilerInvocationTestBinaryRunner :
     KlibCompilerInvocationTestUtils.BinaryRunner<JsCompilerInvocationTestBinaryArtifact> {
-    private val testServices = TestServices()
-    private val testChecker = V8JsTestChecker(
-        testServices.getFixture("repl.js").absolutePath
-    )
+    private val testServices = TestServices().apply {
+        register(FixtureManager::class, FixtureManager(this))
+        register(TemporaryDirectoryManager::class, TemporaryDirectoryManagerImpl(this))
+        register(KotlinTestInfo::class, KotlinTestInfo("_undefined", "_undefined", emptySet()))
+    }
+
+    private val testChecker by lazy {
+        V8JsTestChecker(testServices.getFixture("repl.js").absolutePath)
+    }
 
     override fun runBinary(binaryArtifact: JsCompilerInvocationTestBinaryArtifact) {
         val filePaths = binaryArtifact.jsFiles.map { it.canonicalPath }

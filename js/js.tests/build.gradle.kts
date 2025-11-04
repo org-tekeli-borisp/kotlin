@@ -281,7 +281,7 @@ projectTests {
     testData(project(":js:js.translator").isolated, "testData/incremental")
     testData(project(":js:js.translator").isolated, "testData/box")
     testData(project(":js:js.translator").isolated, "testData/lineNumbers")
-    testData(project(":js:js.translator").isolated, "testData/js-optimizer")
+    testData(project(":js:js.translator").isolated, "testData/js-optimizer/")
     testData(project(":js:js.translator").isolated, "testData/js-name-resolution")
     testData(project(":js:js.translator").isolated, "testData/multiModuleOrder")
     testData(project(":js:js.translator").isolated, "testData/sourcemap")

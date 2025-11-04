@@ -419,6 +419,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
         assertions = JUnit5Assertions
         useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
+        useAdditionalService<FixtureManager>(::FixtureManager)
         useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForCompilerTests)
         useAdditionalService<ApplicationDisposableProvider> { ExecutionListenerBasedDisposableProvider() }
         useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }

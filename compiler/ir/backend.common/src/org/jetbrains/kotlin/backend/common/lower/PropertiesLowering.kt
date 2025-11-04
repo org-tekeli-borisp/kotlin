@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.*
 /**
  * Moves fields and accessors out from its property.
  */
-@Suppress("UNUSED_PARAMETER")
-class PropertiesLowering(context: LoweringContext) : DeclarationTransformer {
+class PropertiesLowering(@Suppress("unused") context: LoweringContext) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {

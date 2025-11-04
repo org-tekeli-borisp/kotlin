@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 
-@Suppress("UNUSED_PARAMETER")
-class StripTypeAliasDeclarationsLowering(cotext: LoweringContext) : DeclarationTransformer {
+class StripTypeAliasDeclarationsLowering(@Suppress("unused") context: LoweringContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         return if (declaration is IrTypeAlias) listOf() else null

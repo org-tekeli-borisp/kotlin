@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
-@Suppress("UNUSED_PARAMETER")
-class RemoveInlineDeclarationsWithReifiedTypeParametersLowering(context: LoweringContext) : DeclarationTransformer {
+class RemoveInlineDeclarationsWithReifiedTypeParametersLowering(@Suppress("unused") context: LoweringContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrFunction && declaration.isInlineFunWithReifiedParameter() ||

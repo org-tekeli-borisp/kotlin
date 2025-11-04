@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-@Suppress("UNUSED_PARAMETER")
-class CleanupLowering(context: LoweringContext) : BodyLoweringPass {
+class CleanupLowering(@Suppress("unused") context: LoweringContext) : BodyLoweringPass {
 
     private val blockRemover = BlockRemover()
     private val codeCleaner = CodeCleaner()

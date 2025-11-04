@@ -90,8 +90,12 @@ sealed class NativeBinary(
      */
     @Suppress("unused")
     @KotlinNativeCacheApi
-    fun disableNativeCache(version: KotlinToolingVersion, reason: String, issueUrl: URI? = null) {
-        disableCacheSettings.add(DisableNativeCacheSettings(version, reason, issueUrl))
+    fun disableNativeCache(version: DisableCacheInKotlinVersion, reason: String, issueUrl: URI? = null) {
+        val toolingVersion = version.let {
+            KotlinToolingVersion(it.major, it.minor, it.patch, null)
+        }
+
+        disableCacheSettings.add(DisableNativeCacheSettings(toolingVersion, reason, issueUrl))
     }
 
     var binaryOptions: MutableMap<String, String> = mutableMapOf()

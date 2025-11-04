@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
-import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.utils.withType
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 internal object DisabledNativeCacheChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
@@ -23,7 +21,6 @@ internal object DisabledNativeCacheChecker : KotlinGradleProjectChecker {
         KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
         val targets = multiplatformExtension.awaitTargets().withType<KotlinNativeTarget>()
         if (targets.isEmpty()) return
-        val nativeVersion = project.nativeProperties.kotlinNativeVersion.map { KotlinToolingVersion(it) }.orNull
 
         targets.configureEach { target ->
             target.binaries.matching { it.disableCacheSettings.isNotEmpty() }.configureEach { binary ->
@@ -31,7 +28,7 @@ internal object DisabledNativeCacheChecker : KotlinGradleProjectChecker {
                     collector.report(
                         project,
                         KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic(
-                            nativeVersion,
+                            project.kotlinToolingVersion,
                             binary.konanTarget,
                             disableCache.reason,
                             disableCache.issueUrl

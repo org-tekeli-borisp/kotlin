@@ -15,10 +15,10 @@ import kotlin.test.fail
 private typealias PassId = Class<out ModuleLoweringPass>
 
 abstract class LoweringPrerequisitesTest {
-    protected fun checkPrerequisites(allPhases: List<AnyNamedPhase>) {
+    protected fun checkPrerequisites(phases: List<AnyNamedPhase>) {
         val createdPhases = mutableListOf<PassId>()
         val unsatisfiedPrerequisites = mutableListOf<Pair<PassId, PassId>>()
-        for (phase in allPhases) {
+        for (phase in phases) {
             phase as? LoweringPhase<*, *, *>
                 ?: fail("Unexpected phase type: ${phase::class.simpleName}")
             val loweringClass = phase.loweringClass

@@ -62,7 +62,8 @@ generatedSourcesTask(
     argsProvider = { generationRoot ->
         listOf(
             generationRoot.toString(),
-            version.toString()
+            version.toString(),
+            layout.projectDirectory.file("native-cache-kotlin-versions.txt").toString(),
         )
     }
 )

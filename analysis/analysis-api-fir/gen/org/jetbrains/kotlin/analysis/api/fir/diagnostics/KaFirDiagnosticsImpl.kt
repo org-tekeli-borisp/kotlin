@@ -226,6 +226,11 @@ internal class IntLiteralOutOfRangeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IntLiteralOutOfRange
 
+internal class IntLiteralWithLeadingZerosImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IntLiteralWithLeadingZeros
+
 internal class FloatLiteralOutOfRangeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

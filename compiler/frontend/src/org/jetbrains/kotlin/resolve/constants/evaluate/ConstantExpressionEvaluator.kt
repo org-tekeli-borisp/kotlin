@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.utils.hasLeadingZeros
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.COLLECTION_LITERAL_CALL
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -492,7 +493,12 @@ private class ConstantExpressionEvaluatorVisitor(
         if (nodeElementType == KtNodeTypes.NULL) return NullValue().wrap()
 
         val result: Any = when (nodeElementType) {
-            KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> parseNumericLiteral(text, nodeElementType)
+            KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> {
+                if (nodeElementType == KtNodeTypes.INTEGER_CONSTANT && hasLeadingZeros(text)) {
+                    trace.report(Errors.INT_LITERAL_WITH_LEADING_ZEROS.on(expression))
+                }
+                parseNumericLiteral(text, nodeElementType)
+            }
             KtNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
             KtNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantChecker.parseChar(expression)
             else -> throw IllegalArgumentException("Unsupported constant: $expression")

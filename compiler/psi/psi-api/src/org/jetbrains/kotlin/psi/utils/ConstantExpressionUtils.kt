@@ -41,6 +41,13 @@ fun hasUnsignedLongNumericLiteralSuffix(text: String): Boolean {
             text.endsWith("Ul") || text.endsWith("UL")
 }
 
+/**
+ * Checks whether the [text] representation of a number literal has leading zeros.
+ */
+fun hasLeadingZeros(text: String): Boolean {
+    return text.length > 1 && text[0] == '0' && text[1].let { it.isDigit() || it == '_' }
+}
+
 fun hasFloatNumericLiteralSuffix(text: String): Boolean {
     return text.endsWith('f') || text.endsWith('F')
 }

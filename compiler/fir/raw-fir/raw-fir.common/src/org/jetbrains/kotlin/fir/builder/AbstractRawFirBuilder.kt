@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.parsing.*
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.utils.hasLeadingZeros
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
@@ -443,7 +444,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         return when (type) {
             INTEGER_CONSTANT -> {
                 var diagnostic: DiagnosticKind = DiagnosticKind.IllegalConstExpression
-                val number: Long?
+                var number: Long?
 
                 val kind = when {
                     convertedText == null -> {
@@ -481,6 +482,11 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                         number = convertedText
                         ConstantValueKind.IntegerLiteral
                     }
+                }
+
+                if (hasLeadingZeros(text)) {
+                    diagnostic = DiagnosticKind.IntLiteralWithLeadingZeros
+                    number = null
                 }
 
                 buildConstOrErrorExpression(

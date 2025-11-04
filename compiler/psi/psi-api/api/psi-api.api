@@ -4215,6 +4215,7 @@ public final class org/jetbrains/kotlin/psi/typeRefHelpers/TypeRefHelpersKt {
 public final class org/jetbrains/kotlin/psi/utils/ConstantExpressionUtils {
 	public static final fun hasFloatNumericLiteralSuffix (Ljava/lang/String;)Z
 	public static final fun hasIllegallyPositionedUnderscore (Ljava/lang/String;Z)Z
+	public static final fun hasLeadingZeros (Ljava/lang/String;)Z
 	public static final fun hasLongNumericLiteralSuffix (Ljava/lang/String;)Z
 	public static final fun hasUnsignedLongNumericLiteralSuffix (Ljava/lang/String;)Z
 	public static final fun hasUnsignedNumericLiteralSuffix (Ljava/lang/String;)Z

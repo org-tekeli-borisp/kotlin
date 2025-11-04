@@ -116,8 +116,6 @@ object JsParser {
             }
             profile.validate(parsedResult)
             return profile.map(parsedResult)
-        } catch (_: AbortParsingException) {
-            return null
         } catch (ex: Throwable) {
             reporter.error("Failed to parse: ${ex.message}", parserContext.startPosition, parserContext.startPosition)
             return null

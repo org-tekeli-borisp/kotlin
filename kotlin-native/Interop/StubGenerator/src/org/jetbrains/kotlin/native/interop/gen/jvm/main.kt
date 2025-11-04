@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.native.interop.gen.*
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
@@ -460,8 +461,8 @@ private fun processCLib(
             }
 
             val serializedMetadata = stubIrOutput.metadata.write(ChunkedKlibModuleFragmentWriteStrategy(topLevelClassifierDeclarationsPerFile = 128)).run {
-                // TODO(KT-81409): replace IntArray(0) with metadataVersion.toArray() after adding metadataVersion KlibModuleMetadata
-                SerializedMetadata(header, fragments, fragmentNames, IntArray(0))
+                // TODO(KT-81409): replace MetadataVersion.INSTANCE.toArray() with metadataVersion.toArray() after adding metadataVersion KlibModuleMetadata
+                SerializedMetadata(header, fragments, fragmentNames, MetadataVersion.INSTANCE.toArray())
             }
 
             createInteropLibrary(

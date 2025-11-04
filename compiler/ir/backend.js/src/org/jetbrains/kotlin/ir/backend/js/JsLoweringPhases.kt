@@ -138,7 +138,7 @@ fun jsLoweringsOfTheFirstPhase(
     return createModulePhases(*phases.toTypedArray())
 }
 
-fun getJsLowerings(): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> {
+val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = run {
     val phases = listOfNotNull<(JsIrBackendContext) -> ModuleLoweringPass>(
         // BEGIN: Common Native/JS/Wasm prefix.
         ::KlibIrValidationBeforeLoweringPhase,
@@ -259,7 +259,7 @@ fun getJsLowerings(): List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragme
         ::CleanupLowering,
         ::IrValidationAfterLoweringPhase,
     )
-    return createModulePhases(*phases.toTypedArray())
+    createModulePhases(*phases.toTypedArray())
 }
 
 val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> by lazy {

@@ -162,4 +162,13 @@ interface AbiValidationVariantSpec {
     fun legacyDump(action: Action<AbiValidationLegacyDumpExtension>) {
         action.execute(legacyDump)
     }
+
+    @ExperimentalAbiValidation
+    companion object {
+        /**
+         * @deprecated Variants DSL was removed and is no longer supported.
+         */
+        @Deprecated("Variants DSL was removed and is no longer supported.", level = DeprecationLevel.ERROR)
+        const val MAIN_VARIANT_NAME = "main"
+    }
 }

@@ -720,6 +720,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec$DefaultImp
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec {
 	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVariants ()Lorg/gradle/api/NamedDomainObjectContainer;
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension$DefaultImpls {
@@ -741,6 +742,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidatio
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec {
 	public abstract fun getEnabled ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVariants ()Lorg/gradle/api/NamedDomainObjectContainer;
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension$DefaultImpls {
@@ -761,10 +763,16 @@ public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatfor
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$Companion;
+	public static final field MAIN_VARIANT_NAME Ljava/lang/String;
 	public abstract fun filters (Lorg/gradle/api/Action;)V
 	public abstract fun getFilters ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiFiltersSpec;
 	public abstract fun getLegacyDump ()Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension;
 	public abstract fun legacyDump (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$Companion {
+	public static final field MAIN_VARIANT_NAME Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationVariantSpec$DefaultImpls {

@@ -86,21 +86,62 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : JvmIncrementalC
     /**
      * A builder for [JvmSnapshotBasedIncrementalCompilationOptions].
      *
+     * @see JvmPlatformToolchain.snapshotBasedIcOptionsBuilder
+     *
      * @since 2.3.20
      */
     public interface Builder {
+        /**
+         * The working directory for the IC operation to store internal objects
+         *
+         * @since 2.3.20
+         */
         public val workingDirectory: Path
+
+        /**
+         * Changes in the source files, which can be unknown, to-be-calculated, or known
+         *
+         * @since 2.3.20
+         */
         public val sourcesChanges: SourcesChanges
+
+        /**
+         * A list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
+         *
+         * @since 2.3.20
+         */
         public val dependenciesSnapshotFiles: List<Path>
+
+        /**
+         * The path to the shrunk classpath snapshot file from a previous compilation.
+         *
+         * @since 2.3.20
+         */
         public val shrunkClasspathSnapshot: Path
 
+        /**
+         * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+         *
+         * @return the previously set value for an option
+         * @throws IllegalStateException if the option was not set and has no default value
+         */
         public operator fun <V> get(key: Option<V>): V
+
+        /**
+         * Set the [value] for option specified by [key], overriding any previous value for that option.
+         */
         public operator fun <V> set(key: Option<V>, value: V)
+
+        /**
+         * Creates an immutable instance of [JvmSnapshotBasedIncrementalCompilationOptions] based on the configuration of this builder.
+         */
         public fun build(): JvmSnapshotBasedIncrementalCompilationOptions
     }
 
-    public fun toBuilder(): JvmSnapshotBasedIncrementalCompilationOptions.Builder
-
+    /**
+     * Creates a builder for [JvmSnapshotBasedIncrementalCompilationOptions] that contains a copy of this configuration.
+     */
+    public fun toBuilder(): Builder
 
     /**
      * Base class for [JvmSnapshotBasedIncrementalCompilationOptions] options.

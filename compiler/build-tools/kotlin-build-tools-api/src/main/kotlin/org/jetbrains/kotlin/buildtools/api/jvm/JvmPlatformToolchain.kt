@@ -35,7 +35,7 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
      * Creates an options set for snapshot-based incremental compilation (IC) in JVM projects.
      * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
      * ```
-     * val icOptions = kotlinToolchains.jvm.createSnapshotBasedIcOptions(
+     * val icOptions = kotlinToolchains.jvm.snapshotBasedIcOptionsBuilder(
      *     workingDirectory = Paths.get("build/kotlin"),
      *     sourcesChanges = SourcesChanges.ToBeCalculated,
      *     dependenciesSnapshotFiles = snapshots,

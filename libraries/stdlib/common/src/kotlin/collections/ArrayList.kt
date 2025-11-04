@@ -81,7 +81,7 @@ public expect class ArrayList<E> : MutableList<E>, RandomAccess {
      * then it may be resized to become more space efficient.
      * This operation can help reduce memory consumption when the list is not expected to grow further.
      *
-     * The implementation may choose to ignore this request.
+     * On the JS target, this method has no effect due to the internal JS implementation.
      *
      * @sample samples.collections.Collections.Lists.ArrayList.trimToSize
      */
@@ -95,6 +95,8 @@ public expect class ArrayList<E> : MutableList<E>, RandomAccess {
      *
      * This operation can be used to minimize the number of incremental reallocations when the eventual size
      * of the list is known in advance, improving performance when adding many elements.
+     *
+     * On the JS target, this method has no effect due to the internal JS implementation.
      *
      * @param minCapacity the desired minimum capacity.
      *

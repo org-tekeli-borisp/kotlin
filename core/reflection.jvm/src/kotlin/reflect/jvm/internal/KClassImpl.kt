@@ -315,14 +315,14 @@ internal class KClassImpl<T : Any>(
             by ReflectProperties.lazySoft {
                 when (useK1Implementation) {
                     true -> declaredNonStaticMembers + inheritedNonStaticMembers_k1Impl
-                    false -> allMembers.filter { it.instanceReceiverParameter != null }
+                    false -> allMembers.filter { !it.isStatic }
                 }
             }
         val allStaticMembers: Collection<DescriptorKCallable<*>> // todo test this property
             by ReflectProperties.lazySoft {
                 when (useK1Implementation) {
                     true -> declaredStaticMembers + inheritedStaticMembers_k1Impl
-                    false -> allMembers.filter { it.instanceReceiverParameter == null }
+                    false -> allMembers.filter { it.isStatic }
                 }
             }
         val declaredMembers: Collection<DescriptorKCallable<*>>

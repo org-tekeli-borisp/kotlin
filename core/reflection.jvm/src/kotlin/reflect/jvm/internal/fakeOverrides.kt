@@ -142,7 +142,7 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
     return AllMembersPreservingTransitivity(result, containsInheritedStatics, containsPackagePrivate)
 }
 
-private val DescriptorKCallable<*>.isStatic: Boolean
+internal val DescriptorKCallable<*>.isStatic: Boolean
     get() = instanceReceiverParameter == null
 
 private val DescriptorKCallable<*>.isJavaField: Boolean

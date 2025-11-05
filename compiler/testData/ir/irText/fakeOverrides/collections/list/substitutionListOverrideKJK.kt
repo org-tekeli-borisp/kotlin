@@ -3,6 +3,9 @@
 // FULL_JDK
 // WITH_STDLIB
 
+// Skip because collections
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 // FILE: Java1.java
 import kotlin.collections.AbstractMutableList;
 

@@ -4,6 +4,9 @@
 // IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
 // ^ MutableList has js specific methods
 
+// Skip because collections
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 interface X {
     val xs: MutableList<Any>
     fun f(): MutableList<Any>

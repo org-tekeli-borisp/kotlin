@@ -1,0 +1,44 @@
+KClass: AML
+  members:
+    fun AML.contains(kotlin.Int): kotlin.Boolean
+    fun AML.containsAll(kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
+    fun AML.equals(kotlin.Any?): kotlin.Boolean
+    fun AML.forEach(java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    fun AML.get(kotlin.Int): kotlin.Int
+    fun AML.hashCode(): kotlin.Int
+    fun AML.indexOf(kotlin.Int): kotlin.Int
+    fun AML.isEmpty(): kotlin.Boolean
+    fun AML.iterator(): kotlin.collections.Iterator<kotlin.Int>
+    fun AML.lastIndexOf(kotlin.Int): kotlin.Int
+    fun AML.listIterator(): kotlin.collections.ListIterator<kotlin.Int>
+    fun AML.listIterator(kotlin.Int): kotlin.collections.ListIterator<kotlin.Int>
+    fun AML.parallelStream(): java.util.stream.Stream<kotlin.Int>
+    fun AML.spliterator(): java.util.Spliterator<kotlin.Int!>
+    fun AML.stream(): java.util.stream.Stream<kotlin.Int>
+    fun AML.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<kotlin.Int>
+    fun AML.testExplicitThis(): kotlin.Unit
+    fun AML.toString(): kotlin.String
+    val AML.size: kotlin.Int
+  declaredMembers:
+    fun AML.testExplicitThis(): kotlin.Unit
+KClass: X
+  members:
+    fun X.equals(kotlin.Any?): kotlin.Boolean
+    fun X.f(): kotlin.collections.MutableList<kotlin.Any>
+    fun X.hashCode(): kotlin.Int
+    fun X.toString(): kotlin.String
+    val X.xs: kotlin.collections.MutableList<kotlin.Any>
+  declaredMembers:
+    fun X.f(): kotlin.collections.MutableList<kotlin.Any>
+    val X.xs: kotlin.collections.MutableList<kotlin.Any>
+KPackage: Kt30020Kt
+  fun kotlin.collections.MutableList<kotlin.Any>.testExtensionReceiver(): kotlin.Unit
+  fun test(X, X?): kotlin.Unit
+KClass: AML.Inner
+  members:
+    fun AML.Inner.equals(kotlin.Any?): kotlin.Boolean
+    fun AML.Inner.hashCode(): kotlin.Int
+    fun AML.Inner.testOuterThis(): kotlin.Unit
+    fun AML.Inner.toString(): kotlin.String
+  declaredMembers:
+    fun AML.Inner.testOuterThis(): kotlin.Unit

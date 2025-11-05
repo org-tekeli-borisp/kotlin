@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 
+// Skip because collections
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 // FILE: 1.kt
 import java.util.*
 

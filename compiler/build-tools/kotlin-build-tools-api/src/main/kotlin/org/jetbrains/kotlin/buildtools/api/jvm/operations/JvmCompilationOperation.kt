@@ -35,6 +35,9 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 @ExperimentalBuildToolsApi
 public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
 
+    /**
+     * A builder for configuring and instantiating the [JvmCompilationOperation].
+     */
     public interface Builder : BuildOperation.Builder {
         /**
          * Kotlin compiler configurable options for JVM platform.

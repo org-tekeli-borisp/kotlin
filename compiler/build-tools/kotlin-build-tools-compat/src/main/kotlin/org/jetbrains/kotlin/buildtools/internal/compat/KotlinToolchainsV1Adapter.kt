@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.buildtools.internal.compat.arguments.JvmCompilerArgu
 import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.nio.file.Path
-import kotlin.concurrent.atomics.AtomicBoolean
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import java.nio.file.Paths
 import java.time.Duration
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.io.path.absolutePathString
 
 public class KotlinToolchainsV1Adapter(
@@ -93,9 +93,16 @@ public class KotlinToolchainsV1Adapter(
         return ExecutionPolicyV1Adapter.InProcess(compilationService.makeCompilerExecutionStrategyConfiguration().useInProcessStrategy())
     }
 
+    @Deprecated(
+        "Use jvmCompilationOperationBuilder instead",
+        replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
+    )
     override fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon {
         return ExecutionPolicyV1Adapter.WithDaemon(compilationService)
     }
+
+    override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder =
+        ExecutionPolicyV1Adapter.WithDaemon(compilationService)
 
     override fun getCompilerVersion(): String {
         return compilationService.getCompilerVersion()
@@ -295,7 +302,8 @@ private class JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
     override val sourcesChanges: SourcesChanges,
     override val dependenciesSnapshotFiles: List<Path>,
     override val shrunkClasspathSnapshot: Path,
-) : JvmSnapshotBasedIncrementalCompilationOptions, JvmSnapshotBasedIncrementalCompilationOptions.Builder, DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter> {
+) : JvmSnapshotBasedIncrementalCompilationOptions, JvmSnapshotBasedIncrementalCompilationOptions.Builder,
+    DeepCopyable<JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter> {
     constructor(
         workingDirectory: Path,
         sourcesChanges: SourcesChanges,
@@ -328,7 +336,13 @@ private class JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
     override fun build(): JvmSnapshotBasedIncrementalCompilationOptions = deepCopy()
 
     override fun deepCopy(): JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter {
-        return JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(options.deepCopy(), workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot)
+        return JvmSnapshotBasedIncrementalCompilationOptionsV1Adapter(
+            options.deepCopy(),
+            workingDirectory,
+            sourcesChanges,
+            dependenciesSnapshotFiles,
+            shrunkClasspathSnapshot
+        )
     }
 
     class Option<V> : BaseOptionWithDefault<V> {
@@ -389,8 +403,14 @@ private interface ExecutionPolicyV1Adapter {
     class InProcess(@Suppress("DEPRECATION") override val strategyConfiguration: CompilerExecutionStrategyConfiguration) :
         ExecutionPolicyV1Adapter, ExecutionPolicy.InProcess
 
-    class WithDaemon(@Suppress("DEPRECATION") private val compilationService: CompilationService) : ExecutionPolicyV1Adapter,
-        ExecutionPolicy.WithDaemon {
+    class WithDaemon private constructor(
+        private val options: Options = Options(ExecutionPolicy.WithDaemon::class),
+        @Suppress("DEPRECATION") private val compilationService: CompilationService,
+    ) : ExecutionPolicyV1Adapter,
+        ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder, DeepCopyable<WithDaemon> {
+
+        @Suppress("DEPRECATION")
+        constructor(compilationService: CompilationService) : this(Options(ExecutionPolicy.WithDaemon::class), compilationService)
 
         @Suppress("DEPRECATION")
         override val strategyConfiguration: CompilerExecutionStrategyConfiguration
@@ -405,7 +425,7 @@ private interface ExecutionPolicyV1Adapter {
                 )
             }
 
-        private val options: Options = Options(ExecutionPolicy.WithDaemon::class)
+        override fun toBuilder(): ExecutionPolicy.WithDaemon.Builder = deepCopy()
 
         override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V = options[key.id]
 
@@ -413,11 +433,15 @@ private interface ExecutionPolicyV1Adapter {
             options[key] = value
         }
 
+        override fun build(): ExecutionPolicy.WithDaemon = deepCopy()
+
         operator fun <V> get(key: Option<V>): V = options[key]
 
         operator fun <V> set(key: Option<V>, value: V) {
             options[key] = value
         }
+
+        override fun deepCopy(): WithDaemon = WithDaemon(options.deepCopy(), compilationService)
 
         class Option<V> : BaseOptionWithDefault<V> {
             constructor(id: String) : super(id)

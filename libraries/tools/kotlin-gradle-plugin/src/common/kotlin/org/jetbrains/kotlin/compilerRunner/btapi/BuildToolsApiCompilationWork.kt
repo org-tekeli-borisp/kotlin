@@ -158,13 +158,13 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 }
             }.build()
             val executionConfig = when (executionStrategy) {
-                KotlinCompilerExecutionStrategy.DAEMON -> kotlinToolchains.createDaemonExecutionPolicy().apply {
+                KotlinCompilerExecutionStrategy.DAEMON -> kotlinToolchains.daemonExecutionPolicyBuilder().apply {
                     val arguments = workArguments.compilerExecutionSettings.daemonJvmArgs ?: emptyList()
                     this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = arguments
                     if (log.isDebugEnabled) {
                         log.debug("Kotlin compile daemon JVM options: ${arguments.joinToString(" ")}")
                     }
-                }
+                }.build()
                 KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinToolchains.createInProcessExecutionPolicy()
                 else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
             }

@@ -455,7 +455,8 @@ $dependenciesImports
       }
       
       if (isStandaloneJsVM) {
-        const wasmBuffer = read(wasmFilePath, 'binary');
+        const fileName = import.meta.url.replace(/\.uninstantiated\.mjs$/, '.wasm');
+        const wasmBuffer = read(fileName, 'binary');
         const wasmModule = new WebAssembly.Module(wasmBuffer);
         wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
       }

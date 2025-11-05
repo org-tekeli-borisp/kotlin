@@ -1,6 +1,9 @@
 // FIR_IDENTICAL
 // KT-64271
 
+// KT-82192
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 inline class IT(val x: Int)
 
 inline class InlineMutableSet(private val ms: MutableSet<IT>) : MutableSet<IT> {

@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.wasm.test
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -30,31 +28,43 @@ import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 
-
 private val outputDir: File
     get() = File(System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("Please set output dir path"))
+private val stdlibPath =
+    File(System.getProperty("kotlin.wasm-js.stdlib.path") ?: error("Please set stdlib path")).canonicalPath
+private val kotlinTestPath =
+    File(System.getProperty("kotlin.wasm-js.kotlin.test.path") ?: error("Please set kotlin-test path")).canonicalPath
 
 const val precompiledStdlibOutputName: String = "kotlin-kotlin-stdlib"
 const val precompiledKotlinTestOutputName: String = "kotlin-kotlin-test"
 
-val precompiledStdlibOutputDir: File
-    get() = File(outputDir, "out/precompile/$precompiledStdlibOutputName")
+internal enum class PrecompileSetup(
+    val debugFriendly: Boolean,
+    val newExceptionProposal: Boolean,
+    val stdlibOutputDir: File,
+    val kotlinTestOutputDir: File,
+) {
+    REGULAR(
+        debugFriendly = false,
+        newExceptionProposal = false,
+        File(outputDir, "out/precompile/$precompiledStdlibOutputName"),
+        File(outputDir, "out/precompile/$precompiledKotlinTestOutputName")
+    ),
+    NEW_EXCEPTION_PROPOSAL(
+        debugFriendly = false,
+        newExceptionProposal = true,
+        File(outputDir, "out/precompile_new_exception/$precompiledStdlibOutputName"),
+        File(outputDir, "out/precompile_new_exception/$precompiledKotlinTestOutputName")
+    ),
+    DEBUG_FRIENDLY(
+        debugFriendly = true,
+        newExceptionProposal = false,
+        stdlibOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledStdlibOutputName"),
+        kotlinTestOutputDir = File(outputDir, "out/precompile_debug_friendly/$precompiledKotlinTestOutputName")
+    ),
+}
 
-val precompiledKotlinTestOutputDir: File
-    get() = File(outputDir, "out/precompile/$precompiledKotlinTestOutputName")
-
-val precompiledStdlibNewExceptionsOutputDir: File
-    get() = File(outputDir, "out/precompile_new_exception/$precompiledStdlibOutputName")
-
-val precompiledKotlinTestNewExceptionsOutputDir: File
-    get() = File(outputDir, "out/precompile_new_exception/$precompiledKotlinTestOutputName")
-
-fun precompileWasmModules() {
-    val stdlibPath =
-        File(System.getProperty("kotlin.wasm-js.stdlib.path") ?: error("Please set stdlib path")).canonicalPath
-    val kotlinTestPath =
-        File(System.getProperty("kotlin.wasm-js.kotlin.test.path") ?: error("Please set kotlin-test path")).canonicalPath
-
+internal fun precompileWasmModules(setup: PrecompileSetup) {
     val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
     val languageSettings = K2JSCompilerArguments().toLanguageVersionSettings(
@@ -79,7 +89,7 @@ fun precompileWasmModules() {
         EnvironmentConfigFiles.WASM_CONFIG_FILES,
     )
 
-    fun compileWasmModule(includes: String, libraries: List<String>, outputName: String, newExceptionProposal: Boolean, outputDir: File) {
+    fun compileWasmModule(includes: String, libraries: List<String>, outputName: String, outputDir: File) {
         val klibs = loadWebKlibsInTestPipeline(
             configuration = configuration,
             includedPath = includes,
@@ -98,7 +108,8 @@ fun precompileWasmModules() {
             put<File>(JSConfigurationKeys.OUTPUT_DIR, outputDir)
             put<String>(JSConfigurationKeys.OUTPUT_NAME, outputName)
             put<Boolean>(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY, true)
-            put<Boolean>(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, newExceptionProposal)
+            put<Boolean>(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, setup.newExceptionProposal)
+            put<Boolean>(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, setup.debugFriendly)
             this.includes = includes
         }
 
@@ -118,30 +129,14 @@ fun precompileWasmModules() {
     compileWasmModule(
         includes = stdlibPath,
         libraries = listOf(stdlibPath),
-        newExceptionProposal = false,
         outputName = precompiledStdlibOutputName,
-        outputDir = precompiledStdlibOutputDir,
-    )
-    compileWasmModule(
-        includes = kotlinTestPath,
-        libraries = listOf(stdlibPath, kotlinTestPath),
-        newExceptionProposal = false,
-        outputName = precompiledKotlinTestOutputName,
-        outputDir = precompiledKotlinTestOutputDir
+        outputDir = setup.stdlibOutputDir,
     )
 
     compileWasmModule(
-        includes = stdlibPath,
-        libraries = listOf(stdlibPath),
-        newExceptionProposal = true,
-        outputName = precompiledStdlibOutputName,
-        outputDir = precompiledStdlibNewExceptionsOutputDir,
-    )
-    compileWasmModule(
         includes = kotlinTestPath,
         libraries = listOf(stdlibPath, kotlinTestPath),
-        newExceptionProposal = true,
         outputName = precompiledKotlinTestOutputName,
-        outputDir = precompiledKotlinTestNewExceptionsOutputDir,
+        outputDir = setup.kotlinTestOutputDir
     )
 }

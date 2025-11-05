@@ -2215,11 +2215,12 @@ class IrValidatorTest {
                 Message(
                     ERROR,
                     """
-                            [IR VALIDATION] IrValidatorTest: Redundant IMPLICIT_CAST: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-                              inside BLOCK_BODY
-                                inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
-                                  inside FILE fqName:org.sample fileName:test.kt
-                            """.trimIndent(),
+                    [IR VALIDATION] IrValidatorTest: Redundant IMPLICIT_CAST: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                    TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
             ),

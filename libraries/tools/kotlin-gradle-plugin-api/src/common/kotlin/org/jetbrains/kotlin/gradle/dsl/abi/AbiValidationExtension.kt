@@ -163,6 +163,9 @@ interface AbiValidationVariantSpec {
         action.execute(legacyDump)
     }
 
+    /**
+     * The constants for ABI validation variants.
+     */
     @ExperimentalAbiValidation
     companion object {
         /**

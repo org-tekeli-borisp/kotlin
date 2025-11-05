@@ -175,12 +175,34 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         return backing.copyOfRange(fromIndex = 0, toIndex = length) as Array<Any?>
     }
 
+    /**
+     * Attempts to reduce the storage used for this list.
+     *
+     * If the backing storage of this list is larger than necessary to hold its current elements,
+     * then it may be resized to become more space efficient.
+     * This operation can help reduce memory consumption when the list is not expected to grow further.
+     *
+     * @sample samples.collections.Collections.Lists.ArrayList.trimToSize
+     */
     public actual fun trimToSize() {
         registerModification()
         if (length < backing.size)
             backing = backing.copyOfUninitializedElements(length)
     }
 
+    /**
+     * Ensures that the capacity of this list is at least equal to the specified [minCapacity].
+     *
+     * If the current capacity is less than the [minCapacity], a new backing storage is allocated with greater capacity.
+     * Otherwise, this method takes no action and simply returns.
+     *
+     * This operation can be used to minimize the number of incremental reallocations when the eventual size
+     * of the list is known in advance, improving performance when adding many elements.
+     *
+     * @param minCapacity the desired minimum capacity.
+     *
+     * @sample samples.collections.Collections.Lists.ArrayList.ensureCapacity
+     */
     public actual fun ensureCapacity(minCapacity: Int) {
         if (minCapacity <= backing.size) return
         registerModification()

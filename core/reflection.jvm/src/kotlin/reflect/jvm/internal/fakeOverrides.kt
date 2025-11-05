@@ -155,13 +155,6 @@ private val KClass<*>.allMembersPreservingTransitivity: AllMembersPreservingTran
         else -> error("Unknown type ${this::class}")
     }
 
-private val KClass<*>.classKind: ClassKind // todo do I need it?
-    get() = when (this) {
-        is KClassImpl<*> -> classKind
-        is MutableCollectionKClass<*> -> klass.classKind
-        else -> error("Unknown type ${this::class}")
-    }
-
 private fun DescriptorKCallable<*>.toEquatableCallableSignature(): EquatableCallableSignature {
     val parameterTypes = parameters.filter { it.kind != KParameter.Kind.INSTANCE }.map { it.type }
     val kind = when (this) {

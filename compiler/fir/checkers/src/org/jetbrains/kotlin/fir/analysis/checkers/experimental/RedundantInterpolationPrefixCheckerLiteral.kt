@@ -27,13 +27,17 @@ object RedundantInterpolationPrefixCheckerConcatenation : FirStringConcatenation
 }
 
 object RedundantInterpolationPrefixCheckerLiteral : FirLiteralExpressionChecker(MppCheckerKind.Common) {
+    private val redundancyRegex = Regex("""(\\+)\$(\w|\{|`[^`])""")
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirLiteralExpression) {
         val prefix = expression.prefix
         if (expression.kind == ConstantValueKind.String && !prefix.isNullOrEmpty()) {
             val value = expression.source.text?.drop(prefix.length) ?: return
-            // approximation of interpolated values: $ followed either by start of an identifier, or braces
-            if (prefix.length == 1 || !Regex("""\$(\w|\{|`[^`])""").containsMatchIn(value)) {
+            // approximation of non-redundant interpolated values:
+            // - $ followed by either start of an identifier or braces (checked by the regex)
+            // - with no backslashes before the $
+            if (redundancyRegex.findAll(value).all { it.groupValues[1].isEmpty() }) {
                 reporter.reportOn(expression.source, FirErrors.REDUNDANT_INTERPOLATION_PREFIX)
             }
         }

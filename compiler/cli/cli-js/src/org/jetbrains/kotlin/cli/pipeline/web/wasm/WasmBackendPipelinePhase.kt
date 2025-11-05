@@ -175,6 +175,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 module = module,
                 outputDir = outputDir,
                 wasmDebug = wasmDebug,
+                generateDwarf = generateDwarf,
             )
         }
     }
@@ -266,6 +267,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         module: ModulesStructure,
         outputDir: File,
         wasmDebug: Boolean,
+        generateDwarf: Boolean,
     ): WasmCompilerResult {
         val performanceManager = configuration.perfManager
 
@@ -304,6 +306,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 useDebuggerCustomFormatters = useDebuggerCustomFormatters,
                 typeScriptFragment = typeScriptFragment,
                 generateSourceMaps = generateSourceMaps,
+                generateDwarf = generateDwarf,
             )
 
             writeCompilationResult(
@@ -328,6 +331,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
     useDebuggerCustomFormatters: Boolean,
     typeScriptFragment: TypeScriptFragment?,
     generateSourceMaps: Boolean,
+    generateDwarf: Boolean,
     outputFileNameBase: String? = null,
 ): WasmCompilerResult {
     val mainModuleFragment = backendContext.irModuleFragment
@@ -375,7 +379,7 @@ fun compileWasmLoweredFragmentsForSingleModule(
         emitNameSection = wasmDebug,
         generateWat = generateWat,
         generateSourceMaps = generateSourceMaps,
-        generateDwarf = false,
+        generateDwarf = generateDwarf,
         useDebuggerCustomFormatters = useDebuggerCustomFormatters,
         stdlibModuleNameForImport = loweredIrFragments.first().name.asString().takeIf { !stdlibIsMainModule },
         dependencyModules = dependencyImports,

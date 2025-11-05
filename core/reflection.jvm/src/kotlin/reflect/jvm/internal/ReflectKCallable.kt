@@ -5,8 +5,11 @@
 
 package kotlin.reflect.jvm.internal
 
+import java.lang.reflect.GenericDeclaration
 import kotlin.coroutines.Continuation
 import kotlin.jvm.internal.CallableReference
+import kotlin.jvm.internal.KotlinGenericDeclaration
+import kotlin.jvm.internal.findMethodBySignature
 import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -57,8 +60,10 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
     }
 }
 
-internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?> {
+internal interface ReflectKFunction : ReflectKCallable<Any?>, KFunction<Any?>, KotlinGenericDeclaration {
     val signature: String
+
+    override fun findJvmDeclaration(): GenericDeclaration? = container.findMethodBySignature(signature)
 }
 
 internal val ReflectKCallable<*>.isBound: Boolean

@@ -203,7 +203,9 @@ internal class JvmCompilationOperationImpl(
             daemonJVMOptions = jvmOptions,
             daemonOptions = daemonOptions
         ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
-
+        onCancel {
+            daemon.cancelCompilation(sessionId, compilationId)
+        }
         if (loggerAdapter.kotlinLogger.isDebugEnabled) {
             daemon.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->
                 loggerAdapter.kotlinLogger.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
@@ -232,7 +234,7 @@ internal class JvmCompilationOperationImpl(
             DaemonCompilationResults(
                 loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
             ),
-            compilationAliveFilePath
+            compilationId
         ).get()
 
         try {

@@ -132,8 +132,11 @@ interface CompileService : Remote {
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
         compilationResults: CompilationResults?,
-        compilationAliveFlagPath: String?
+        compilationId: Int?,
     ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun cancelCompilation(sessionId: Int, compilationId: Int): CallResult<Nothing>
 
     @Throws(RemoteException::class)
     fun classesFqNamesByFiles(

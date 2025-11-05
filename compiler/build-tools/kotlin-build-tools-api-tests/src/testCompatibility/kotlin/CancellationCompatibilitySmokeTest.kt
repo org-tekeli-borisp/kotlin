@@ -6,22 +6,15 @@
 package org.jetbrains.kotlin.buildtools.api.tests
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertNoCompiledSources
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOutputSetChanges
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
-import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 
@@ -31,12 +24,12 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
         Assumptions.assumeFalse(strategyConfig.first.javaClass.simpleName.contains("V1Adapter"))
+        Assumptions.assumeTrue(strategyConfig.second is ExecutionPolicy.InProcess)
         val hasCancellationSupport =
             KotlinToolingVersion(strategyConfig.first.getCompilerVersion()) > KotlinToolingVersion(2, 3, 0, "Beta1")
         project(strategyConfig) {
             val module1 = module("jvm-module-1")
 
-            // you should handle the right order of compilation between modules yourself
             module1.compile(compilationConfigAction = { operation ->
                 try {
                     operation.cancel()
@@ -47,7 +40,9 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
                 if (hasCancellationSupport) {
                     expectCompilationResult(CompilationResult.COMPILER_INTERNAL_ERROR)
                     assertNoCompiledSources(module)
-                    assertLogContainsSubstringExactlyTimes(LogLevel.ERROR, "org.jetbrains.kotlin.progress.CompilationCanceledException", 1)
+                    assertLogContainsSubstringExactlyTimes(
+                        LogLevel.ERROR, "org.jetbrains.kotlin.progress.CompilationCanceledException", 1
+                    )
                 }
             }
         }

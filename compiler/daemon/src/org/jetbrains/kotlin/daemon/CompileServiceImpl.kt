@@ -58,6 +58,7 @@ import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.*
+import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -342,17 +343,11 @@ abstract class CompileServiceImplBase(
         createReporter: (ServicesFacadeT, CompilationOptions) -> DaemonMessageReporter,
         createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
         getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
-        compilationAliveFlagPath: String? = null,
+        compilationId: Int? = null,
     ) = kotlin.run {
         val messageCollector = createMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = createReporter(servicesFacade, compilationOptions)
         val targetPlatform = compilationOptions.targetPlatform
-        val compilationAlive = ClientOrSessionProxy<Any>(compilationAliveFlagPath)
-        val compilationCanceledStatus = object : CompilationCanceledStatus {
-            override fun checkCanceled() {
-                if (!compilationAlive.isAlive) throw CompilationCanceledException()
-            }
-        }
         log.info("Starting compilation with args: " + compilerArguments.joinToString(" "))
 
         @Suppress("UNCHECKED_CAST")
@@ -374,7 +369,7 @@ abstract class CompileServiceImplBase(
                 @Suppress("UNCHECKED_CAST")
                 servicesFacade as JpsServicesFacadeT
                 withIncrementalCompilation(k2PlatformArgs, enabled = servicesFacade.hasIncrementalCaches()) {
-                    doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
+                    doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { eventManger, profiler, _ ->
                         val services = createServices(servicesFacade, eventManger, profiler)
                         val exitCode = compiler.exec(messageCollector, services, k2PlatformArgs)
 
@@ -390,13 +385,13 @@ abstract class CompileServiceImplBase(
                 }
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
-                doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { _, _, compilationCanceled ->
                     val exitCode = compiler.exec(
                         messageCollector,
-                        Services.Builder().register(CompilationCanceledStatus::class.java, compilationCanceledStatus).build(),
+                        compilationCanceled?.let { Services.Builder().register(CompilationCanceledStatus::class.java, it).build() }
+                            ?: Services.EMPTY,
                         k2PlatformArgs
                     )
-
                     val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = DumpFormat.PlainText)
                     compilationResults?.also {
                         (it as CompilationResults).add(
@@ -414,7 +409,7 @@ abstract class CompileServiceImplBase(
 
                 when (targetPlatform) {
                     CompileService.TargetPlatform.JVM -> withIncrementalCompilation(k2PlatformArgs) {
-                        doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                        doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { _, _, compilationCanceled ->
                             execIncrementalCompiler(
                                 k2PlatformArgs as K2JVMCompilerArguments,
                                 gradleIncrementalArgs,
@@ -424,12 +419,12 @@ abstract class CompileServiceImplBase(
                                     compilationResults!!,
                                     gradleIncrementalArgs
                                 ),
-                                compilationCanceledStatus
+                                compilationCanceled
                             )
                         }
                     }
                     CompileService.TargetPlatform.JS -> withJsIC(k2PlatformArgs) {
-                        doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                        doCompile(sessionId, daemonReporter, tracer = null, compilationId = null) { _, _, _ ->
                             execJsIncrementalCompiler(
                                 k2PlatformArgs as K2JSCompilerArguments,
                                 gradleIncrementalArgs,
@@ -449,25 +444,34 @@ abstract class CompileServiceImplBase(
         }
     }
 
-
     protected inline fun doCompile(
         sessionId: Int,
         daemonMessageReporter: DaemonMessageReporter,
         tracer: RemoteOperationsTracer?,
-        body: (EventManager, Profiler) -> ExitCode,
+        compilationId: Int?,
+        body: (EventManager, Profiler, CompilationCanceledStatus?) -> ExitCode,
     ): CompileService.CallResult<Int> = run {
         log.fine("alive!")
-        withValidClientOrSessionProxy(sessionId) {
+        withValidClientOrSessionProxy(sessionId) { session: ClientOrSessionProxy<Any>? ->
+            val runningCompilations = compilationId?.let { compilationId ->
+                (session?.data as? RunningCompilations)?.also { runningCompilations ->
+                    runningCompilations.add(compilationId)
+                }
+            }
+
+            val compilationCanceledStatus = runningCompilations?.getCompilationCanceledStatus(compilationId)
+
             tracer?.before("compile")
             val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
             val eventManager = EventManagerImpl()
             try {
                 log.fine("trying get exitCode")
                 val exitCode = checkedCompile(daemonMessageReporter, rpcProfiler) {
-                    body(eventManager, rpcProfiler).code
+                    body(eventManager, rpcProfiler, compilationCanceledStatus).code
                 }
                 CompileService.CallResult.Good(exitCode)
             } finally {
+                runningCompilations?.remove(compilationId)
                 eventManager.fireCompilationFinished()
                 tracer?.after("compile")
             }
@@ -778,7 +782,7 @@ class CompileServiceImpl(
     // TODO: consider tying a session to a client and use this info to cleanup
     override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         CompileService.CallResult.Good(
-            state.sessions.leaseSession(ClientOrSessionProxy<Any>(aliveFlagPath)).apply {
+            state.sessions.leaseSession(ClientOrSessionProxy<RunningCompilations>(aliveFlagPath, RunningCompilations())).apply {
                 log.info("leased a new session $this, session alive file: $aliveFlagPath")
             })
     }
@@ -838,7 +842,7 @@ class CompileServiceImpl(
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
         compilationResults: CompilationResults?,
-        compilationAliveFlagPath: String?
+        compilationId: Int?,
     ) = ifAlive {
         compileImpl(
             sessionId,
@@ -851,8 +855,15 @@ class CompileServiceImpl(
             createReporter = ::DaemonMessageReporter,
             createServices = this::createCompileServices,
             getICReporter = { a, b, c -> getBuildReporter(a, b!!, c) },
-            compilationAliveFlagPath,
+            compilationId,
         )
+    }
+
+    override fun cancelCompilation(sessionId: Int, compilationId: Int): CompileService.CallResult<Nothing> = ifAlive {
+        withValidClientOrSessionProxy(sessionId) { session: ClientOrSessionProxy<Any>? ->
+            (session?.data as? RunningCompilations)?.remove(compilationId)
+            CompileService.CallResult.Ok()
+        }
     }
 
 
@@ -1192,6 +1203,26 @@ class CompileServiceImpl(
         ifAliveChecksImpl(minAliveness) {
             body()
             CompileService.CallResult.Ok()
+        }
+    }
+}
+
+class RunningCompilations() {
+    private val compilations = ConcurrentSkipListSet<Int>()
+
+    fun remove(compilationId: Int) {
+        compilations.remove(compilationId)
+    }
+
+    fun add(compilationId: Int) {
+        compilations.add(compilationId)
+    }
+
+    fun getCompilationCanceledStatus(compilationId: Int) = object : CompilationCanceledStatus {
+        override fun checkCanceled() {
+            if (!compilations.contains(compilationId)) {
+                throw CompilationCanceledException()
+            }
         }
     }
 }

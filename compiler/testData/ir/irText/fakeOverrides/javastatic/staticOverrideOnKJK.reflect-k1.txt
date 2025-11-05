@@ -1,0 +1,85 @@
+KClass: Java2
+  members:
+    fun Java2.bar(): kotlin.Int
+    fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    fun Java2.foo(kotlin.Int): kotlin.Unit
+    fun Java2.hashCode(): kotlin.Int
+    fun Java2.toString(): kotlin.String
+    fun foo(kotlin.Any!): kotlin.Unit
+    val Java2.a: kotlin.Int
+    var a: kotlin.Int
+  declaredMembers:
+    fun Java2.bar(): kotlin.Int
+    fun Java2.foo(kotlin.Int): kotlin.Unit
+    fun foo(kotlin.Any!): kotlin.Unit
+    val Java2.a: kotlin.Int
+    var a: kotlin.Int
+KClass: KotlinInterface
+  members:
+    fun KotlinInterface.bar(): kotlin.Int
+    fun KotlinInterface.equals(kotlin.Any?): kotlin.Boolean
+    fun KotlinInterface.foo(kotlin.Int): kotlin.Unit
+    fun KotlinInterface.hashCode(): kotlin.Int
+    fun KotlinInterface.toString(): kotlin.String
+    val KotlinInterface.a: kotlin.Int
+  declaredMembers:
+    fun KotlinInterface.bar(): kotlin.Int
+    fun KotlinInterface.foo(kotlin.Int): kotlin.Unit
+    val KotlinInterface.a: kotlin.Int
+KPackage: TestKt
+  fun test(A, B, C, D): kotlin.Unit
+KClass: Java1
+  members:
+    fun Java1.bar(): kotlin.Int
+    fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    fun Java1.foo(kotlin.Int): kotlin.Unit
+    fun Java1.hashCode(): kotlin.Int
+    fun Java1.toString(): kotlin.String
+    fun foo(kotlin.Any!): kotlin.Unit
+    val Java1.a: kotlin.Int
+    var a: kotlin.Int
+  declaredMembers:
+    fun foo(kotlin.Any!): kotlin.Unit
+    var a: kotlin.Int
+KClass: B
+  members:
+    fun B.bar(): kotlin.Int
+    fun B.equals(kotlin.Any?): kotlin.Boolean
+    fun B.foo(kotlin.Int): kotlin.Unit
+    fun B.hashCode(): kotlin.Int
+    fun B.toString(): kotlin.String
+    val B.a: kotlin.Int
+  declaredMembers:
+    fun B.bar(): kotlin.Int
+    fun B.foo(kotlin.Int): kotlin.Unit
+    val B.a: kotlin.Int
+KClass: D
+  members:
+    fun D.bar(): kotlin.Int
+    fun D.equals(kotlin.Any?): kotlin.Boolean
+    fun D.foo(kotlin.Int): kotlin.Unit
+    fun D.hashCode(): kotlin.Int
+    fun D.toString(): kotlin.String
+    val D.a: kotlin.Int
+  declaredMembers:
+    fun D.bar(): kotlin.Int
+    fun D.foo(kotlin.Int): kotlin.Unit
+    val D.a: kotlin.Int
+KClass: A
+  members:
+    fun A.bar(): kotlin.Int
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.foo(kotlin.Int): kotlin.Unit
+    fun A.hashCode(): kotlin.Int
+    fun A.toString(): kotlin.String
+    val A.a: kotlin.Int
+  declaredMembers:
+KClass: C
+  members:
+    fun C.bar(): kotlin.Int
+    fun C.equals(kotlin.Any?): kotlin.Boolean
+    fun C.foo(kotlin.Int): kotlin.Unit
+    fun C.hashCode(): kotlin.Int
+    fun C.toString(): kotlin.String
+    val C.a: kotlin.Int
+  declaredMembers:

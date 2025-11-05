@@ -3,7 +3,6 @@
 // IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6
 // IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
 // ^ MutableList has js specific methods
-// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
 
 interface X {
     val xs: MutableList<Any>

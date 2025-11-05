@@ -90,14 +90,18 @@ internal data class AllMembersPreservingTransitivity(
     val containsPackagePrivate: Boolean,
 )
 
-private val collectionKType = typeOf<Collection<*>>()
-private fun KType.flexibleCollectionTypeToImmutableCollectionTypeOrThis(): KType {
-    if (!isSubtypeOf(collectionKType)) return this
-    // Take the upper bound to coerce to immutable types (related: KT-11754)
-    val upperBound = (this as AbstractKType).upperBoundIfFlexible() ?: return this
-    // Substitute type args from lower bound to avoid star projections
-    val args = lowerBoundIfFlexible()?.arguments ?: return this
-    return (upperBound.classifier ?: nonDenotableSupertypesAreNotPossible()).createType(args)
+internal val mutableCollectionKType = typeOf<MutableCollection<*>>()
+private fun KType.coerceMutableCollectionTypeToImmutableCollectionType(): KType = when {
+    isSubtypeOf(mutableCollectionKType) -> {
+        // Take the upper bound to coerce to immutable types.
+        // The returned classifier for mutable types is immutable,
+        // it's a known problem (KT-11754) that we rely on here
+        val immutableCollectionClassifier = ((this as AbstractKType).upperBoundIfFlexible() ?: this).classifier
+        // Substitute type args from lower bound to avoid star projections
+        val args = (lowerBoundIfFlexible() ?: this).arguments
+        (immutableCollectionClassifier ?: nonDenotableSupertypesAreNotPossible()).createType(args)
+    }
+    else -> this
 }
 
 /**
@@ -109,9 +113,9 @@ internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMemb
     var containsInheritedStatics = false
     var containsPackagePrivate = false
     for (rawSupertype in kClass.supertypes) {
-        val supertype = rawSupertype.flexibleCollectionTypeToImmutableCollectionTypeOrThis()
-        val supertypeKClass = supertype.classifier as? KClass<*>
-            ?: nonDenotableSupertypesAreNotPossible()
+        // Because mutable collections are severely broken in reflect. Related: KT-11754
+        val supertype = rawSupertype.coerceMutableCollectionTypeToImmutableCollectionType()
+        val supertypeKClass = supertype.classifier as? KClass<*> ?: nonDenotableSupertypesAreNotPossible()
         val substitutor = KTypeSubstitutor.create(supertype)
         val supertypeMembers = supertypeKClass.allMembersPreservingTransitivity
         containsInheritedStatics = containsInheritedStatics || supertypeMembers.containsInheritedStatics

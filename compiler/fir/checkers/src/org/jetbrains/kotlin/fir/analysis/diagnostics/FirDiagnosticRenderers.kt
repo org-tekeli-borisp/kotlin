@@ -319,8 +319,8 @@ object FirDiagnosticRenderers {
                         var placeholderIndex = 0
 
                         if (isClassLike) {
-                            if (isAmbiguous && !it.classId.packageFqName.isRoot) {
-                                append(it.classId.packageFqName.asString())
+                            if (isAmbiguous) {
+                                append(if (it.classId.packageFqName.isRoot) "<root>" else it.classId.packageFqName.asString())
                                 append(".")
                             }
 

@@ -88,20 +88,22 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         if (skipAsserts) return
         val k1ReflectDump = k1ReflectStringBuilder.toString()
         val newReflectDump = newReflectStringBuilder.toString()
-        when {
-            SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in testServices.moduleStructure.allDirectives -> {
-                val k1ReflectFile =
-                    testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-k1.txt")
-                val newReflectFile =
-                    testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-new.txt")
-                assertions.assertEqualsToFile(k1ReflectFile, k1ReflectDump)
-                assertions.assertEqualsToFile(newReflectFile, newReflectDump)
+        val skipCompatibilityCheck = SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in testServices.moduleStructure.allDirectives
+        val k1ReflectFile =
+            testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-k1.txt")
+        val newReflectFile =
+            testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-new.txt")
+        if (skipCompatibilityCheck) {
+            assertions.assertEqualsToFile(k1ReflectFile, k1ReflectDump)
+            assertions.assertEqualsToFile(newReflectFile, newReflectDump)
 
-                assertions.assertTrue(k1ReflectDump != newReflectDump) {
-                    "K1 and new kotlin-reflect dumps are the same. Please drop SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK directive"
-                }
+            assertions.assertTrue(k1ReflectDump != newReflectDump) {
+                "K1 and new kotlin-reflect dumps are the same. Please drop SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK directive"
             }
-            k1ReflectDump != newReflectDump -> {
+        } else {
+            k1ReflectFile.delete()
+            newReflectFile.delete()
+            if (k1ReflectDump != newReflectDump) {
                 val k1ReflectHeader = "// K1 kotlin-reflect dump\n"
                 val newReflectHeader = "// New kotlin-reflect dump\n"
                 assertions.assertEquals(k1ReflectHeader + k1ReflectDump, newReflectHeader + newReflectDump)

@@ -32,6 +32,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("benchmarkString.kt")
+  public void testBenchmarkString() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/benchmarkString.kt");
+  }
+
+  @Test
   @TestMetadata("callingWasmDirectly.kt")
   public void testCallingWasmDirectly() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/callingWasmDirectly.kt");

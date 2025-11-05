@@ -108,7 +108,7 @@ private fun KType.coerceMutableCollectionTypeToImmutableCollectionType(): KType 
  * todo KDoc
  */
 internal fun getAllMembersPreservingTransitivity(kClass: KClassImpl<*>): AllMembersPreservingTransitivity {
-    val result = HashMap<EquatableCallableSignature, DescriptorKCallable<*>>() // todo rename
+    val result = HashMap<EquatableCallableSignature, DescriptorKCallable<*>>()
     val thisReceiver = kClass.descriptor.thisAsReceiverParameter
     var containsInheritedStatics = false
     var containsPackagePrivate = false

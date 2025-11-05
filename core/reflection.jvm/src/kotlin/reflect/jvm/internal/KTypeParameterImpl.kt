@@ -25,20 +25,19 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import kotlin.jvm.internal.TypeParameterReference
+import kotlin.jvm.internal.KTypeParameterBase
 import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal class KTypeParameterImpl private constructor(
     descriptor: TypeParameterDescriptor?,
-    private val _container: KTypeParameterOwnerImpl?,
-    private val computeContainer: (() -> KTypeParameterOwnerImpl)?,
+    container: KTypeParameterOwnerImpl?,
+    computeContainer: (() -> KTypeParameterOwnerImpl)?,
     override val name: String,
     override val variance: KVariance,
     override val isReified: Boolean,
-) : KTypeParameter, TypeParameterMarker, TypeConstructorMarker {
+) : KTypeParameterBase(container, computeContainer), TypeParameterMarker, TypeConstructorMarker {
     constructor(
         container: KTypeParameterOwnerImpl,
         name: String,
@@ -63,18 +62,6 @@ internal class KTypeParameterImpl private constructor(
 
     @Volatile
     override lateinit var upperBounds: List<KType>
-
-    private val container: KTypeParameterOwnerImpl
-        get() = _container ?: computeContainer!!()
-
-    override fun equals(other: Any?) =
-        other is KTypeParameterImpl && container == other.container && name == other.name
-
-    override fun hashCode() =
-        container.hashCode() * 31 + name.hashCode()
-
-    override fun toString() =
-        TypeParameterReference.toString(this)
 }
 
 private fun Variance.toKVariance(): KVariance =

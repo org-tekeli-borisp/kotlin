@@ -90,12 +90,12 @@ internal class DescriptorKFunction private constructor(
                     createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
             }
             else -> throw KotlinReflectionInternalError("Could not compute caller for function: $descriptor (member = $member)")
-        }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptySet())
+        }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
     }
 
     override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
         @Suppress("USELESS_CAST")
-        val preventUnboxingForIndices = mutableSetOf<Int>()
+        val preventUnboxingForIndices = mutableListOf<Int>()
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinFunction -> run {
                 getFunctionWithDefaultParametersForValueClassOverride(this)?.let { defaultImplsFunction ->

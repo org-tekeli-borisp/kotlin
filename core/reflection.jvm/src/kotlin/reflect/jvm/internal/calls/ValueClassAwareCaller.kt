@@ -25,7 +25,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
     callable: ReflectKCallable<*>,
     private val caller: Caller<M>,
     private val isDefault: Boolean,
-    forbidUnboxingForIndices: Set<Int>,
+    forbidUnboxingForIndices: List<Int>,
 ) : Caller<M> {
     override val member: M
         get() = caller.member
@@ -188,7 +188,7 @@ private fun Member.acceptsBoxedReceiverParameter(): Boolean {
 internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(
     callable: ReflectKCallable<*>,
     isDefault: Boolean,
-    forbidUnboxingForIndices: Set<Int>,
+    forbidUnboxingForIndices: List<Int>,
 ): Caller<M> =
     if (callable.parameters.any { it.type.isInlineClassType } || callable.returnType.isInlineClassType)
         ValueClassAwareCaller(callable, this, isDefault, forbidUnboxingForIndices)

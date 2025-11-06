@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.cli.CliDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.java.FirJavaAnnotationProvider
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
 import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator

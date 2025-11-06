@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
- * Removes redundant casts like
- * - TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
- *       GET_VAR 'val arg: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
- *
- * , which can appear after function inlining.
+ * Removes redundant casts like the following, which can appear after function inlining
+ * ```
+ * TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+ *   GET_VAR 'val arg: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+ * ```
  */
 class RedundantCastsRemoverLowering(val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {

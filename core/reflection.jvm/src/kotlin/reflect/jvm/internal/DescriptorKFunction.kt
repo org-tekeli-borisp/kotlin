@@ -158,15 +158,10 @@ internal class DescriptorKFunction private constructor(
     }
 
     override val overridden: Collection<ReflectKFunction>
-        get() {
-            return descriptor.overriddenDescriptors.map {
-                DescriptorKFunction(
-                    Reflection.getOrCreateKotlinClass(
-                        (it.containingDeclaration as ClassDescriptor).toJavaClass()
-                    ) as KDeclarationContainerImpl,
-                    it
-                )
-            }
+        get() = descriptor.overriddenDescriptors.map {
+            val containerClass = (it.containingDeclaration as ClassDescriptor).toJavaClass()
+                ?: throw KotlinReflectionInternalError("Unknown container class for overridden function: $this")
+            DescriptorKFunction(containerClass.kotlin as KClassImpl<*>, it)
         }
 
     private fun getFunctionWithDefaultParametersForValueClassOverride(function: ReflectKFunction): ReflectKFunction? {

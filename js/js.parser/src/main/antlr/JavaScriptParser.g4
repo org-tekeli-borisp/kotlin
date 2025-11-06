@@ -395,8 +395,8 @@ singleExpressionImpl
     | New singleExpressionImpl arguments                                           # NewExpression
     | New singleExpressionImpl                                                     # NewExpression
     | singleExpressionImpl arguments                                               # ArgumentsExpression
-    | New '.' identifier                                                           # MetaExpression // new.target
-    | Import '.' identifier                                                        # ImportMetaExpression
+    | New '.' Target                                                               # MetaExpression // new.target
+    | Import '.' Meta                                                              # ImportMetaExpression
     | singleExpressionImpl {this.notLineTerminator()}? '++'                        # PostIncrementExpression
     | singleExpressionImpl {this.notLineTerminator()}? '--'                        # PostDecreaseExpression
     | Delete singleExpressionImpl                                                  # DeleteExpression
@@ -542,6 +542,8 @@ identifier
     | From
     | Yield
     | Of
+    | Target
+    | Meta
     ;
 
 reservedWord

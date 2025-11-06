@@ -43,9 +43,10 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		From=100, Of=101, Yield=102, YieldStar=103, Class=104, Enum=105, Extends=106, 
 		Super=107, Const=108, Export=109, Import=110, Async=111, Await=112, Implements=113, 
 		StrictLet=114, NonStrictLet=115, Private=116, Public=117, Interface=118, 
-		Package=119, Protected=120, Static=121, Identifier=122, StringLiteral=123, 
-		BackTick=124, WhiteSpaces=125, LineTerminator=126, HtmlComment=127, CDataComment=128, 
-		UnexpectedCharacter=129, TemplateStringStartExpression=130, TemplateStringAtom=131;
+		Package=119, Protected=120, Static=121, Meta=122, Target=123, Identifier=124, 
+		StringLiteral=125, BackTick=126, WhiteSpaces=127, LineTerminator=128, 
+		HtmlComment=129, CDataComment=130, UnexpectedCharacter=131, TemplateStringStartExpression=132, 
+		TemplateStringAtom=133;
 	public static final int
 		RULE_program = 0, RULE_sourceElement = 1, RULE_optionalStatements = 2, 
 		RULE_optionalSingleExpression = 3, RULE_optionalExpressionOrStatement = 4, 
@@ -121,7 +122,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			"'in'", "'try'", "'as'", "'from'", "'of'", "'yield'", "'yield*'", "'class'", 
 			"'enum'", "'extends'", "'super'", "'const'", "'export'", "'import'", 
 			"'async'", "'await'", "'implements'", null, null, "'private'", "'public'", 
-			"'interface'", "'package'", "'protected'", "'static'"
+			"'interface'", "'package'", "'protected'", "'static'", "'meta'", "'target'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -148,9 +149,9 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			"From", "Of", "Yield", "YieldStar", "Class", "Enum", "Extends", "Super", 
 			"Const", "Export", "Import", "Async", "Await", "Implements", "StrictLet", 
 			"NonStrictLet", "Private", "Public", "Interface", "Package", "Protected", 
-			"Static", "Identifier", "StringLiteral", "BackTick", "WhiteSpaces", "LineTerminator", 
-			"HtmlComment", "CDataComment", "UnexpectedCharacter", "TemplateStringStartExpression", 
-			"TemplateStringAtom"
+			"Static", "Meta", "Target", "Identifier", "StringLiteral", "BackTick", 
+			"WhiteSpaces", "LineTerminator", "HtmlComment", "CDataComment", "UnexpectedCharacter", 
+			"TemplateStringStartExpression", "TemplateStringAtom"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -417,7 +418,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			setState(203);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361326928L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 2305843009213693951L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361326928L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 9223372036854775807L) != 0)) {
 				{
 				setState(202);
 				singleExpression();
@@ -1082,6 +1083,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Package:
 			case Protected:
 			case Static:
+			case Meta:
+			case Target:
 			case Identifier:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -1150,6 +1153,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				case Package:
 				case Protected:
 				case Static:
+				case Meta:
+				case Target:
 				case Identifier:
 					{
 					setState(260);
@@ -1259,7 +1264,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			setState(284);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (((((_la - 62)) & ~0x3f) == 0 && ((1L << (_la - 62)) & 4611686018427385859L) != 0)) {
+			if (((((_la - 62)) & ~0x3f) == 0 && ((1L << (_la - 62)) & -2045L) != 0)) {
 				{
 				setState(280);
 				importAliasName();
@@ -1436,6 +1441,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Package:
 			case Protected:
 			case Static:
+			case Meta:
+			case Target:
 			case Identifier:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -1498,7 +1505,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			{
 			setState(297);
 			_la = _input.LA(1);
-			if ( !(((((_la - 102)) & ~0x3f) == 0 && ((1L << (_la - 102)) & 1049601L) != 0)) ) {
+			if ( !(((((_la - 102)) & ~0x3f) == 0 && ((1L << (_la - 102)) & 4195329L) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -1663,6 +1670,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Package:
 			case Protected:
 			case Static:
+			case Meta:
+			case Target:
 			case Identifier:
 				{
 				setState(303);
@@ -2033,6 +2042,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Package:
 			case Protected:
 			case Static:
+			case Meta:
+			case Target:
 			case Identifier:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -2142,7 +2153,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			setState(360);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (((((_la - 62)) & ~0x3f) == 0 && ((1L << (_la - 62)) & 4611686018427385859L) != 0)) {
+			if (((((_la - 62)) & ~0x3f) == 0 && ((1L << (_la - 62)) & -2045L) != 0)) {
 				{
 				setState(356);
 				exportAliasName();
@@ -2969,7 +2980,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(431);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361326928L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 2305843009213693951L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361326928L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 9223372036854775807L) != 0)) {
 					{
 					setState(430);
 					((ForStatementContext)_localctx).condition = expressionSequence(0);
@@ -2981,7 +2992,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(435);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361326928L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 2305843009213693951L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361326928L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 9223372036854775807L) != 0)) {
 					{
 					setState(434);
 					((ForStatementContext)_localctx).increment = expressionSequence(0);
@@ -4046,7 +4057,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(560);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (_la==OpenBracket || _la==OpenBrace || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 1125899906842623L) != 0)) {
+				if (_la==OpenBracket || _la==OpenBrace || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 4503599627370495L) != 0)) {
 					{
 					setState(559);
 					assignable();
@@ -4240,7 +4251,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			setState(583);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 1125899906842623L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 4503599627370495L) != 0)) {
 				{
 				setState(582);
 				formalParameterList();
@@ -4622,7 +4633,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(636);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 1125899906842623L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 4503599627370495L) != 0)) {
 					{
 					setState(635);
 					formalParameterList();
@@ -4678,7 +4689,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(655);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 1125899906842623L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 4503599627370495L) != 0)) {
 					{
 					setState(654);
 					formalParameterList();
@@ -4853,6 +4864,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Package:
 			case Protected:
 			case Static:
+			case Meta:
+			case Target:
 			case Identifier:
 			case StringLiteral:
 				enterOuterAlt(_localctx, 1);
@@ -5025,6 +5038,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Package:
 			case Protected:
 			case Static:
+			case Meta:
+			case Target:
 			case Identifier:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -5431,7 +5446,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			setState(718);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361064784L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 2305843009213693951L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361064784L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 9223372036854775807L) != 0)) {
 				{
 				setState(717);
 				arrayElement();
@@ -5786,7 +5801,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(761);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 1125899906842623L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 4503599627370495L) != 0)) {
 					{
 					setState(760);
 					formalParameterList();
@@ -5951,6 +5966,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Package:
 			case Protected:
 			case Static:
+			case Meta:
+			case Target:
 			case Identifier:
 				enterOuterAlt(_localctx, 1);
 				{
@@ -6048,7 +6065,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			setState(804);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361064784L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 2305843009213693951L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & -4611686018361064784L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 9223372036854775807L) != 0)) {
 				{
 				setState(793);
 				argument();
@@ -6461,9 +6478,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 	public static class MetaExpressionContext extends SingleExpressionImplContext {
 		public TerminalNode New() { return getToken(JavaScriptParser.New, 0); }
 		public TerminalNode Dot() { return getToken(JavaScriptParser.Dot, 0); }
-		public IdentifierContext identifier() {
-			return getRuleContext(IdentifierContext.class,0);
-		}
+		public TerminalNode Target() { return getToken(JavaScriptParser.Target, 0); }
 		public MetaExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -6555,9 +6570,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 	public static class ImportMetaExpressionContext extends SingleExpressionImplContext {
 		public TerminalNode Import() { return getToken(JavaScriptParser.Import, 0); }
 		public TerminalNode Dot() { return getToken(JavaScriptParser.Dot, 0); }
-		public IdentifierContext identifier() {
-			return getRuleContext(IdentifierContext.class,0);
-		}
+		public TerminalNode Meta() { return getToken(JavaScriptParser.Meta, 0); }
 		public ImportMetaExpressionContext(SingleExpressionImplContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -7458,7 +7471,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(832);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (((((_la - 99)) & ~0x3f) == 0 && ((1L << (_la - 99)) & 8458255L) != 0)) {
+				if (((((_la - 99)) & ~0x3f) == 0 && ((1L << (_la - 99)) & 58789903L) != 0)) {
 					{
 					setState(831);
 					identifier();
@@ -7516,7 +7529,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(846);
 				match(Dot);
 				setState(847);
-				identifier();
+				match(Target);
 				}
 				break;
 			case 7:
@@ -7529,7 +7542,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(849);
 				match(Dot);
 				setState(850);
-				identifier();
+				match(Meta);
 				}
 				break;
 			case 8:
@@ -8506,7 +8519,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(1018);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 1125899906842623L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 4503599627370495L) != 0)) {
 					{
 					setState(1017);
 					formalParameterList();
@@ -8648,6 +8661,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			case Package:
 			case Protected:
 			case Static:
+			case Meta:
+			case Target:
 			case Identifier:
 			case StringLiteral:
 				enterOuterAlt(_localctx, 1);
@@ -8664,7 +8679,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(1034);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 1125899906842623L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 262688L) != 0) || ((((_la - 73)) & ~0x3f) == 0 && ((1L << (_la - 73)) & 4503599627370495L) != 0)) {
 					{
 					setState(1033);
 					formalParameterList();
@@ -9348,6 +9363,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		public TerminalNode From() { return getToken(JavaScriptParser.From, 0); }
 		public TerminalNode Yield() { return getToken(JavaScriptParser.Yield, 0); }
 		public TerminalNode Of() { return getToken(JavaScriptParser.Of, 0); }
+		public TerminalNode Target() { return getToken(JavaScriptParser.Target, 0); }
+		public TerminalNode Meta() { return getToken(JavaScriptParser.Meta, 0); }
 		public IdentifierContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -9376,7 +9393,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 			{
 			setState(1086);
 			_la = _input.LA(1);
-			if ( !(((((_la - 99)) & ~0x3f) == 0 && ((1L << (_la - 99)) & 8458255L) != 0)) ) {
+			if ( !(((((_la - 99)) & ~0x3f) == 0 && ((1L << (_la - 99)) & 58789903L) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -10250,7 +10267,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0083\u0480\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
+		"\u0004\u0001\u0085\u0480\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
 		"\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004"+
 		"\u0002\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007"+
 		"\u0002\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b"+
@@ -10391,10 +10408,10 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0018\u001a\u001c\u001e \"$&(*,.02468:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprt"+
 		"vxz|~\u0080\u0082\u0084\u0086\u0088\u008a\u008c\u008e\u0090\u0092\u0094"+
 		"\u0096\u0098\u009a\u009c\u009e\u00a0\u00a2\u00a4\u00a6\u00a8\u00aa\u00ac"+
-		"\u00ae\u00b0\u00b2\u00b4\u00b6\u0000\f\u0003\u0000ffppzz\u0001\u0000f"+
+		"\u00ae\u00b0\u00b2\u00b4\u00b6\u0000\f\u0003\u0000ffpp||\u0001\u0000f"+
 		"g\u0001\u0000\u001a\u001c\u0001\u0000\u0016\u0017\u0001\u0000 \"\u0001"+
 		"\u0000#&\u0001\u0000\'*\u0001\u00000<\u0001\u0000@D\u0001\u0000EH\u0004"+
-		"\u0000cfoosszz\u0001\u0000rs\u052a\u0000\u00b9\u0001\u0000\u0000\u0000"+
+		"\u0000cfoossz|\u0001\u0000rs\u052a\u0000\u00b9\u0001\u0000\u0000\u0000"+
 		"\u0002\u00c0\u0001\u0000\u0000\u0000\u0004\u00c5\u0001\u0000\u0000\u0000"+
 		"\u0006\u00cb\u0001\u0000\u0000\u0000\b\u00d6\u0001\u0000\u0000\u0000\n"+
 		"\u00d9\u0001\u0000\u0000\u0000\f\u00f1\u0001\u0000\u0000\u0000\u000e\u00f3"+
@@ -10490,7 +10507,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0003\u0016\u000b\u0000\u0106\u0104\u0001\u0000\u0000\u0000\u0106\u0105"+
 		"\u0001\u0000\u0000\u0000\u0107\u0108\u0001\u0000\u0000\u0000\u0108\u0109"+
 		"\u0003\"\u0011\u0000\u0109\u010a\u0003\u00b6[\u0000\u010a\u010e\u0001"+
-		"\u0000\u0000\u0000\u010b\u010c\u0005{\u0000\u0000\u010c\u010e\u0003\u00b6"+
+		"\u0000\u0000\u0000\u010b\u010c\u0005}\u0000\u0000\u010c\u010e\u0003\u00b6"+
 		"[\u0000\u010d\u0102\u0001\u0000\u0000\u0000\u010d\u010b\u0001\u0000\u0000"+
 		"\u0000\u010e\u0015\u0001\u0000\u0000\u0000\u010f\u0115\u0005\t\u0000\u0000"+
 		"\u0110\u0111\u0003\u0018\f\u0000\u0111\u0112\u0005\r\u0000\u0000\u0112"+
@@ -10505,7 +10522,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0000\u0000\u0000\u0120\u0123\u0003\u001a\r\u0000\u0121\u0122\u0005c"+
 		"\u0000\u0000\u0122\u0124\u0003\u001c\u000e\u0000\u0123\u0121\u0001\u0000"+
 		"\u0000\u0000\u0123\u0124\u0001\u0000\u0000\u0000\u0124\u0019\u0001\u0000"+
-		"\u0000\u0000\u0125\u0128\u0003\u00acV\u0000\u0126\u0128\u0005{\u0000\u0000"+
+		"\u0000\u0000\u0125\u0128\u0003\u00acV\u0000\u0126\u0128\u0005}\u0000\u0000"+
 		"\u0127\u0125\u0001\u0000\u0000\u0000\u0127\u0126\u0001\u0000\u0000\u0000"+
 		"\u0128\u001b\u0001\u0000\u0000\u0000\u0129\u012a\u0007\u0000\u0000\u0000"+
 		"\u012a\u001d\u0001\u0000\u0000\u0000\u012b\u012c\u0003$\u0012\u0000\u012c"+
@@ -10515,7 +10532,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0000\u0000\u0000\u0132\u0133\u0005c\u0000\u0000\u0133\u0135\u0003\u00ac"+
 		"V\u0000\u0134\u0132\u0001\u0000\u0000\u0000\u0134\u0135\u0001\u0000\u0000"+
 		"\u0000\u0135!\u0001\u0000\u0000\u0000\u0136\u0137\u0005d\u0000\u0000\u0137"+
-		"\u0138\u0005{\u0000\u0000\u0138#\u0001\u0000\u0000\u0000\u0139\u013c\u0003"+
+		"\u0138\u0005}\u0000\u0000\u0138#\u0001\u0000\u0000\u0000\u0139\u013c\u0003"+
 		"\u00acV\u0000\u013a\u013b\u0005c\u0000\u0000\u013b\u013d\u0003\u00acV"+
 		"\u0000\u013c\u013a\u0001\u0000\u0000\u0000\u013c\u013d\u0001\u0000\u0000"+
 		"\u0000\u013d%\u0001\u0000\u0000\u0000\u013e\u0140\u0005m\u0000\u0000\u013f"+
@@ -10773,7 +10790,7 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0000\u030d\u02ea\u0001\u0000\u0000\u0000\u030d\u02f1\u0001\u0000\u0000"+
 		"\u0000\u030d\u02fe\u0001\u0000\u0000\u0000\u030d\u0303\u0001\u0000\u0000"+
 		"\u0000\u030d\u030a\u0001\u0000\u0000\u0000\u030e\u0083\u0001\u0000\u0000"+
-		"\u0000\u030f\u0317\u0003\u00acV\u0000\u0310\u0317\u0005{\u0000\u0000\u0311"+
+		"\u0000\u030f\u0317\u0003\u00acV\u0000\u0310\u0317\u0005}\u0000\u0000\u0311"+
 		"\u0317\u0003\u00a4R\u0000\u0312\u0313\u0005\u0005\u0000\u0000\u0313\u0314"+
 		"\u0003\u008cF\u0000\u0314\u0315\u0005\u0006\u0000\u0000\u0315\u0317\u0001"+
 		"\u0000\u0000\u0000\u0316\u030f\u0001\u0000\u0000\u0000\u0316\u0310\u0001"+
@@ -10808,8 +10825,8 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0003\u008eG\u0000\u0349\u034a\u0003\u0086C\u0000\u034a\u037c\u0001\u0000"+
 		"\u0000\u0000\u034b\u034c\u0005O\u0000\u0000\u034c\u037c\u0003\u008eG+"+
 		"\u034d\u034e\u0005O\u0000\u0000\u034e\u034f\u0005\u0013\u0000\u0000\u034f"+
-		"\u037c\u0003\u00aeW\u0000\u0350\u0351\u0005n\u0000\u0000\u0351\u0352\u0005"+
-		"\u0013\u0000\u0000\u0352\u037c\u0003\u00aeW\u0000\u0353\u0354\u0005`\u0000"+
+		"\u037c\u0005{\u0000\u0000\u0350\u0351\u0005n\u0000\u0000\u0351\u0352\u0005"+
+		"\u0013\u0000\u0000\u0352\u037c\u0005z\u0000\u0000\u0353\u0354\u0005`\u0000"+
 		"\u0000\u0354\u037c\u0003\u008eG%\u0355\u0356\u0005T\u0000\u0000\u0356"+
 		"\u037c\u0003\u008eG$\u0357\u0358\u0005L\u0000\u0000\u0358\u037c\u0003"+
 		"\u008eG#\u0359\u035a\u0005\u0014\u0000\u0000\u035a\u037c\u0003\u008eG"+
@@ -10933,18 +10950,18 @@ public class JavaScriptParser extends JavaScriptParserBase {
 		"\u0001\u0000\u0000\u0000\u0411\u0410\u0001\u0000\u0000\u0000\u0412\u009b"+
 		"\u0001\u0000\u0000\u0000\u0413\u0414\u0007\u0007\u0000\u0000\u0414\u009d"+
 		"\u0001\u0000\u0000\u0000\u0415\u041d\u0005>\u0000\u0000\u0416\u041d\u0005"+
-		"?\u0000\u0000\u0417\u041d\u0005{\u0000\u0000\u0418\u041d\u0003\u00a0P"+
+		"?\u0000\u0000\u0417\u041d\u0005}\u0000\u0000\u0418\u041d\u0003\u00a0P"+
 		"\u0000\u0419\u041d\u0005\u0004\u0000\u0000\u041a\u041d\u0003\u00a4R\u0000"+
 		"\u041b\u041d\u0003\u00a6S\u0000\u041c\u0415\u0001\u0000\u0000\u0000\u041c"+
 		"\u0416\u0001\u0000\u0000\u0000\u041c\u0417\u0001\u0000\u0000\u0000\u041c"+
 		"\u0418\u0001\u0000\u0000\u0000\u041c\u0419\u0001\u0000\u0000\u0000\u041c"+
 		"\u041a\u0001\u0000\u0000\u0000\u041c\u041b\u0001\u0000\u0000\u0000\u041d"+
-		"\u009f\u0001\u0000\u0000\u0000\u041e\u0422\u0005|\u0000\u0000\u041f\u0421"+
+		"\u009f\u0001\u0000\u0000\u0000\u041e\u0422\u0005~\u0000\u0000\u041f\u0421"+
 		"\u0003\u00a2Q\u0000\u0420\u041f\u0001\u0000\u0000\u0000\u0421\u0424\u0001"+
 		"\u0000\u0000\u0000\u0422\u0420\u0001\u0000\u0000\u0000\u0422\u0423\u0001"+
 		"\u0000\u0000\u0000\u0423\u0425\u0001\u0000\u0000\u0000\u0424\u0422\u0001"+
-		"\u0000\u0000\u0000\u0425\u0426\u0005|\u0000\u0000\u0426\u00a1\u0001\u0000"+
-		"\u0000\u0000\u0427\u042d\u0005\u0083\u0000\u0000\u0428\u0429\u0005\u0082"+
+		"\u0000\u0000\u0000\u0425\u0426\u0005~\u0000\u0000\u0426\u00a1\u0001\u0000"+
+		"\u0000\u0000\u0427\u042d\u0005\u0085\u0000\u0000\u0428\u0429\u0005\u0084"+
 		"\u0000\u0000\u0429\u042a\u0003\u008cF\u0000\u042a\u042b\u0005\n\u0000"+
 		"\u0000\u042b\u042d\u0001\u0000\u0000\u0000\u042c\u0427\u0001\u0000\u0000"+
 		"\u0000\u042c\u0428\u0001\u0000\u0000\u0000\u042d\u00a3\u0001\u0000\u0000"+

@@ -682,14 +682,9 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitImportMetaExpression(ctx: JavaScriptParser.ImportMetaExpressionContext): JsNameRef {
-        val identifier = ctx.identifier()
-        if (identifier.text != "meta") {
-            reportError("'meta' identifier expected, got '${identifier.text}'", ctx.identifier())
-        }
-
-        return makeRefNode(identifier.text).apply {
+        return makeRefNode(ctx.Meta().text).apply {
             qualifier = makeRefNode(ctx.Import().text).applyLocation(ctx.Import())
-        }.applyLocation(identifier)
+        }.applyLocation(ctx.Meta())
     }
 
     override fun visitMultiplicativeExpression(ctx: JavaScriptParser.MultiplicativeExpressionContext): JsBinaryOperation {

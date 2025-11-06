@@ -204,6 +204,11 @@ Package      : 'package'    {this.isStrictMode()}?;
 Protected    : 'protected'  {this.isStrictMode()}?;
 Static       : 'static'     {this.isStrictMode()}?;
 
+/// Special Identifiers
+
+Meta         : 'meta';
+Target       : 'target';
+
 /// Identifier Names and Identifiers
 
 Identifier: IdentifierStart IdentifierPart*;

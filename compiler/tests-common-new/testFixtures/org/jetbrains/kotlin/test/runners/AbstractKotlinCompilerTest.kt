@@ -45,7 +45,6 @@ abstract class AbstractKotlinCompilerTest {
 
         val defaultConfiguration: TestConfigurationBuilder.() -> Unit = {
             assertions = JUnit5Assertions
-            useAdditionalService<FixtureManager>(::FixtureManager)
             useAdditionalService<TemporaryDirectoryManager>(::TemporaryDirectoryManagerImpl)
             useAdditionalService<TargetPlatformProvider>(::TargetPlatformProviderForCompilerTests)
             useSourcePreprocessor(*defaultPreprocessors.toTypedArray())

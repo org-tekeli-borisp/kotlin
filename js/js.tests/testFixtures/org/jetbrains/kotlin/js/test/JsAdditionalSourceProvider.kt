@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -15,42 +16,47 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.getFixture
 import java.io.File
-import java.io.FileFilter
 
 class JsAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,
         module: TestModule,
-        testModuleStructure: TestModuleStructure,
+        testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         if (JsEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return emptyList()
         // Add the files only to common modules with no dependencies, otherwise they'll produce "IrSymbol is already bound"
         if (module.allDependencies.isNotEmpty()) {
             return emptyList()
         }
-
-        val testDirectory = module.files.first().originalFile.parent
-
-        return buildList {
-            add(testServices.getFixture(ASSERTION_HELPERS).toTestFile())
-            getLocalCommonFile(testDirectory, KotlinFileType.EXTENSION)?.toTestFile()?.let(::add)
-        }
+        return getAdditionalKotlinFiles(module.files.first().originalFile.parent).map { it.toTestFile() }
     }
 
     companion object {
         private const val COMMON_FILES_NAME = "_common"
-        private const val ASSERTION_HELPERS = "assertionHelpers.kt"
+        private const val COMMON_FILES_DIR = "_commonFiles/"
+        private const val COMMON_FILES_DIR_PATH = JsEnvironmentConfigurator.TEST_DATA_DIR_PATH + "/" + COMMON_FILES_DIR
 
-        private fun getLocalCommonFile(directory: String, extension: String): File? {
+        private fun getFilesInDirectoryByExtension(directory: String, extension: String): List<String> {
+            val dir = ForTestCompileRuntime.transformTestDataPath(directory)
+            if (!dir.isDirectory) return emptyList()
+
+            return dir.listFiles { it.extension == extension }?.map { it.absolutePath } ?: emptyList()
+        }
+
+        private fun getAdditionalFiles(directory: String, extension: String): List<File> {
+            val globalCommonFiles = getFilesInDirectoryByExtension(COMMON_FILES_DIR_PATH, extension).map { File(it) }
             val localCommonFilePath = "$directory/$COMMON_FILES_NAME.$extension"
-            val localCommonFile = File(localCommonFilePath).takeIf { it.exists() } ?: return null
-            return localCommonFile
+            val localCommonFile = File(localCommonFilePath).takeIf { it.exists() } ?: return globalCommonFiles
+            return globalCommonFiles + localCommonFile
+        }
+
+        fun getAdditionalKotlinFiles(directory: String): List<File> {
+            return getAdditionalFiles(directory, KotlinFileType.EXTENSION)
         }
 
         fun getAdditionalJsFiles(directory: String): List<File> {
-            return listOfNotNull(getLocalCommonFile(directory, JavaScript.EXTENSION))
+            return getAdditionalFiles(directory, JavaScript.EXTENSION)
         }
     }
 }

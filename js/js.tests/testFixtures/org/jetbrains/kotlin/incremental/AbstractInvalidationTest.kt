@@ -31,21 +31,11 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
-import org.jetbrains.kotlin.test.runners.toKotlinTestInfo
-import org.jetbrains.kotlin.test.services.FixtureManager
-import org.jetbrains.kotlin.test.services.KotlinTestInfo
-import org.jetbrains.kotlin.test.services.TemporaryDirectoryManager
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.getFixture
-import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
-import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.TestInfo
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -81,19 +71,10 @@ abstract class AbstractInvalidationTest(
     }
 
     private val zipAccessor = ZipFileSystemCacheableAccessor(2)
-    protected val testServices = TestServices().apply {
-        register(FixtureManager::class, FixtureManager(this))
-        register(TemporaryDirectoryManager::class, TemporaryDirectoryManagerImpl(this))
-    }
 
     protected abstract val rootDisposable: TestDisposable
 
     protected abstract val environment: KotlinCoreEnvironment
-
-    @BeforeEach
-    fun initTestInfo(testInfo: TestInfo) {
-        testServices.register(KotlinTestInfo::class, testInfo.toKotlinTestInfo())
-    }
 
     @AfterEach
     protected fun disposeEnvironment() {
@@ -329,7 +310,8 @@ abstract class AbstractInvalidationTest(
         }
 
         protected fun prepareExternalJsFiles(): MutableList<String> {
-            return testDir.filesInDir.mapNotNullTo(mutableListOf(testServices.getFixture(MODULE_EMULATION_FILE).absolutePath)) { file ->
+            val moduleEmulationPath = ForTestCompileRuntime.transformTestDataPath(MODULE_EMULATION_FILE)
+            return testDir.filesInDir.mapNotNullTo(mutableListOf(moduleEmulationPath.absolutePath)) { file ->
                 file.takeIf { it.name.isAllowedJsFile() }?.readText()?.let { jsCode ->
                     val externalModule = jsDir.resolve(file.name)
                     externalModule.writeAsJsModule(jsCode, file.nameWithoutExtension)

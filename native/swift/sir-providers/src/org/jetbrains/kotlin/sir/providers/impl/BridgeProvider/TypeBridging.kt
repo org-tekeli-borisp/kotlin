@@ -137,20 +137,20 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
     }
 }
 
-internal fun bridgeParameter(parameter: SirParameter, index: Int): BridgeParameter {
+internal fun bridgeParameter(parameter: SirParameter, index: Int): BridgedParameter {
     val bridgeParameterName = parameter.name?.let(::createBridgeParameterName) ?: "_$index"
     val bridge = if (parameter.isVariadic)
         bridgeTypeForVariadicParameter(parameter.type) as SwiftToKotlinBridge
     else
         bridgeParameterType(parameter.type)
-    return BridgeParameter.In(
+    return BridgedParameter.In(
         name = bridgeParameterName,
         bridge = bridge,
         isExplicit = parameter.origin != null,
     )
 }
 
-internal sealed interface BridgeParameter {
+internal sealed interface BridgedParameter {
     val name: String
     val bridge: SwiftToKotlinBridge
     val isExplicit: Boolean
@@ -159,13 +159,13 @@ internal sealed interface BridgeParameter {
         override val name: String,
         override val bridge: SwiftToKotlinBridge,
         override val isExplicit: Boolean = false,
-    ) : BridgeParameter
+    ) : BridgedParameter
 
     data class InOut(
         override val name: String,
         override val bridge: Bridge,
         override val isExplicit: Boolean = false,
-    ) : BridgeParameter
+    ) : BridgedParameter
 
     val isRenderable: Boolean get() = bridge !is AsOptionalNothing && bridge !is AsVoid
 }

@@ -20,11 +20,12 @@ fun box(): String {
         target: new target,
         meta: new meta
     })""")
-    assertEquals(obj.`async`, 1)
-    assertEquals(obj.`as`, 1)
-    assertEquals(obj.`from`, 1)
-    assertEquals(obj.`of`, 1)
-    assertEquals(obj.`target`, 1)
+    assertEquals(obj.`async`.value, 1)
+    assertEquals(obj.`as`.value, 1)
+    assertEquals(obj.`from`.value, 1)
+    assertEquals(obj.`of`.value, 1)
+    assertEquals(obj.`target`.value, 1)
+    assertEquals(obj.`meta`.value, 1)
 
     return "OK"
 }

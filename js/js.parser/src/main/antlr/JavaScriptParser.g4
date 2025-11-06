@@ -391,9 +391,8 @@ singleExpressionImpl
     | singleExpressionImpl '?.'? '[' expressionSequence ']'                        # MemberIndexExpression
     | singleExpressionImpl '?'? '.' '#'? identifierName                            # MemberDotExpression
     // Split to try `new Date()` first, then `new Date`.
-    | New identifier arguments                                                     # NewExpression
-    | New singleExpressionImpl arguments                                           # NewExpression
-    | New singleExpressionImpl                                                     # NewExpression
+    | New identifier arguments?                                                    # NewExpression
+    | New singleExpressionImpl arguments?                                          # NewExpression
     | singleExpressionImpl arguments                                               # ArgumentsExpression
     | New '.' Target                                                               # MetaExpression // new.target
     | Import '.' Meta                                                              # ImportMetaExpression

@@ -7633,6 +7633,12 @@ public class LightTreeJsBoxTestGenerated extends AbstractLightTreeJsBoxTest {
     public void testWhile() {
       runTest("js/js.translator/testData/box/jsCode/while.kt");
     }
+
+    @Test
+    @TestMetadata("yield.kt")
+    public void testYield() {
+      runTest("js/js.translator/testData/box/jsCode/yield.kt");
+    }
   }
 
   @Nested

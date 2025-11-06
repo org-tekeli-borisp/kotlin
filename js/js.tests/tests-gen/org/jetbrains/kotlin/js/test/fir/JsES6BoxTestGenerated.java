@@ -7816,6 +7816,12 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     public void testWhile() {
       runTest("js/js.translator/testData/box/jsCode/while.kt");
     }
+
+    @Test
+    @TestMetadata("yield.kt")
+    public void testYield() {
+      runTest("js/js.translator/testData/box/jsCode/yield.kt");
+    }
   }
 
   @Nested

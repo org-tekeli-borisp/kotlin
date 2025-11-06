@@ -42,7 +42,6 @@ internal class ValueClassAwareCaller<out M : Member?>(
     private class BoxUnboxData(
         val argumentRange: IntRange,
         val unboxParameters: Array<Method?>,
-        val isBoxingForParameterDisabled: BooleanArray,
         val box: Method?,
     )
 
@@ -60,7 +59,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
         if (callable.isGetterOfUnderlyingPropertyOfValueClass()) {
             // Getter of the underlying val of a value class is always called on a boxed receiver,
             // no argument unboxing is required.
-            return@run BoxUnboxData(IntRange.EMPTY, emptyArray(), BooleanArray(0), box)
+            return@run BoxUnboxData(IntRange.EMPTY, emptyArray(), box)
         }
 
         val shift = when {
@@ -111,15 +110,14 @@ internal class ValueClassAwareCaller<out M : Member?>(
             else null
         }
 
-        val isBoxingForParameterDisabled = BooleanArray(expectedArgsSize)
+        forbidUnboxingForIndices.forEach { index -> unbox[index] = null }
 
         val container = callable.container
         if (!callable.isConstructor && container is KClass<*> && container.isValue && member?.acceptsBoxedReceiverParameter() == true) {
-            isBoxingForParameterDisabled[0] = true
+            unbox[0] = null
         }
-        forbidUnboxingForIndices.forEach { index -> isBoxingForParameterDisabled[index] = true }
 
-        BoxUnboxData(argumentRange, unbox, isBoxingForParameterDisabled, box)
+        BoxUnboxData(argumentRange, unbox, box)
     }
 
     override fun call(args: Array<*>): Any? {
@@ -129,7 +127,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val unboxedArguments = Array(args.size) { index ->
             val arg = args[index]
-            if (index in range && !data.isBoxingForParameterDisabled[index]) {
+            if (index in range) {
                 // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of an inline class type
                 val method = unbox[index]
                 when {

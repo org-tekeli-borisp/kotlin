@@ -1485,7 +1485,7 @@ object ArrayOps : TemplateGroupBase() {
                     val size_ = size
                     var index = 0
                     override fun next(): T {
-                        if (index >= size) throw NoSuchElementException()
+                        if (index >= size_) throw NoSuchElementException()
                         return this@asList[index++]
                     }
                     override fun hasNext(): Boolean = index < size_

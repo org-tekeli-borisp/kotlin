@@ -79,7 +79,7 @@ public actual fun UIntArray.asList(): List<UInt> {
             val size_ = size
             var index = 0
             override fun next(): UInt {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -105,7 +105,7 @@ public actual fun ULongArray.asList(): List<ULong> {
             val size_ = size
             var index = 0
             override fun next(): ULong {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -131,7 +131,7 @@ public actual fun UByteArray.asList(): List<UByte> {
             val size_ = size
             var index = 0
             override fun next(): UByte {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -157,7 +157,7 @@ public actual fun UShortArray.asList(): List<UShort> {
             val size_ = size
             var index = 0
             override fun next(): UShort {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_

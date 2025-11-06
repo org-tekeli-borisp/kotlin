@@ -119,7 +119,7 @@ public actual fun <T> Array<out T>.asList(): List<T> {
             val size_ = size
             var index = 0
             override fun next(): T {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -143,7 +143,7 @@ public actual fun ByteArray.asList(): List<Byte> {
             val size_ = size
             var index = 0
             override fun next(): Byte {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -167,7 +167,7 @@ public actual fun ShortArray.asList(): List<Short> {
             val size_ = size
             var index = 0
             override fun next(): Short {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -191,7 +191,7 @@ public actual fun IntArray.asList(): List<Int> {
             val size_ = size
             var index = 0
             override fun next(): Int {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -215,7 +215,7 @@ public actual fun LongArray.asList(): List<Long> {
             val size_ = size
             var index = 0
             override fun next(): Long {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -239,7 +239,7 @@ public actual fun FloatArray.asList(): List<Float> {
             val size_ = size
             var index = 0
             override fun next(): Float {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -263,7 +263,7 @@ public actual fun DoubleArray.asList(): List<Double> {
             val size_ = size
             var index = 0
             override fun next(): Double {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -287,7 +287,7 @@ public actual fun BooleanArray.asList(): List<Boolean> {
             val size_ = size
             var index = 0
             override fun next(): Boolean {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_
@@ -311,7 +311,7 @@ public actual fun CharArray.asList(): List<Char> {
             val size_ = size
             var index = 0
             override fun next(): Char {
-                if (index >= size) throw NoSuchElementException()
+                if (index >= size_) throw NoSuchElementException()
                 return this@asList[index++]
             }
             override fun hasNext(): Boolean = index < size_

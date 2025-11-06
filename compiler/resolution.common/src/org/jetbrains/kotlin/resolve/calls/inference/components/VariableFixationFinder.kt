@@ -114,7 +114,7 @@ class VariableFixationFinder(
         //  it prioritized in comparison with READY_FOR_FIXATION_LOWER (however, KT-41934 example currently prevents it)
         HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES,
 
-        // *** Strong de-prioritizers ***
+        // *** Strong de-prioritizers (normally, these are `true`, and they de-prioritize by being `false`) ***
         HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
         HAS_PROPER_CONSTRAINTS,
         ALLOWED,

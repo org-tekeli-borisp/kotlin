@@ -196,17 +196,17 @@ class DescriptorPatchingResult(val newDescriptor: String, val boxedIndices: Set<
 // The compiler excessively boxes type of parameter, such that it has inline type and its underlying type is nullable
 // Fixing it would break binary backward compatibility, so we mimic compiler behavior here
 // See KT-57357
-internal fun patchJvmDescriptorByExtraBoxing(descriptor: ReflectKFunction, jvmDescriptor: String): DescriptorPatchingResult {
+internal fun patchJvmDescriptorByExtraBoxing(function: ReflectKFunction, jvmDescriptor: String): DescriptorPatchingResult {
 
     val parsedDescriptor = parseJvmDescriptor(jvmDescriptor)
     val hasDefaultMarker = parsedDescriptor.parameters.lastOrNull() == DefaultConstructorMarkerDescriptor
-    val valueParamCount = descriptor.valueParameters.size + if (hasDefaultMarker) 1 else 0
+    val valueParamCount = function.valueParameters.size + if (hasDefaultMarker) 1 else 0
 
     val boxedIndices = mutableSetOf<Int>()
     val newParameters = mutableListOf<String>()
 
     newParameters.addAll(parsedDescriptor.parameters.take(parsedDescriptor.parameters.size - valueParamCount))
-    descriptor.valueParameters.zip(parsedDescriptor.parameters.takeLast(valueParamCount))
+    function.valueParameters.zip(parsedDescriptor.parameters.takeLast(valueParamCount))
         .forEach { (param, paramJvmDescriptor) ->
             if (param.isAlwaysBoxedByCompiler) {
                 boxedIndices.add(newParameters.size)

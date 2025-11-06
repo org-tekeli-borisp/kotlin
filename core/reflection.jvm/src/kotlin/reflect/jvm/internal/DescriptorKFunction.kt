@@ -169,15 +169,15 @@ internal class DescriptorKFunction private constructor(
             }
         }
 
-    private fun getFunctionWithDefaultParametersForValueClassOverride(descriptor: ReflectKFunction): ReflectKFunction? {
+    private fun getFunctionWithDefaultParametersForValueClassOverride(function: ReflectKFunction): ReflectKFunction? {
         if (
-            descriptor.valueParameters.none { (it as? ReflectKParameter)?.declaresDefaultValue == true } &&
-            (descriptor.container as? KClass<*>)?.isValue == true &&
+            function.valueParameters.none { (it as? ReflectKParameter)?.declaresDefaultValue == true } &&
+            (function.container as? KClass<*>)?.isValue == true &&
             Modifier.isStatic(caller.member!!.modifiers)
         ) {
             // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
             // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
-            return descriptor.overridden
+            return function.overridden
                 .firstOrNull { function -> function.valueParameters.any { (it as? ReflectKParameter)?.declaresDefaultValue == true } }
         }
         return null

@@ -417,7 +417,7 @@ internal object KotlinToolingDiagnostics {
 
     internal object NativeCacheDisabledDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
-            kotlinVersion: KotlinToolingVersion,
+            kotlinVersion: kotlin.KotlinVersion,
             target: KonanTarget,
             reason: String,
             issueUrl: URI?

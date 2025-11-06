@@ -92,7 +92,7 @@ sealed class NativeBinary(
     @KotlinNativeCacheApi
     fun disableNativeCache(version: DisableCacheInKotlinVersion, reason: String, issueUrl: URI? = null) {
         val toolingVersion = version.let {
-            KotlinToolingVersion(it.major, it.minor, it.patch, null)
+            KotlinVersion(it.major, it.minor, it.patch)
         }
 
         disableCacheSettings.add(DisableNativeCacheSettings(toolingVersion, reason, issueUrl))

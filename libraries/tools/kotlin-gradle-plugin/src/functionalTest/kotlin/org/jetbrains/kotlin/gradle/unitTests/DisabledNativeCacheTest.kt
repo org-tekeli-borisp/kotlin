@@ -12,9 +12,9 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.Test
 import java.net.URI
 import kotlin.test.assertEquals
@@ -171,11 +172,13 @@ private val ProjectInternal.currentVersionForDisableCache: DisableCacheInKotlinV
     get() {
         val allInstances: List<DisableCacheInKotlinVersion> =
             DisableCacheInKotlinVersion::class.sealedSubclasses.mapNotNull { it.objectInstance }
+        val kotlinNativeVersion = project!!.nativeProperties.kotlinNativeVersion.get()
+        val nativeToolingVersion = KotlinToolingVersion(kotlinNativeVersion)
 
         return allInstances.last { releaseVersion ->
-            releaseVersion.major < kotlinToolingVersion.major ||
-                    (releaseVersion.major == kotlinToolingVersion.major && releaseVersion.minor < kotlinToolingVersion.minor) ||
-                    (releaseVersion.major == kotlinToolingVersion.major && releaseVersion.minor == kotlinToolingVersion.minor && releaseVersion.patch <= kotlinToolingVersion.patch)
+            releaseVersion.major < nativeToolingVersion.major ||
+                    (releaseVersion.major == nativeToolingVersion.major && releaseVersion.minor < nativeToolingVersion.minor) ||
+                    (releaseVersion.major == nativeToolingVersion.major && releaseVersion.minor == nativeToolingVersion.minor && releaseVersion.patch <= nativeToolingVersion.patch)
         }
     }
 

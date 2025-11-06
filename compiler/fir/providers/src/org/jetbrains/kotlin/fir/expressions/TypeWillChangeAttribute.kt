@@ -40,9 +40,6 @@ data class TypeHasChangedAttribute(
 
 val ConeAttributes.typeHasChangedAttribute: TypeHasChangedAttribute? by ConeAttributes.attributeAccessor()
 
-//fun ConeKotlinType.hasChangedBecauseOf(feature: LanguageFeature): Boolean =
-//    attributes.typeHasChangedAttribute.let { it != null && it.languageFeature == feature }
-
 fun ConeKotlinType.typeChangeRelatedTo(feature: LanguageFeature): TypeHasChangedAttribute? =
     attributes.typeHasChangedAttribute?.takeIf { it.languageFeature == feature }
 
@@ -54,22 +51,3 @@ fun <T : ConeKotlinType> T.withOldTypeBefore(feature: LanguageFeature, createOld
         else -> withAttributes(attributes.add(TypeHasChangedAttribute(oldType, feature)))
     }
 }
-
-///**
-// * Returns the type that used to be there before the [feature] was enabled by default (if it was),
-// * judging by their [LanguageFeature.sinceVersion].
-// * The idea is to tell if the [feature] has anything to do with this specific type change,
-// * and if it does, make use of the stored type information.
-// */
-//fun ConeKotlinType.typeBefore(feature: LanguageFeature): ConeKotlinType? {
-//    val typeHasChangedAttribute = attributes.typeHasChangedAttribute ?: return null
-//    val attributesSinceKotlin = typeHasChangedAttribute.languageFeature.sinceVersion
-//    val featuresSinceKotlin = feature.sinceVersion
-//
-//    return when {
-//        attributesSinceKotlin == null -> typeHasChangedAttribute.oldType
-//        featuresSinceKotlin == null -> null
-//        featuresSinceKotlin <= attributesSinceKotlin -> typeHasChangedAttribute.oldType
-//        else -> null
-//    }
-//}

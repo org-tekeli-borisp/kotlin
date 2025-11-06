@@ -1003,7 +1003,7 @@ class FirCallCompletionResultsWriterTransformer(
             }
 
         return declaration.typeParameters.map {
-            val typeParameter = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+            val typeParameter = it.symbol.defaultType
             val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
             val newType = prepareType(substitution, finalSubstitutorWithActualTypeArguments)
 

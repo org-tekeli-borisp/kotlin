@@ -20,5 +20,7 @@ public sealed class DisableCacheInKotlinVersion private constructor(
 
   override fun compareTo(other: DisableCacheInKotlinVersion): Int = compareValuesBy(this, other, { it.major }, { it.minor }, { it.patch })
 
+  public object `2_3_20` : DisableCacheInKotlinVersion(2, 3, 20)
+
   public object `2_3_255` : DisableCacheInKotlinVersion(2, 3, 255)
 }

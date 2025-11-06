@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModu
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 import kotlin.test.assertEquals
@@ -30,7 +31,7 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
             buildKtModuleProvider {
                 val stdlibModule = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(Paths.get("dist/kotlinc/lib/kotlin-stdlib.jar"))
+                        addBinaryRoot(StandardLibrariesPathProviderForKotlinProject.runtimeJarForTests().toPath())
                         platform = JvmPlatforms.defaultJvmPlatform
                         libraryName = "stdlib"
                     }

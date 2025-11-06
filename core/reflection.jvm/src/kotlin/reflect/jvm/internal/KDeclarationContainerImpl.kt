@@ -55,7 +55,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getLocalPropertyMetadata(index: Int): KmProperty?
 
-    private val classloader: ClassLoader get() = jClass.safeClassLoader
+    private val classLoader: ClassLoader get() = jClass.safeClassLoader
 
     fun createLocalProperty(index: Int, signature: String): KProperty0<*>? {
         val kmProperty = getLocalPropertyMetadata(index) ?: return null
@@ -194,7 +194,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     fun findMethodBySignature(name: String, desc: String): Method? {
         if (name == "<init>") return null
 
-        val functionJvmDescriptor = classloader.parseAndLoadDescriptor(desc, loadReturnType = true)
+        val functionJvmDescriptor = classLoader.parseAndLoadDescriptor(desc, loadReturnType = true)
         val parameterTypes = functionJvmDescriptor.parameters.toTypedArray()
         val returnType = functionJvmDescriptor.returnType!!
         methodOwner.lookupMethod(name, parameterTypes, returnType, false)?.let { return it }
@@ -216,7 +216,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             // Note that this value is replaced inside the lookupMethod call below, for each class/interface in the hierarchy.
             parameterTypes.add(jClass)
         }
-        val jvmDescriptor = classloader.parseAndLoadDescriptor(desc, loadReturnType = true)
+        val jvmDescriptor = classLoader.parseAndLoadDescriptor(desc, loadReturnType = true)
         addParametersAndMasks(parameterTypes, jvmDescriptor.parameters, isConstructor = false, hasExtensionParameter)
 
         return methodOwner.lookupMethod(
@@ -225,11 +225,11 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findConstructorBySignature(desc: String): Constructor<*>? =
-        jClass.tryGetConstructor(classloader.parseAndLoadDescriptor(desc, loadReturnType = false).parameters)
+        jClass.tryGetConstructor(classLoader.parseAndLoadDescriptor(desc, loadReturnType = false).parameters)
 
     fun findDefaultConstructor(desc: String): Constructor<*>? =
         jClass.tryGetConstructor(arrayListOf<Class<*>>().also { parameterTypes ->
-            val parsedParameters = classloader.parseAndLoadDescriptor(desc, loadReturnType = false).parameters
+            val parsedParameters = classLoader.parseAndLoadDescriptor(desc, loadReturnType = false).parameters
             addParametersAndMasks(parameterTypes, parsedParameters, isConstructor = true, hasExtensionParameter = false)
         })
 

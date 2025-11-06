@@ -51,7 +51,7 @@ internal fun Project.configureKotlinTestDependency(
     coreLibrariesVersion: Provider<String>,
 ) {
     if (kotlinExtension is KotlinMultiplatformExtension) launch {
-        await(KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript) // so coreLibrariesVersion is final
+        await(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) // so coreLibrariesVersion is final
         val coreLibrariesVersionFinal = coreLibrariesVersion.get()
         val kotlinTestDependency = dependencies.create("${KOTLIN_MODULE_GROUP}:kotlin-test:${coreLibrariesVersionFinal}")
         kotlinExtension.sourceSets.configureEach { sourceSet ->

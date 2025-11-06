@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.buildKMPWithAllBackends
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.util.setFunctionalTestMode
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.test.*
@@ -40,7 +41,15 @@ class IdeKotlinTestResolutionTest {
         ),
         "linuxX64Test" to listOf(
             // Kotlin/Native have kotlin-test dependencies bundled to native-distribution
-            // so there is artifact on "kotlin-test" dependency expected
+            // so there is no artifact on "kotlin-test" dependency expected
+            binaryCoordinates(".*kotlin-test.*".toRegex()).notExpected,
+            anyDependsOnDependency(),
+            anySourceFriendDependency(),
+            kotlinNativeDistributionDependencies,
+        ),
+        "nativeTest" to listOf(
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-test:annotationsCommonMain:$kgpVersion"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-test:assertionsCommonMain:$kgpVersion"),
             anyDependsOnDependency(),
             anySourceFriendDependency(),
             kotlinNativeDistributionDependencies,
@@ -63,6 +72,7 @@ class IdeKotlinTestResolutionTest {
         addKotlinTestToProject: Project.() -> Unit
     ) {
         val project = buildKMPWithAllBackends {
+            setFunctionalTestMode()
             configureRepositoriesForTests()
             addKotlinTestToProject()
         }
@@ -135,8 +145,14 @@ class IdeKotlinTestResolutionTest {
             ),
             "linuxX64Main" to listOf(
                 // Kotlin/Native have kotlin-test dependencies bundled to native-distribution
-                // so there is artifact on "kotlin-test" dependency expected
+                // so there is no artifact on "kotlin-test" dependency expected
                 binaryCoordinates(".*kotlin-test.*".toRegex()).notExpected,
+                anyDependsOnDependency(),
+                kotlinNativeDistributionDependencies,
+            ),
+            "nativeMain" to listOf(
+                binaryCoordinates("org.jetbrains.kotlin:kotlin-test:annotationsCommonMain:$kgpVersion"),
+                binaryCoordinates("org.jetbrains.kotlin:kotlin-test:assertionsCommonMain:$kgpVersion"),
                 anyDependsOnDependency(),
                 kotlinNativeDistributionDependencies,
             ),

@@ -7605,6 +7605,12 @@ public class LightTreeJsBoxTestGenerated extends AbstractLightTreeJsBoxTest {
     }
 
     @Test
+    @TestMetadata("specialIdentifiers.kt")
+    public void testSpecialIdentifiers() {
+      runTest("js/js.translator/testData/box/jsCode/specialIdentifiers.kt");
+    }
+
+    @Test
     @TestMetadata("stringEscape.kt")
     public void testStringEscape() {
       runTest("js/js.translator/testData/box/jsCode/stringEscape.kt");

@@ -7788,6 +7788,12 @@ public class JsES6BoxTestGenerated extends AbstractJsES6BoxTest {
     }
 
     @Test
+    @TestMetadata("specialIdentifiers.kt")
+    public void testSpecialIdentifiers() {
+      runTest("js/js.translator/testData/box/jsCode/specialIdentifiers.kt");
+    }
+
+    @Test
     @TestMetadata("stringEscape.kt")
     public void testStringEscape() {
       runTest("js/js.translator/testData/box/jsCode/stringEscape.kt");

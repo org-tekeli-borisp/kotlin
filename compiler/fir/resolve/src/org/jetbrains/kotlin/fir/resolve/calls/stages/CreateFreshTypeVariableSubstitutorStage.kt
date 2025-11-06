@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
 import org.jetbrains.kotlin.fir.isEnabled
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -230,6 +233,26 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             csBuilder.registerVariable(freshVariable)
         }
 
+        val constraints = if (LanguageFeature.ProperlyCheckUpperBoundsViolationsWhenCreatingFreshVariables.isEnabled()) {
+            addConstraintsProperly(declaration, toFreshVariables, freshTypeVariables)
+        } else {
+            @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
+            addConstraintsTheOldWay(toFreshVariables, freshTypeVariables, typeParameters)
+        }
+
+        for ((lower, upper) in constraints) {
+            csBuilder.addSubtypeConstraint(lower, upper, ConeDeclaredUpperBoundConstraintPosition())
+        }
+
+        return toFreshVariables to freshTypeVariables
+    }
+
+    context(context: ResolutionContext)
+    private fun addConstraintsProperly(
+        declaration: FirTypeParameterRefsOwner,
+        toFreshVariables: ConeSubstitutor,
+        freshTypeVariables: List<ConeTypeParameterBasedTypeVariable>,
+    ): List<Pair<ConeKotlinType, ConeKotlinType>> {
         val typeAliasConstructorInfo = (declaration as? FirConstructor)?.typeAliasConstructorInfo
         val isTypealiasConstructor = typeAliasConstructorInfo != null
 
@@ -245,6 +268,8 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             }
         }
 
+        val constraints = mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
+
         for ((index, parameter) in typeParametersForConstraining.withIndex()) {
             val argumentType = typeArgumentsForConstraining.getOrNull(index)?.type?.let(toFreshVariables::substituteOrSelf) ?: continue
 
@@ -254,11 +279,69 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                         && substitutedBound.upperBoundIfFlexible().isMarkedNullable
 
                 if (!isRedundant) {
-                    csBuilder.addSubtypeConstraint(argumentType, substitutedBound, ConeDeclaredUpperBoundConstraintPosition())
+                    constraints += argumentType to substitutedBound
                 }
             }
         }
 
-        return toFreshVariables to freshTypeVariables
+        return constraints
+    }
+
+    @OnlyForDefaultLanguageFeatureDisabled(LanguageFeature.ProperlyCheckUpperBoundsViolationsWhenCreatingFreshVariables)
+    context(context: ResolutionContext)
+    private fun addConstraintsTheOldWay(
+        toFreshVariables: ConeSubstitutor,
+        freshTypeVariables: List<ConeTypeParameterBasedTypeVariable>,
+        typeParameters: List<FirTypeParameterRef>,
+    ): MutableList<Pair<ConeKotlinType, ConeKotlinType>> {
+        val constraints = mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
+
+        fun ConeTypeParameterBasedTypeVariable.addSubtypeConstraint(
+            upperBound: ConeKotlinType//,
+            //position: DeclaredUpperBoundConstraintPosition
+        ) {
+            if (upperBound.lowerBoundIfFlexible().classLikeLookupTagIfAny?.classId == StandardClassIds.Any &&
+                upperBound.upperBoundIfFlexible().isMarkedNullable
+            ) {
+                return
+            }
+
+            constraints += defaultType to toFreshVariables.substituteOrSelf(upperBound)
+        }
+
+        for (index in typeParameters.indices) {
+            val typeParameter = typeParameters[index]
+            val freshVariable = freshTypeVariables[index]
+
+            val parameterSymbolFromExpandedClass = typeParameter.symbol.fir.getTypeParameterFromExpandedClass(index)
+
+            for (upperBound in parameterSymbolFromExpandedClass.symbol.resolvedBounds) {
+                freshVariable.addSubtypeConstraint(upperBound.coneType/*, position*/)
+            }
+        }
+
+        return constraints
+    }
+
+    context(context: ResolutionContext)
+    private fun FirTypeParameter.getTypeParameterFromExpandedClass(index: Int): FirTypeParameter {
+        val containingDeclaration = containingDeclarationSymbol.fir
+        if (containingDeclaration is FirRegularClass) {
+            return containingDeclaration.typeParameters.elementAtOrNull(index)?.symbol?.fir ?: this
+        } else if (containingDeclaration is FirTypeAlias) {
+            val typeParameterConeType = toConeType()
+            val expandedConeType = containingDeclaration.expandedTypeRef.coneType
+            val typeArgumentIndex = expandedConeType.typeArguments.indexOfFirst { it.type == typeParameterConeType }
+            val expandedTypeFir = expandedConeType.toSymbol()?.fir
+            if (expandedTypeFir is FirTypeParameterRefsOwner) {
+                val typeParameterFir = expandedTypeFir.typeParameters.elementAtOrNull(typeArgumentIndex)?.symbol?.fir ?: return this
+                if (expandedTypeFir is FirTypeAlias) {
+                    return typeParameterFir.getTypeParameterFromExpandedClass(typeArgumentIndex)
+                }
+                return typeParameterFir
+            }
+        }
+
+        return this
     }
 }

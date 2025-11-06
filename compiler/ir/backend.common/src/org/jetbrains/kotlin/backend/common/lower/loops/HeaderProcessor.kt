@@ -44,8 +44,8 @@ interface ForLoopHeader {
 
     /** Statements used to initialize an iteration of the loop (e.g., assign loop variable). */
     fun initializeIteration(
-        loopVariable: IrVariable?,
-        loopVariableComponents: Map<Int, IrVariable>,
+        loopVariables: List<IrVariable>,
+        loopVariableComponents: Map<Int, List<IrVariable>>,
         builder: DeclarationIrBuilder,
         backendContext: CommonBackendContext,
     ): List<IrStatement>

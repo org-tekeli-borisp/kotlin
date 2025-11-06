@@ -29,8 +29,8 @@ class IndexedGetLoopHeader(
         listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable)
 
     override fun initializeIteration(
-        loopVariable: IrVariable?,
-        loopVariableComponents: Map<Int, IrVariable>,
+        loopVariables: List<IrVariable>,
+        loopVariableComponents: Map<Int, List<IrVariable>>,
         builder: DeclarationIrBuilder,
         backendContext: CommonBackendContext,
     ): List<IrStatement> =
@@ -42,13 +42,14 @@ class IndexedGetLoopHeader(
             val get = irCall(indexedGetFun.symbol, indexedGetFun.returnType).apply {
                 arguments[0] = irGet(headerInfo.objectVariable)
                 arguments[1] = irGet(inductionVariable)
-            }.implicitCastIfNeededTo(loopVariable?.type ?: indexedGetFun.returnType)
+            }.implicitCastIfNeededTo(loopVariables.firstOrNull()?.type ?: indexedGetFun.returnType)
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.
-            loopVariable?.initializer = loopVariable.initializer?.transform(InitializerCallReplacer(get), null)
+            loopVariables.firstOrNull()?.let { it.initializer = it.initializer?.transform(InitializerCallReplacer(get), null) }
+            loopVariables.drop(1).forEach { it.initializer = irGet(loopVariables.first()) }
             // Even if there is no loop variable, we always want to call `get()` as it may have side effects.
             // The un-lowered loop always calls `get()` on each iteration.
-            listOf(loopVariable ?: get) + incrementInductionVariable(this)
+            loopVariables.ifEmpty { listOf(get) } + incrementInductionVariable(this)
         }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {

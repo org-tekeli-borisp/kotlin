@@ -15,7 +15,7 @@ import kotlin.wasm.internal.*
  */
 
 public actual class String internal @WasmPrimitiveConstructor constructor(
-    internal val internalStr: JsString,
+    private var _internalStr: JsString?,
     @kotlin.internal.IntrinsicConstEvaluation
     private var _chars: WasmCharArray?,
     @kotlin.internal.IntrinsicConstEvaluation
@@ -38,7 +38,11 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     public actual override fun get(index: Int): Char {
         rangeCheck(index, this.length)
 //        return jsCharCodeAt(this.internalStr, index).reinterpretAsChar()
-        return chars.get(index)
+        return if (_chars != null) {
+            _chars!!.get(index)
+        } else {
+            jsCharCodeAt(_internalStr!!, index).reinterpretAsChar()
+        }
     }
 
     @Suppress("RETURN_VALUE_NOT_USED")
@@ -51,6 +55,16 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
                 _chars = copy
             }
             return _chars!!
+        }
+
+    @Suppress("RETURN_VALUE_NOT_USED")
+    @kotlin.internal.IntrinsicConstEvaluation
+    internal val internalStr: JsString
+        get() {
+            if (_internalStr == null) {
+                _internalStr = jsFromCharCodeArray(_chars!!, 0, length).unsafeCast()
+            }
+            return _internalStr!!
         }
 
     public actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
@@ -112,6 +126,6 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 }
 
 internal actual fun WasmCharArray.createString(): String =
-    String(jsFromCharCodeArray(this, 0, this.len()).unsafeCast(), this, this.len())
+    String(null, this, this.len())
 
 internal actual fun String.getChars() = this.chars

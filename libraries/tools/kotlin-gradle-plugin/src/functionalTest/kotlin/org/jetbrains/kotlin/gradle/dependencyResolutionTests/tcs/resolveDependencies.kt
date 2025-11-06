@@ -12,7 +12,7 @@ fun Project.resolveDependencies(sourceSetName: String): Iterable<IdeaKotlinDepen
 }
 
 /**
- * Only dependsOn and project-2-project dependencies
+ * Only dependsOn, project-2-project and friends (associated compilations) dependencies
  */
 fun Project.resolveProjectDependencies(sourceSetName: String): Iterable<IdeaKotlinDependency> =
     resolveDependencies(sourceSetName).filter { it !is IdeaKotlinBinaryDependency }

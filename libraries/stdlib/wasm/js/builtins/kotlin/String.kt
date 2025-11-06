@@ -37,7 +37,8 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun get(index: Int): Char {
         rangeCheck(index, this.length)
-        return jsCharCodeAt(this.internalStr, index).reinterpretAsChar()
+//        return jsCharCodeAt(this.internalStr, index).reinterpretAsChar()
+        return chars.get(index)
     }
 
     @Suppress("RETURN_VALUE_NOT_USED")

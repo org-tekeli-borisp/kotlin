@@ -54546,6 +54546,12 @@ public class CustomJsCompilerSecondPhaseTestGenerated extends AbstractCustomJsCo
               }
 
               @Test
+              @TestMetadata("classNameMapping.kt")
+              public void testClassNameMapping() {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/classNameMapping.kt");
+              }
+
+              @Test
               @TestMetadata("constructorManyDefaultParameters.kt")
               public void testConstructorManyDefaultParameters() {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClasses/nullableObject/defaultArguments/constructorManyDefaultParameters.kt");

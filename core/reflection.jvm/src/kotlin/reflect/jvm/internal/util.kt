@@ -399,7 +399,10 @@ internal fun parseJvmDescriptor(desc: String): FunctionJvmDescriptor {
     return FunctionJvmDescriptor(parameterTypes, returnType)
 }
 
-internal fun KClass<*>.toJvmDescriptor(): String = ClassMapperLite.mapClass(jvmName)
+/**
+ * Returns JVM descriptor, assuming that given KClass is not primitive
+ */
+internal fun KClass<*>.toJvmDescriptor(): String = "L${jvmName.replace('.', '/')};"
 
 internal val KParameter.isAlwaysBoxedByCompiler: Boolean
     get() {

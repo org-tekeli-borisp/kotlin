@@ -1,0 +1,4 @@
+fun main() {
+    when (@AnnUnresolvedAnnotation "") {
+    }
+}

@@ -157,6 +157,9 @@ class VariableFixationFinder(
                     || hasUnprocessedConstraintsInForks()
             val areAllProperConstraintsSelfTypeBased = areAllProperConstraintsSelfTypeBased()
 
+            // These values go in the same order as they are defined in `TypeVariableFixationReadinessQuality`,
+            // except for being reversed: so that higher-priority ones come first.
+
             it[Q.ALLOWED] = !forbidden
             it[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased
             it[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)

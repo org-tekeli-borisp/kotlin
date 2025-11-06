@@ -94,7 +94,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         }
     }
 
-    fun getTypePreservingFlexibilityWrtTypeVariable(
+    private fun getTypePreservingFlexibilityWrtTypeVariable(
         type: ConeKotlinType,
         typeParameter: FirTypeParameterRef,
         context: ResolutionContext,

@@ -174,7 +174,7 @@ class VariableFixationFinder(
             it[Q.REIFIED] = isReified()
             it[Q.HAS_PROPER_NON_NOTHING_LOWER_CONSTRAINT] = hasLowerNonNothingProperConstraint()
 
-            computeReadinessForVariableWithDependencies(it)
+            computeIltConstraintsRelatedFlags(it)
         }
 
     context(c: Context)
@@ -293,7 +293,7 @@ class VariableFixationFinder(
     }
 
     context(c: Context)
-    private fun TypeConstructorMarker.computeReadinessForVariableWithDependencies(readiness: TypeVariableFixationReadiness) {
+    private fun TypeConstructorMarker.computeIltConstraintsRelatedFlags(readiness: TypeVariableFixationReadiness) {
         val constraints = c.notFixedTypeVariables[this]?.constraints
         if (!fixationEnhancementsIn22 || constraints == null) return
 

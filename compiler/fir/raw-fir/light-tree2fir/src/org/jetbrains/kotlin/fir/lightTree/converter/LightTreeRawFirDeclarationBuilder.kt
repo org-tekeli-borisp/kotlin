@@ -12,7 +12,11 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
@@ -24,11 +28,7 @@ import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
-import org.jetbrains.kotlin.fir.declarations.utils.DanglingTypeConstraint
-import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
-import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
-import org.jetbrains.kotlin.fir.declarations.utils.danglingTypeConstraints
-import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import org.jetbrains.kotlin.config.AnalysisFlags
 
 class LightTreeRawFirDeclarationBuilder(
     session: FirSession,
@@ -328,7 +327,7 @@ class LightTreeRawFirDeclarationBuilder(
             when (it.tokenType) {
                 ANNOTATION -> annotations += it
                 ANNOTATION_ENTRY -> annotations += it
-                CONTEXT_RECEIVER_LIST -> contextLists += it
+                CONTEXT_PARAMETER_LIST -> contextLists += it
                 is KtModifierKeywordToken -> addModifier(it, isInClass)
             }
         }
@@ -2415,7 +2414,7 @@ class LightTreeRawFirDeclarationBuilder(
                     isMarkedNullable = false
                 }
                 INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, false)
-                CONTEXT_RECEIVER_LIST, TokenType.ERROR_ELEMENT -> firType =
+                CONTEXT_PARAMETER_LIST, TokenType.ERROR_ELEMENT -> firType =
                     buildErrorTypeRef {
                         source = typeRefSource
                         diagnostic = ConeSyntaxDiagnostic("Unwrapped type is null")
@@ -2622,7 +2621,7 @@ class LightTreeRawFirDeclarationBuilder(
                 FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(it)
                 VALUE_PARAMETER_LIST -> parameters += convertFunctionTypeParameters(it)
                 TYPE_REFERENCE -> returnTypeReference = convertType(it)
-                CONTEXT_RECEIVER_LIST -> contextList = it
+                CONTEXT_PARAMETER_LIST -> contextList = it
             }
         }
 

@@ -125,4 +125,20 @@ public class IncrementalCompilationIT extends MavenITBase {
                 .filesExist(withJavaOutputPaths())
                 .compiledKotlin();
     }
+
+    @Test // Regression test for KT-82180
+    public void removeUsedClass() throws Exception {
+        MavenProject project = new MavenProject("kotlinSimple");
+        project.exec(executionStrategy, "package");
+
+        File aKt = project.file("src/main/kotlin/A.kt");
+        if (!aKt.delete()) {
+            throw new IllegalStateException("Could not delete " + aKt);
+        }
+
+        project.exec(executionStrategy, "package", "-X")
+                .failed()
+                .contains("Unresolved reference 'A'")
+                .compiledKotlin("src/main/kotlin/useA.kt");
+    }
 }

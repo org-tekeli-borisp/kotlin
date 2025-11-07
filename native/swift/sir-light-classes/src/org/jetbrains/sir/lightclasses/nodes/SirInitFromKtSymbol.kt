@@ -143,18 +143,18 @@ internal class SirRegularInitFromKtSymbol(
             if (origin is InnerInitSource) {
                 addAll(
                     bridgeInitProxy?.createSirBridges {
-                    val args = this.argNames
+                        val args = this.argNames
 
-                    require(!kotlinFqName.parent().isRoot) {
-                        "Expected qualified name with a dot, but were ${kotlinFqName.asString()} instead"
-                    }
-                    require(args.size >= 2) {
-                        "Expected >=2 inner constructor arguments, but were ${args.size}: ${args.joinToString(",")}"
-                    }
-                    val outerClassName = kotlinFqName.parent()
-                    val innerClassName = kotlinFqName.shortName()
-                    val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
-                    val innerConstructorCall = "(${args.last()} as $outerClassName).$innerClassName($innerConstructorArgs)"
+                        require(!kotlinFqName.parent().isRoot) {
+                            "Expected qualified name with a dot, but were ${kotlinFqName.asString()} instead"
+                        }
+                        require(args.size >= 2) {
+                            "Expected >=2 inner constructor arguments, but were ${args.size}: ${args.joinToString(",")}"
+                        }
+                        val outerClassName = kotlinFqName.parent()
+                        val innerClassName = kotlinFqName.shortName()
+                        val innerConstructorArgs = args.drop(1).dropLast(1).joinToString(", ")
+                        val innerConstructorCall = "(${args.last()} as $outerClassName).$innerClassName($innerConstructorArgs)"
 
                         "kotlin.native.internal.initInstance(${args.first()}, $innerConstructorCall)"
                     }.orEmpty()

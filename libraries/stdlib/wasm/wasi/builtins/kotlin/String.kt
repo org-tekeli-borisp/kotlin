@@ -6,7 +6,6 @@
 package kotlin
 
 import kotlin.wasm.internal.*
-import kotlin.math.min
 
 /**
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
@@ -72,10 +71,10 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 
     public actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
         checkStringBounds(startIndex, endIndex, length)
-        val newLength = endIndex - startIndex
-        val newChars = WasmCharArray(newLength)
-        copyWasmArray(chars, newChars, startIndex, 0, newLength)
-        return newChars.createString()
+//        val newLength = endIndex - startIndex
+//        val newChars = WasmCharArray(newLength)
+//        copyWasmArray(chars, newChars, startIndex, 0, newLength)
+        return chars.createStringFromSubArray(startIndex, endIndex)
     }
 
     private fun checkStringBounds(startIndex: Int, endIndex: Int, length: Int) {
@@ -153,7 +152,18 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
-internal actual fun WasmCharArray.createString(): String =
-    String(null, this.len(), this)
+internal actual fun WasmCharArray.createStringFromSubArray(start: Int, end: Int): String {
+    val size = end - start
+    val copy = WasmCharArray(size)
+    copyWasmArray(this, copy, start, 0, size)
+    return String(null, size, copy)
+}
+
+internal actual fun WasmCharArray.createString(): String {
+    val size = this.len()
+    val copy = WasmCharArray(size)
+    copyWasmArray(this, copy, 0, 0, size)
+    return String(null, size, copy)
+}
 
 internal actual fun String.getChars() = this.chars

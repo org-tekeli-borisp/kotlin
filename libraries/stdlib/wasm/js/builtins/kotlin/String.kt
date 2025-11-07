@@ -126,8 +126,13 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
-internal actual fun WasmCharArray.createString(): String =
-    String(jsFromCharCodeArray(this, 0, this.len()).unsafeCast(), this.len())
+internal actual fun WasmCharArray.createStringFromSubArray(start: Int, end: Int): String =
+    String(jsFromCharCodeArray(this, start, end).unsafeCast(), end - start)
+
+internal actual fun WasmCharArray.createString(): String {
+    val size = this.len()
+    return String(jsFromCharCodeArray(this, 0, size).unsafeCast(), size)
+}
 
 @Suppress("RETURN_VALUE_NOT_USED")
 internal actual fun String.getChars(): WasmCharArray {

@@ -1689,7 +1689,7 @@ open class PsiRawFirBuilder(
         }
 
         private fun MutableList<FirValueParameter>.addContextParameters(
-            contextLists: List<KtContextReceiverList>,
+            contextLists: List<KtContextParameterList>,
             containingDeclarationSymbol: FirBasedSymbol<*>,
         ) {
             for (contextList in contextLists) {

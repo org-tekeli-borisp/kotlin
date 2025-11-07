@@ -12,3 +12,7 @@ declare function KtSingleton<T>(): T & (abstract new() => any);
 /* ErrorDeclaration: Class declarations are not implemented yet */
 /* ErrorDeclaration: Class declarations are not implemented yet */
 /* ErrorDeclaration: Class declarations are not implemented yet */
+/* ErrorDeclaration: Class declarations are not implemented yet */
+/* ErrorDeclaration: Class declarations are not implemented yet */
+/* ErrorDeclaration: Class declarations are not implemented yet */
+/* ErrorDeclaration: Class declarations are not implemented yet */

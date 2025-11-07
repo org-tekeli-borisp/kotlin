@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
@@ -30,6 +32,7 @@ abstract class AbstractAnalysisApiTypeScriptExportTest : AbstractKotlinCompilerT
                 "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                 "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
             )
+            DIAGNOSTICS with "-warnings"
         }
 
         facadeStep(::AnalysisApiBasedDtsGeneratorFacade)
@@ -39,31 +42,36 @@ abstract class AbstractAnalysisApiTypeScriptExportTest : AbstractKotlinCompilerT
         // TODO(KT-82224): Remove this when we implement support for file-level @JsExport in Analysis-API-based TypeScript Export
         forTestsMatching("*-in-exported-file/*") {
             defaultDirectives {
-                CodegenTestDirectives.IGNORE_BACKEND with TargetBackend.ANY
+                IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT with TargetBackend.ANY
             }
         }
     }
 }
 
 abstract class AbstractJsAnalysisApiTypeScriptExportTest : AbstractAnalysisApiTypeScriptExportTest() {
+    open val targetBackend: TargetBackend
+        get() = TargetBackend.JS_IR
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
-            targetBackend = TargetBackend.JS_IR
+            targetBackend = this@AbstractJsAnalysisApiTypeScriptExportTest.targetBackend
         }
         setUpDefaultDirectivesForJsBoxTest(FirParser.LightTree)
-        commonConfigurationForJsBackendFirstStageTest()
+        commonConfigurationForJsBackendFirstStageTest(
+            customIgnoreDirective = IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT,
+        )
         configureTypeScriptExport()
     }
 }
 
 abstract class AbstractJsES6AnalysisApiTypeScriptExportTest : AbstractJsAnalysisApiTypeScriptExportTest() {
+    override val targetBackend: TargetBackend
+        get() = TargetBackend.JS_IR_ES6
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        globalDefaults {
-            targetBackend = TargetBackend.JS_IR_ES6
-        }
+        super.configure(builder)
         defaultDirectives {
             +JsEnvironmentConfigurationDirectives.ES6_MODE
         }
-        super.configure(builder)
     }
 }

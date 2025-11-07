@@ -15,12 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationKlibKindExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
-import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiCheckTaskImpl
-import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiDumpTaskImpl
-import org.jetbrains.kotlin.gradle.tasks.abi.KotlinLegacyAbiUpdateTask
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_ACTUAL_DUMP_DIR
-import org.jetbrains.kotlin.gradle.plugin.abi.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
-import org.jetbrains.kotlin.gradle.tasks.abi.AbiToolsTask
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
@@ -142,7 +136,7 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
      * - remove tasks with old names
      */
     val checkTaskName = checkTaskProvider.name
-    tasks.register(AbiToolsTask.composeTaskName("checkLegacyAbi", variantName)) { task ->
+    tasks.register("checkLegacyAbi") { task ->
         task.dependsOn(checkTaskProvider)
         task.doFirst {
             val projectPath = it.path.substringBeforeLast(":")
@@ -151,7 +145,7 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
     }
 
     val updateTaskName = updateTaskProvider.name
-    tasks.register(AbiToolsTask.composeTaskName("updateLegacyAbi", variantName)) { task ->
+    tasks.register("updateLegacyAbi") { task ->
         task.dependsOn(updateTaskProvider)
         task.doFirst {
             val projectPath = it.path.substringBeforeLast(":")

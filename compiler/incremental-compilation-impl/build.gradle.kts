@@ -23,7 +23,7 @@ dependencies {
     api(project(":daemon-common"))
     api(project(":compiler:build-tools:kotlin-build-statistics"))
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
-    compileOnly(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    implementation(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
     compileOnly(intellijCore())
 
     testFixturesApi(libs.junit4)

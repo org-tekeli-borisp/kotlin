@@ -22,7 +22,6 @@ dependencies {
     runtimeOnly(project(":kotlin-script-runtime"))
     runtimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     runtimeOnly(project(":kotlin-daemon-embeddable"))
-    runtimeOnly(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
     runtimeOnly(libs.kotlinx.coroutines.core) { isTransitive = false }
     testImplementation(libs.junit4)
     testImplementation(kotlinTest("junit"))

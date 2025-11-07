@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-57192
 // Promise<Unit> wrongly raised NON_EXPORTABLE_TYPE
 

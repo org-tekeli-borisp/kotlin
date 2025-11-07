@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-57809
 
 package bar.baz

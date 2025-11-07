@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Note: JsAllowInvalidCharsIdentifiersEscaping
 
 interface I𝔹

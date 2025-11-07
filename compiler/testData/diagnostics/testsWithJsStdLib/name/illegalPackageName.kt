@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: -JsAllowInvalidCharsIdentifiersEscaping
 // FILE: slashes.kt
 package a.<!INVALID_CHARACTERS!>`//`<!>.b.<!INVALID_CHARACTERS!>`/`<!>.c

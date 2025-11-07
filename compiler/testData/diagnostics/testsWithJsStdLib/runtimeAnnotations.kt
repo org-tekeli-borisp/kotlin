@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DIAGNOSTICS: +RUNTIME_ANNOTATION_NOT_SUPPORTED
 @Retention(AnnotationRetention.BINARY)
 annotation class X

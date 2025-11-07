@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 @OptIn(ExperimentalStdlibApi::class)
 @JsExternalInheritorsOnly

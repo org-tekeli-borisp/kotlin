@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun interface Foo<T> {
     fun invoke(): T
 }

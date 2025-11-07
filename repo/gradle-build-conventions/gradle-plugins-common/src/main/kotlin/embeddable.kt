@@ -27,6 +27,7 @@ val packagesToRelocate =
         "one.util.streamex",
         "it.unimi.dsi.fastutil",
         "kotlinx.collections.immutable",
+        "kotlinx.serialization",
         "com.fasterxml",
         "org.codehaus",
         "io.opentelemetry",

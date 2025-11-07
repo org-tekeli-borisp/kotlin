@@ -13,15 +13,17 @@ kotlin {
 dependencies {
     compileOnly(kotlinStdlib())
 
-    implementation(project(":core:compiler.common.js"))
-
+    implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-standalone"))
-    implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
-
+    implementation(project(":core:compiler.common.js"))
+    implementation(project(":core:util.runtime"))
     implementation(project(":js:js.ast"))
     implementation(project(":js:typescript-export-model"))
     implementation(project(":js:typescript-printer"))
+    implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
+    api(project(":core:compiler.common"))
     api(project(":js:js.config"))
 }
 

@@ -15,39 +15,45 @@ import org.jetbrains.kotlin.fir.types.withAttributes
 import kotlin.reflect.KClass
 
 /**
- * Contains the type that would have been present previously in place of the current one,
- * if the corresponding [LanguageFeature] had been disabled.
- * Present for the duration of the feature's deprecation cycle to relax the diagnostics
- * to warnings.
+ * Contains the type that will be present in place of the current one,
+ * when the corresponding [LanguageFeature] gets enabled.
+ * Present for the duration of the feature's deprecation cycle to provide deprecation warnings.
  */
-data class TypeHasChangedAttribute(
-    val oldType: ConeKotlinType,
+data class TypeWillChangeAttribute(
+    val newType: ConeKotlinType,
     val languageFeature: LanguageFeature,
-) : ConeAttribute<TypeHasChangedAttribute>() {
+) : ConeAttribute<TypeWillChangeAttribute>() {
     // Those methods should not matter too much because it's only assumed to be used for explicit type arguments
     // for which we don't expect to perform complex operations
-    override fun union(other: TypeHasChangedAttribute?): TypeHasChangedAttribute? = null
-    override fun intersect(other: TypeHasChangedAttribute?): TypeHasChangedAttribute? = null
-    override fun add(other: TypeHasChangedAttribute?): TypeHasChangedAttribute = other ?: this
-    override fun isSubtypeOf(other: TypeHasChangedAttribute?): Boolean = true
+    override fun union(other: TypeWillChangeAttribute?): TypeWillChangeAttribute? = null
+    override fun intersect(other: TypeWillChangeAttribute?): TypeWillChangeAttribute? = null
+    override fun add(other: TypeWillChangeAttribute?): TypeWillChangeAttribute = other ?: this
+    override fun isSubtypeOf(other: TypeWillChangeAttribute?): Boolean = true
 
-    override val key: KClass<out TypeHasChangedAttribute>
-        get() = TypeHasChangedAttribute::class
+    override val key: KClass<out TypeWillChangeAttribute>
+        get() = TypeWillChangeAttribute::class
 
     override val keepInInferredDeclarationType: Boolean
         get() = true
 }
 
-val ConeAttributes.typeHasChangedAttribute: TypeHasChangedAttribute? by ConeAttributes.attributeAccessor()
+val ConeAttributes.typeWillChangeAttribute: TypeWillChangeAttribute? by ConeAttributes.attributeAccessor()
 
-fun ConeKotlinType.typeChangeRelatedTo(feature: LanguageFeature): TypeHasChangedAttribute? =
-    attributes.typeHasChangedAttribute?.takeIf { it.languageFeature == feature }
+fun ConeKotlinType.typeChangeRelatedTo(feature: LanguageFeature): TypeWillChangeAttribute? =
+    attributes.typeWillChangeAttribute?.takeIf { it.languageFeature == feature }
+
+fun <T : ConeKotlinType> T.withNewTypeSince(feature: LanguageFeature, newType: T): T =
+    withAttributes(attributes.add(TypeWillChangeAttribute(newType, feature)))
 
 context(sessionHolder: SessionHolder)
-fun <T : ConeKotlinType> T.withOldTypeBefore(feature: LanguageFeature, createOldType: () -> T): T = when {
-    feature.isEnabled() -> this
-    else -> when (val oldType = createOldType()) {
-        this -> this
-        else -> withAttributes(attributes.add(TypeHasChangedAttribute(oldType, feature)))
+inline fun <T : ConeKotlinType> LanguageFeature.chooseType(createNewType: () -> T, createOldType: () -> T): T {
+    val newType = createNewType()
+
+    return when {
+        isEnabled() -> newType
+        else -> when (val oldType = createOldType()) {
+            newType -> newType
+            else -> oldType.withNewTypeSince(this, newType)
+        }
     }
 }

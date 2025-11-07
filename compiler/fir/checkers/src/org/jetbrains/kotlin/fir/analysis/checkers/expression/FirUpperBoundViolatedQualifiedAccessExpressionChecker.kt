@@ -60,17 +60,18 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             context.session,
         )
 
-        val typeArgumentsBeforeArgumentInteractionsFix = when {
+        val typeArgumentsAfterArgumentInteractionsFix = when {
             LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions.isDisabled() -> typeArguments.map {
-                val typeChange = it.type?.typeChangeRelatedTo(LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions)
-                typeChange?.oldType?.let(it::replaceType) ?: it
+                val projectionType = it.type ?: return@map it
+                val typeChange = projectionType.typeChangeRelatedTo(LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions)
+                typeChange?.newType?.withAttributes(projectionType.attributes)?.let(it::replaceType) ?: it
             }
             else -> null
         }
-        val substitutorBeforeArgumentInteractionsFix = typeArgumentsBeforeArgumentInteractionsFix?.let {
+        val substitutorAfterArgumentInteractionsFix = typeArgumentsAfterArgumentInteractionsFix?.let {
             createSubstitutorForUpperBoundViolationCheck(
                 typeParameters,
-                typeArgumentsBeforeArgumentInteractionsFix,
+                typeArgumentsAfterArgumentInteractionsFix,
                 context.session,
             )
         }
@@ -106,18 +107,20 @@ object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAcces
             }
         }
 
-        val mustRelaxDueToArgumentInteractionsBug = substitutorBeforeArgumentInteractionsFix?.let {
-            val wereAnyErrors = detectErrorDiagnosticsReported {
-                runTheCheck(
-                    substitutorBeforeArgumentInteractionsFix,
-                    typeArgumentsBeforeArgumentInteractionsFix,
-                    mustRelaxDueToArgumentInteractionsBug = false,
-                )
-            }
-            !wereAnyErrors
-        } ?: false
+        if (substitutorAfterArgumentInteractionsFix == null) {
+            runTheCheck(substitutor, typeArguments, mustRelaxDueToArgumentInteractionsBug = false)
+            return
+        }
 
-        runTheCheck(substitutor, typeArguments, mustRelaxDueToArgumentInteractionsBug)
+        val wereAnyErrors = detectErrorDiagnosticsReported {
+            runTheCheck(substitutor, typeArguments, mustRelaxDueToArgumentInteractionsBug = false)
+        }
+
+        runTheCheck(
+            substitutorAfterArgumentInteractionsFix,
+            typeArgumentsAfterArgumentInteractionsFix,
+            mustRelaxDueToArgumentInteractionsBug = !wereAnyErrors,
+        )
     }
 
     private fun ConeTypeProjection.withSourceRecursive(expression: FirQualifiedAccessExpression): ConeTypeProjection {

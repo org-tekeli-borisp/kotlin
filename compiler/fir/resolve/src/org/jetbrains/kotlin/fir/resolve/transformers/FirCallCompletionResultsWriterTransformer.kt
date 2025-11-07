@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -1005,11 +1004,11 @@ class FirCallCompletionResultsWriterTransformer(
         return declaration.typeParameters.map {
             val typeParameter = it.symbol.defaultType
             val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
-            val newType = prepareType(substitution, finalSubstitutorWithActualTypeArguments)
 
-            newType.withOldTypeBefore(LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions) {
-                prepareType(substitution, finalSubstitutor)
-            }
+            LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions.chooseType(
+                createNewType = { prepareType(substitution, finalSubstitutorWithActualTypeArguments) },
+                createOldType = { prepareType(substitution, finalSubstitutor) },
+            )
         }
     }
 

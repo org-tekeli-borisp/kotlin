@@ -82,9 +82,7 @@ private fun Project.registerJarTaskForJavaExec(
     inputKind: GeneratorInputKind,
 ) {
     val classpath = sourceSet.runtimeClasspath
-    /**
-     * We write the whole classpath into separate jar to workaround CLI length limit on Windows
-     */
+    // We write the whole classpath into separate jar to work around CLI length limit on Windows
     val jarWithClasspathTask = project.tasks.register("${javaExec.name}WriteClassPath", Jar::class.java) {
         inputs.files(classpath)
             .withPropertyName("classpathInput")
@@ -117,9 +115,9 @@ private fun Project.registerJarTaskForJavaExec(
     }
 
     javaExec.configure {
-        inputs.files(jarWithClasspathTask.map { it.outputs.files })
+        inputs.files(jarWithClasspathTask)
             .withPropertyName("jarTaskOutput")
-            .withPathSensitivity(PathSensitivity.RELATIVE)
+            .withNormalizer(ClasspathNormalizer::class.java)
 
         inputs.files(classpathInput)
             .withPropertyName("classpathToExecute")

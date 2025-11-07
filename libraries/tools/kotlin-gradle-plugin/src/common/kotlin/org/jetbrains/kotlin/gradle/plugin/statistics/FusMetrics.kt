@@ -406,6 +406,7 @@ internal object KotlinSourceSetMetrics : FusMetrics {
             project.reportSourceSetDependenciesUsage(
                 mapOf(
                     "webMain" to BooleanMetrics.KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT,
+                    "webTest" to BooleanMetrics.KOTLIN_WEB_TEST_DEPENDENCIES_PRESENT,
                 )
             )
         }

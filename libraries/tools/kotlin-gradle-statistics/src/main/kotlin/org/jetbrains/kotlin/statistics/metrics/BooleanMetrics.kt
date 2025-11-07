@@ -52,6 +52,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     KOTLIN_WEB_MAIN_SOURCES_USED(OR, SAFE),
     KOTLIN_WEB_TEST_SOURCES_USED(OR, SAFE),
     KOTLIN_WEB_MAIN_DEPENDENCIES_PRESENT(OR, SAFE),
+    KOTLIN_WEB_TEST_DEPENDENCIES_PRESENT(OR, SAFE),
 
     // Disabled explicitly by the user
     KOTLIN_CROSS_COMPILATION_DISABLED(OR, SAFE),

@@ -682,7 +682,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xdont-warn-on-error-suppression",
             "-Xstdlib-compilation",
             "-Xklib-relative-path-base=${rootDir.canonicalPath}",
-            "-Xklib-normalize-absolute-path=true",
+            "-Xklib-normalize-absolute-path",
 
             // See addReturnValueCheckerInfo() in libraries/stdlib/build.gradle.kts:
             "-Xreturn-value-checker=full",

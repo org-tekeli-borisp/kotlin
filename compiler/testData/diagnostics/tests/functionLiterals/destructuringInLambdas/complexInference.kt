@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
@@ -34,8 +35,8 @@ fun bar(aInstance: A, bInstance: B) {
 
     <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(bInstance) {
         <!CANNOT_INFER_PARAMETER_TYPE, COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>[a, b]<!>, [c, d] ->
-        a <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
-        b <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+        a <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Int<!>>() }
+        b <!CANNOT_INFER_PARAMETER_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>String<!>>() }
         c checkType { _<Double>() }
         d checkType { _<Short>() }
     }

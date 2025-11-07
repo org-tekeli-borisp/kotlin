@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-55281
 // CHECK_TYPE_WITH_EXACT
@@ -9,7 +10,7 @@ fun test() {
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<Any?>>(buildee)
+    checkExactType<<!CANNOT_INFER_PARAMETER_TYPE!>Buildee<Any?><!>>(buildee)
 }
 
 

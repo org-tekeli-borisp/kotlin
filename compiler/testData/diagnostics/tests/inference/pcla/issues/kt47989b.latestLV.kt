@@ -6,12 +6,12 @@
 fun test() {
     val buildee = <!CANNOT_INFER_PARAMETER_TYPE!>build<!> {
         object: TypeSourceInterface {
-            override fun produceTargetType() = getTypeVariable()
+            override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>produceTargetTypeBuildee<!>() = this@build
         }
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<<!CANNOT_INFER_PARAMETER_TYPE!>Buildee<TargetType><!>>(buildee)
+    checkExactType<Buildee<TargetType>>(buildee)
 }
 
 
@@ -20,18 +20,15 @@ fun test() {
 class TargetType
 
 interface TypeSourceInterface {
-    fun produceTargetType(): TargetType
+    fun produceTargetTypeBuildee(): Buildee<TargetType>
 }
 
-class Buildee<TV> {
-    fun getTypeVariable(): TV = storage
-    private var storage: TV = null!!
-}
+class Buildee<TV>
 
 fun <PTV> build(instructions: Buildee<PTV>.() -> Unit): Buildee<PTV> {
     return Buildee<PTV>().apply(instructions)
 }
 
-/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, classDeclaration, functionDeclaration,
-functionalType, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, override, propertyDeclaration,
-stringLiteral, typeParameter, typeWithExtension */
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, override, propertyDeclaration, stringLiteral,
+thisExpression, typeParameter, typeWithExtension */

@@ -4,7 +4,7 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = build {
+    val buildee = <!CANNOT_INFER_PARAMETER_TYPE!>build<!> {
         this as DerivedBuildee<*>
         consumeNullableAny(getTypeVariable())
     }

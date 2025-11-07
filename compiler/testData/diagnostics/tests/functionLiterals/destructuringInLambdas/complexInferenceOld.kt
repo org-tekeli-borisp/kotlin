@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE

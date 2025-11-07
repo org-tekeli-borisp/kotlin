@@ -98,7 +98,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     // Thus, we should expose the accessors. The easiest way to do so is to copy @JvmStatic annotation.
     private fun IrSimpleFunction.copyPropagatedJvmStaticAnnotation(): List<IrConstructorCall> {
         if (!isPropertyAccessor) return emptyList()
-        if (hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) return emptyList()
+        if (hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
         if (!propertyIfAccessor.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
         return propertyIfAccessor.annotations.filter { it.isAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) }.map { it.deepCopyWithSymbols() }
     }

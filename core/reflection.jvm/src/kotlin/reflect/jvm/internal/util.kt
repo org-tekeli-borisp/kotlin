@@ -400,7 +400,7 @@ internal fun parseJvmDescriptor(desc: String): FunctionJvmDescriptor {
 }
 
 /**
- * Returns JVM descriptor, assuming that given KClass is not primitive
+ * Returns JVM descriptor, assuming that given KClass is not primitive or array
  */
 internal fun KClass<*>.toJvmDescriptor(): String = "L${jvmName.replace('.', '/')};"
 
@@ -410,7 +410,7 @@ internal val KParameter.isAlwaysBoxedByCompiler: Boolean
                 generateSequence(type) { it.unsubstitutedUnderlyingType() }.drop(1).any { it.isNullableType() }
     }
 
-fun KType.unsubstitutedUnderlyingType(): KType? =
+internal fun KType.unsubstitutedUnderlyingType(): KType? =
     (classifier as? KClassImpl<*>)?.inlineClassUnderlyingType
 
 internal class FunctionJvmDescriptorLoaded(val parameters: List<Class<*>>, val returnType: Class<*>?)

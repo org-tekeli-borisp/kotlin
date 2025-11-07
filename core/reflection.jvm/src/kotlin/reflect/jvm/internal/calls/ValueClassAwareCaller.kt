@@ -112,6 +112,8 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         forbidUnboxingForIndices.forEach { index -> unbox[index] = null }
 
+        // If the actual called member lies in the interface/DefaultImpls class, it accepts a boxed parameter as ex-dispatch receiver.
+        // Forbid unboxing dispatchReceiver in this case.
         val container = callable.container
         if (!callable.isConstructor && container is KClass<*> && container.isValue && member?.acceptsBoxedReceiverParameter() == true) {
             unbox[0] = null

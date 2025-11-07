@@ -30,7 +30,8 @@ public class SirTypeProviderImpl(
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
 ) : SirTypeProvider {
 
-    public data class TypeTranslationCtx(
+    @ConsistentCopyVisibility
+    public data class TypeTranslationCtx internal constructor(
         val currentPosition: SirTypeVariance,
         val reportErrorType: (String) -> Nothing,
         val reportUnsupportedType: () -> Nothing,

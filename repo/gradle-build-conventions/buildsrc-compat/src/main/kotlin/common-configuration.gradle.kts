@@ -333,7 +333,6 @@ fun Project.configureTests() {
             ":examples:scripting-jvm-simple-script-host",
             ":generators",
             ":generators:analysis-api-generator:generator-kotlin-native",
-            ":js:js.tests",
             ":jps:jps-common",
             ":jps:jps-plugin",
             ":kotlin-allopen-compiler-plugin",

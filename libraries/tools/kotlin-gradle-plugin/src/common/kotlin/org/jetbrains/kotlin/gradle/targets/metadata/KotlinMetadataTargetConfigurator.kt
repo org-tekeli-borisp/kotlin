@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.isFromUklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinMetadataConfigurationMetrics
-import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadataDependencyClasspath
 import org.jetbrains.kotlin.gradle.targets.native.internal.sharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -194,26 +192,6 @@ class KotlinMetadataTargetConfigurator :
 
         return compilationFactory.create(compilationName).apply {
             target.compilations.add(this@apply)
-            // native compiler arguments don't have `-Xtarget-platform` flag
-            if (this !is KotlinSharedNativeCompilation) {
-                this.compileTaskProvider.configure { taskProvider ->
-                    val targetsArguments = platformCompilations.mapNotNull {
-                        when (it.platformType) {
-                            KotlinPlatformType.androidJvm, KotlinPlatformType.jvm -> "JVM"
-                            KotlinPlatformType.js -> "JS"
-                            KotlinPlatformType.wasm -> {
-                                when ((it.target as? KotlinJsIrTarget)?.wasmTargetType) {
-                                    KotlinWasmTargetType.WASI -> "WasmWasi"
-                                    KotlinWasmTargetType.JS, null -> "WasmJs"
-                                }
-                            }
-                            KotlinPlatformType.native -> "Native"
-                            else -> null
-                        }
-                    }.distinct().map { "-Xtarget-platform=$it" }
-                    taskProvider.compilerOptions.freeCompilerArgs.addAll(targetsArguments)
-                }
-            }
 
             configureMetadataDependenciesForCompilation(this@apply)
 
